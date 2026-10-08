@@ -1,0 +1,1731 @@
+{
+  "schemaVersion": 2,
+  "appVersion": "2.2.1",
+  "updatedAt": "2026-10-07T16:42:58.911Z",
+  "settings": {
+    "sheetEndpoint": "",
+    "sheetToken": "",
+    "fourthAnswer": "Parcialmente conforme"
+  },
+  "blocks": [
+    {
+      "id": "block_muy55qdf_ldsnk5",
+      "name": "Chamado de Projetos",
+      "color": "#5f6ec3",
+      "description": "Esta etapa verifica se no chamado de projetos há as informações necessárias para a correta continuidade do fluxo. Aqui serão verificadas informações como código do projeto, informações cadastrais do cliente, parceiros e escalonamentos, atividades a serem feitas etc.",
+      "questions": [
+        {
+          "id": "question_muy56ikh_ctuirx",
+          "text": "Código do Projeto (Sankhya):"
+        },
+        {
+          "id": "question_muy5745u_lk2ikr",
+          "text": "Código do Cliente SANKHYA. (código do cliente):"
+        },
+        {
+          "id": "question_muy5c5x0_kt8gzw",
+          "text": "GP (Gerente de Projetos):"
+        },
+        {
+          "id": "question_muy5d5vv_tw0y68",
+          "text": "GN"
+        },
+        {
+          "id": "question_muy5d8g7_u9ntbn",
+          "text": "Nome do Cliente"
+        },
+        {
+          "id": "question_muy5dbkn_fyk4vm",
+          "text": "Número da unidade"
+        },
+        {
+          "id": "question_muy5gags_xle5ed",
+          "text": "Cidade da unidade"
+        },
+        {
+          "id": "question_muy5gg08_dmmvz3",
+          "text": "Endereço da unidade"
+        },
+        {
+          "id": "question_muy5gqsg_h9c2a9",
+          "text": "Designação do cliente/links do cliente (quando for cliente que costua ter designação. Ex: LDC, Raízen, CCS)"
+        },
+        {
+          "id": "question_muy5i6b4_3fnhgd",
+          "text": "Horário de funcionamento da unidade"
+        },
+        {
+          "id": "question_muy5il0u_fi0lxv",
+          "text": "Razão Social do cliente"
+        },
+        {
+          "id": "question_muy5kf9p_y55wqr",
+          "text": "CNPJ do cliente"
+        },
+        {
+          "id": "question_muy5ks2t_wsm6gt",
+          "text": "CEP do cliente"
+        },
+        {
+          "id": "question_muy5l0oy_9oc8m9",
+          "text": "Coordenadas geográficas/link"
+        },
+        {
+          "id": "question_muy5r6sm_9f2iq9",
+          "text": "Parceiro do link"
+        },
+        {
+          "id": "question_muy5rgp6_aimeyw",
+          "text": "Tipo do link (Internet, MPLS ou L2L)"
+        },
+        {
+          "id": "question_muy5u7hy_bdlxam",
+          "text": "Designação do circuito"
+        },
+        {
+          "id": "question_muy5ugxq_5qv7k2",
+          "text": "Meio Físico"
+        },
+        {
+          "id": "question_muy5uqtt_mqvl3u",
+          "text": "Velocidade contratada pelo cliente"
+        },
+        {
+          "id": "question_muy5uync_c6trcl",
+          "text": "Velocidade contratada com o parceiro"
+        },
+        {
+          "id": "question_muy5vayq_uz0h8s",
+          "text": "Mantenedor (quando RPT)"
+        },
+        {
+          "id": "question_muy5vmwn_14o3na",
+          "text": "Número do pedido (quando CCS)"
+        },
+        {
+          "id": "question_muy5vwp7_6nw34i",
+          "text": "Empresa contratante do link"
+        },
+        {
+          "id": "question_muy5x030_5r2qeb",
+          "text": "Descrição clara da atividade (interna e externa)"
+        },
+        {
+          "id": "question_muy5xaew_tmentr",
+          "text": "Indicação da equipe responsável pela execução"
+        },
+        {
+          "id": "question_muy5xfg4_8k9pon",
+          "text": "Escopo da atividade"
+        },
+        {
+          "id": "question_muy5xqrh_kot2w8",
+          "text": "Data em que a atividade deverá ser realizada:"
+        },
+        {
+          "id": "question_muy5y077_z7c61p",
+          "text": "Lista de equipamentos necessários (quando a atividade demandar que sejam provisionados equipamentos em alguma etapa)"
+        },
+        {
+          "id": "question_muy5yp41_ggl031",
+          "text": "Solicitação de inclusão dos hosts no monitoramento (etapa Desenvolvimento)"
+        },
+        {
+          "id": "question_muy63ba9_oxcde1",
+          "text": "Solicitação de inclusão das informações na Intranet (etapa Intranet)"
+        },
+        {
+          "id": "question_muy644du_asvx6u",
+          "text": "Solicitação de rotina de backup (etapa Backup de Dispositivos)"
+        },
+        {
+          "id": "question_muy64k72_4pawqs",
+          "text": "Solicitação de testes de monitoramento com o robô (etapa Homologação)"
+        },
+        {
+          "id": "question_muy65haq_d14zdv",
+          "text": "Escalonamento do cliente"
+        },
+        {
+          "id": "question_muy65zkz_y5smbr",
+          "text": "Dias específicos para o escalonamento"
+        },
+        {
+          "id": "question_muy66eg5_fiwuyb",
+          "text": "Horário de acionamento do escalonamento"
+        },
+        {
+          "id": "question_muy66hxn_zievjb",
+          "text": "Meio principal de contato (Ligação, WhatsApp etc.):"
+        },
+        {
+          "id": "question_muy66mc8_oiaxt7",
+          "text": "Informações de integração"
+        }
+      ]
+    },
+    {
+      "id": "block_muy55qdf_kpqx67",
+      "name": "Ativações",
+      "color": "#21824c",
+      "description": "Nesta etapa é verificado se o N2 efetuou de forma correta todas as ativações técnicas do projeto: configurações, serviços, links, firewalls, roteadores, testes e validações.",
+      "questions": [
+        {
+          "id": "question_muy7gc3y_4imqn5",
+          "text": "Evidências dos testes de link e/ou equipamento:"
+        },
+        {
+          "id": "question_muy7gg7f_wnrcci",
+          "text": "Evidências das configurações realizadas (IPs, VLANs, rotas, interfaces etc.):"
+        },
+        {
+          "id": "question_muy7gguw_oy08f2",
+          "text": "Evidência da atuação do N3 ou parceiro (nota técnica), quando aplicável:"
+        }
+      ]
+    },
+    {
+      "id": "block_muy55qdf_kjl205",
+      "name": "Desenvolvimento",
+      "color": "#1592a6",
+      "description": "No Desenvolvimento é verificado se o especialista incluiu e configurou todos os hosts, IPs e equipamentos no Zabbix, incluindo sensores, templates e triggers para o monitoramento proativo do serviço.",
+      "questions": [
+        {
+          "id": "question_muy7wiry_bs1wwd",
+          "text": "Criou host no monitoramento"
+        },
+        {
+          "id": "question_muy7wlu6_rl6xr3",
+          "text": "Criou mapa novo/editou mapa"
+        },
+        {
+          "id": "question_muy7wsc4_nwoabe",
+          "text": "Configurações de IPs"
+        },
+        {
+          "id": "question_muy7wwt4_rd8opr",
+          "text": "Verificação de conformidade entre cfg passada pelo N2 e a colocada no Host"
+        },
+        {
+          "id": "question_muy7x5us_ki2tkz",
+          "text": "Intuitividade do mapa e melhorias que podem ser feitas"
+        }
+      ]
+    },
+    {
+      "id": "block_muy55qdf_ea7glb",
+      "name": "Intranet",
+      "color": "#6a3ca2",
+      "description": "Na fila de Intranet, o responsável documenta todo o projeto e o cliente na intranet colaborativa: escalation GN, cliente e parceiro; procedimentos e criticidade do atendimento; horários de expediente e plantão; regras de acesso e necessidade de integração. Também configura o link para a intranet no inventário do host e realiza a adequação de cadastros Sankhya.",
+      "questions": [
+        {
+          "id": "question_muy7h57l_p274uu",
+          "text": "Código do Cliente SANKHYA. (código do cliente):"
+        },
+        {
+          "id": "question_muy7h8nt_85b9cs",
+          "text": "GP - OBS: As vezes o GP não é quem envia o e-mail:"
+        },
+        {
+          "id": "question_muy7hcbh_gqfpli",
+          "text": "Nome do cliente:"
+        },
+        {
+          "id": "question_muy7henx_b99luk",
+          "text": "Número da unidade"
+        },
+        {
+          "id": "question_muy7hhah_ul1vdr",
+          "text": "Cidade da unidade"
+        },
+        {
+          "id": "question_muy7hqc5_at5ges",
+          "text": "Endereço da unidade/cliente"
+        },
+        {
+          "id": "question_muy7hyv4_lxivjf",
+          "text": "Designação do cliente/links do cliente (quando for cliente que costua ter designação. Ex: LDC, Raízen, CCS)"
+        },
+        {
+          "id": "question_muy7i5hl_54701s",
+          "text": "Horário de funcionamento da unidade"
+        },
+        {
+          "id": "question_muy7jokf_spossx",
+          "text": "Razão Social"
+        },
+        {
+          "id": "question_muy7jz2p_cb07ld",
+          "text": "CNPJ:"
+        },
+        {
+          "id": "question_muy7k3lt_gblm26",
+          "text": "Coordenada"
+        },
+        {
+          "id": "question_muy7kae9_vt5ixd",
+          "text": "Parceiro do link"
+        },
+        {
+          "id": "question_muy7kc4v_o71j2g",
+          "text": "Tipo. (MPLS, Internet, L2L)"
+        },
+        {
+          "id": "question_muy7kie9_o6kdj1",
+          "text": "Meio Físico"
+        },
+        {
+          "id": "question_muy7klkl_9koto5",
+          "text": "Velocidade contratada pelo cliente"
+        },
+        {
+          "id": "question_muy7koru_kk3j11",
+          "text": "Velocidade contratada com o parceiro"
+        },
+        {
+          "id": "question_muy7ksh5_7jf2a8",
+          "text": "Mantenedor (Quando RPT)"
+        },
+        {
+          "id": "question_muy7ky8d_o5ofcp",
+          "text": "Número do pedido (quando CCS)"
+        },
+        {
+          "id": "question_muy7l4dl_b2vk0u",
+          "text": "Empresa contratante do link (lik nosso ou do cliente)"
+        },
+        {
+          "id": "question_muy7l8pf_3u3mfk",
+          "text": "Em caso de link/equipamento temporário deverá constar data de término do monitoramento:"
+        },
+        {
+          "id": "question_muy7lmqp_xcrmyd",
+          "text": "Em caso de link/equipamento temporário deverá constar se é brinde ou será faturado, pois se for faturado, deverá haver e-mail de cancelamento:"
+        },
+        {
+          "id": "question_muy7qktm_c781v1",
+          "text": "Procedimento padrão"
+        },
+        {
+          "id": "question_muy7qppu_kgu50c",
+          "text": "Procedimento específico"
+        },
+        {
+          "id": "question_muy7qu4e_5tomar",
+          "text": "Escalonamento do cliente"
+        },
+        {
+          "id": "question_muy7qz54_e5063k",
+          "text": "Escalonamento interno (M7)"
+        },
+        {
+          "id": "question_muy7r3bm_7yrt5f",
+          "text": "Dias específicos para o escalonamento"
+        },
+        {
+          "id": "question_muy7rbcc_ytmak8",
+          "text": "Horários específicos de acionamento do escalonamento"
+        },
+        {
+          "id": "question_muy7rh6j_ufpxf2",
+          "text": "Especificação de qual meio principal de contato do escalonamento. (Ligação, WhatsApp)"
+        },
+        {
+          "id": "question_muy7rnrm_g12ppu",
+          "text": "Informações de integração"
+        },
+        {
+          "id": "question_muy7rscq_pw0jk1",
+          "text": "Informação de prioridade (VIP ou não) do cliente"
+        },
+        {
+          "id": "question_muy7rv4v_thvgl6",
+          "text": "Galeria de imagens"
+        },
+        {
+          "id": "question_muy7s4ii_43tymc",
+          "text": "Parceiros homologados quando CCS"
+        },
+        {
+          "id": "question_muy7s8x1_fxuh1y",
+          "text": "Inventário do host (no Zabbix)"
+        },
+        {
+          "id": "question_muy7sejy_f1hphy",
+          "text": "Nome do cliente completo do OTRS"
+        },
+        {
+          "id": "question_muy7sive_p7udso",
+          "text": "Apelido (código cliente)"
+        },
+        {
+          "id": "question_muy7stai_4q3yq7",
+          "text": "URL A (Link para a página no OTRS)"
+        },
+        {
+          "id": "question_muy7sxfd_b0ge6t",
+          "text": "URL B (Código da página no OTRS)"
+        },
+        {
+          "id": "question_muy7t0lc_jk2huj",
+          "text": "Imagem da topologia"
+        },
+        {
+          "id": "question_muy7t4fn_knnrv4",
+          "text": "Orientação (quando houver)"
+        }
+      ]
+    },
+    {
+      "id": "block_muy55qdf_8zn3ke",
+      "name": "Backup de Dispositivos",
+      "color": "#ef7f22",
+      "description": "Nesta etapa o responsável realiza o backup de todas as configurações dos equipamentos, registra e armazena os backups, garantindo segurança e rastreabilidade técnica.",
+      "questions": [
+        {
+          "id": "question_muy7w3n9_cpeth0",
+          "text": "Execução da rotina de backup das configurações:"
+        }
+      ]
+    },
+    {
+      "id": "block_muy55qdf_jrks77",
+      "name": "Homologação",
+      "color": "#c49a68",
+      "description": "A etapa de homologação constrói e configura os bots de WhatsApp que realizam testes de envio automático de notas ou notificações de SLA para os grupos de Gerentes de Negócio: 15 minutos, 2 horas e 4 horas. Também valida o envio e o funcionamento dos bots junto aos grupos.",
+      "questions": [
+        {
+          "id": "question_muy7xd31_44o0ce",
+          "text": "Checa envio de aviso no grupo B.O. Primeiro atendimento."
+        },
+        {
+          "id": "question_muy7xrpn_vgr03y",
+          "text": "Checa envio de aviso no grupo Escalation GN"
+        },
+        {
+          "id": "question_muy7xz7n_l69z50",
+          "text": "Checa envio de aviso no grupo Escalation Riberto"
+        },
+        {
+          "id": "question_muy7y48b_jfx7rl",
+          "text": "Força alerta de abertura automática de chamado."
+        }
+      ]
+    },
+    {
+      "id": "block_muy55qdf_r2ysc2",
+      "name": "Qualidade",
+      "color": "#b8860b",
+      "description": "Nesta etapa você deve informar observações pertitentes quantoa  checagem dos itens deste ticket.",
+      "questions": [
+        {
+          "id": "question_muy8irex_8ndykt",
+          "text": "Observações sobre este ticket."
+        }
+      ]
+    }
+  ],
+  "records": [
+    {
+      "id": "record_muyb1kpi_7x6s7t",
+      "ticket": "883088241",
+      "date": "2026-10-07",
+      "createdAt": "2026-10-07T16:11:19.446Z",
+      "score": 74,
+      "answers": [
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy56ikh_ctuirx",
+          "question": "Código do Projeto (Sankhya):",
+          "questionOrder": 1,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5745u_lk2ikr",
+          "question": "Código do Cliente SANKHYA. (código do cliente):",
+          "questionOrder": 2,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5c5x0_kt8gzw",
+          "question": "GP (Gerente de Projetos):",
+          "questionOrder": 3,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5d5vv_tw0y68",
+          "question": "GN",
+          "questionOrder": 4,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5d8g7_u9ntbn",
+          "question": "Nome do Cliente",
+          "questionOrder": 5,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5dbkn_fyk4vm",
+          "question": "Número da unidade",
+          "questionOrder": 6,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5gags_xle5ed",
+          "question": "Cidade da unidade",
+          "questionOrder": 7,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5gg08_dmmvz3",
+          "question": "Endereço da unidade",
+          "questionOrder": 8,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5gqsg_h9c2a9",
+          "question": "Designação do cliente/links do cliente (quando for cliente que costua ter designação. Ex: LDC, Raízen, CCS)",
+          "questionOrder": 9,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5i6b4_3fnhgd",
+          "question": "Horário de funcionamento da unidade",
+          "questionOrder": 10,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5il0u_fi0lxv",
+          "question": "Razão Social do cliente",
+          "questionOrder": 11,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5kf9p_y55wqr",
+          "question": "CNPJ do cliente",
+          "questionOrder": 12,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5ks2t_wsm6gt",
+          "question": "CEP do cliente",
+          "questionOrder": 13,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5l0oy_9oc8m9",
+          "question": "Coordenadas geográficas/link",
+          "questionOrder": 14,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5r6sm_9f2iq9",
+          "question": "Parceiro do link",
+          "questionOrder": 15,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5rgp6_aimeyw",
+          "question": "Tipo do link (Internet, MPLS ou L2L)",
+          "questionOrder": 16,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5u7hy_bdlxam",
+          "question": "Designação do circuito",
+          "questionOrder": 17,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5ugxq_5qv7k2",
+          "question": "Meio Físico",
+          "questionOrder": 18,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5uqtt_mqvl3u",
+          "question": "Velocidade contratada pelo cliente",
+          "questionOrder": 19,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5uync_c6trcl",
+          "question": "Velocidade contratada com o parceiro",
+          "questionOrder": 20,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5vayq_uz0h8s",
+          "question": "Mantenedor (quando RPT)",
+          "questionOrder": 21,
+          "answer": "na",
+          "answerLabel": "Não se aplica",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5vmwn_14o3na",
+          "question": "Número do pedido (quando CCS)",
+          "questionOrder": 22,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5vwp7_6nw34i",
+          "question": "Empresa contratante do link",
+          "questionOrder": 23,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5x030_5r2qeb",
+          "question": "Descrição clara da atividade (interna e externa)",
+          "questionOrder": 24,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5xaew_tmentr",
+          "question": "Indicação da equipe responsável pela execução",
+          "questionOrder": 25,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5xfg4_8k9pon",
+          "question": "Escopo da atividade",
+          "questionOrder": 26,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5xqrh_kot2w8",
+          "question": "Data em que a atividade deverá ser realizada:",
+          "questionOrder": 27,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5y077_z7c61p",
+          "question": "Lista de equipamentos necessários (quando a atividade demandar que sejam provisionados equipamentos em alguma etapa)",
+          "questionOrder": 28,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": "Ativação CCS, equipamentos M7 já no local."
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy5yp41_ggl031",
+          "question": "Solicitação de inclusão dos hosts no monitoramento (etapa Desenvolvimento)",
+          "questionOrder": 29,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy63ba9_oxcde1",
+          "question": "Solicitação de inclusão das informações na Intranet (etapa Intranet)",
+          "questionOrder": 30,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy644du_asvx6u",
+          "question": "Solicitação de rotina de backup (etapa Backup de Dispositivos)",
+          "questionOrder": 31,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy64k72_4pawqs",
+          "question": "Solicitação de testes de monitoramento com o robô (etapa Homologação)",
+          "questionOrder": 32,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy65haq_d14zdv",
+          "question": "Escalonamento do cliente",
+          "questionOrder": 33,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy65zkz_y5smbr",
+          "question": "Dias específicos para o escalonamento",
+          "questionOrder": 34,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy66eg5_fiwuyb",
+          "question": "Horário de acionamento do escalonamento",
+          "questionOrder": 35,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy66hxn_zievjb",
+          "question": "Meio principal de contato (Ligação, WhatsApp etc.):",
+          "questionOrder": 36,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ldsnk5",
+          "block": "Chamado de Projetos",
+          "blockOrder": 1,
+          "questionId": "question_muy66mc8_oiaxt7",
+          "question": "Informações de integração",
+          "questionOrder": 37,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_kpqx67",
+          "block": "Ativações",
+          "blockOrder": 2,
+          "questionId": "question_muy7gc3y_4imqn5",
+          "question": "Evidências dos testes de link e/ou equipamento:",
+          "questionOrder": 1,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_kpqx67",
+          "block": "Ativações",
+          "blockOrder": 2,
+          "questionId": "question_muy7gg7f_wnrcci",
+          "question": "Evidências das configurações realizadas (IPs, VLANs, rotas, interfaces etc.):",
+          "questionOrder": 2,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_kpqx67",
+          "block": "Ativações",
+          "blockOrder": 2,
+          "questionId": "question_muy7gguw_oy08f2",
+          "question": "Evidência da atuação do N3 ou parceiro (nota técnica), quando aplicável:",
+          "questionOrder": 3,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": "Técnico parceiro envioufoto dos equipamentos M7 no local."
+        },
+        {
+          "blockId": "block_muy55qdf_kjl205",
+          "block": "Desenvolvimento",
+          "blockOrder": 3,
+          "questionId": "question_muy7wiry_bs1wwd",
+          "question": "Criou host no monitoramento",
+          "questionOrder": 1,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_kjl205",
+          "block": "Desenvolvimento",
+          "blockOrder": 3,
+          "questionId": "question_muy7wlu6_rl6xr3",
+          "question": "Criou mapa novo/editou mapa",
+          "questionOrder": 2,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_kjl205",
+          "block": "Desenvolvimento",
+          "blockOrder": 3,
+          "questionId": "question_muy7wsc4_nwoabe",
+          "question": "Configurações de IPs",
+          "questionOrder": 3,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_kjl205",
+          "block": "Desenvolvimento",
+          "blockOrder": 3,
+          "questionId": "question_muy7wwt4_rd8opr",
+          "question": "Verificação de conformidade entre cfg passada pelo N2 e a colocada no Host",
+          "questionOrder": 4,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_kjl205",
+          "block": "Desenvolvimento",
+          "blockOrder": 3,
+          "questionId": "question_muy7x5us_ki2tkz",
+          "question": "Intuitividade do mapa e melhorias que podem ser feitas",
+          "questionOrder": 5,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7h57l_p274uu",
+          "question": "Código do Cliente SANKHYA. (código do cliente):",
+          "questionOrder": 1,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7h8nt_85b9cs",
+          "question": "GP - OBS: As vezes o GP não é quem envia o e-mail:",
+          "questionOrder": 2,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7hcbh_gqfpli",
+          "question": "Nome do cliente:",
+          "questionOrder": 3,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7henx_b99luk",
+          "question": "Número da unidade",
+          "questionOrder": 4,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7hhah_ul1vdr",
+          "question": "Cidade da unidade",
+          "questionOrder": 5,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7hqc5_at5ges",
+          "question": "Endereço da unidade/cliente",
+          "questionOrder": 6,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7hyv4_lxivjf",
+          "question": "Designação do cliente/links do cliente (quando for cliente que costua ter designação. Ex: LDC, Raízen, CCS)",
+          "questionOrder": 7,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7i5hl_54701s",
+          "question": "Horário de funcionamento da unidade",
+          "questionOrder": 8,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7jokf_spossx",
+          "question": "Razão Social",
+          "questionOrder": 9,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7jz2p_cb07ld",
+          "question": "CNPJ:",
+          "questionOrder": 10,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7k3lt_gblm26",
+          "question": "Coordenada",
+          "questionOrder": 11,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7kae9_vt5ixd",
+          "question": "Parceiro do link",
+          "questionOrder": 12,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7kc4v_o71j2g",
+          "question": "Tipo. (MPLS, Internet, L2L)",
+          "questionOrder": 13,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7kie9_o6kdj1",
+          "question": "Meio Físico",
+          "questionOrder": 14,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7klkl_9koto5",
+          "question": "Velocidade contratada pelo cliente",
+          "questionOrder": 15,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7koru_kk3j11",
+          "question": "Velocidade contratada com o parceiro",
+          "questionOrder": 16,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7ksh5_7jf2a8",
+          "question": "Mantenedor (Quando RPT)",
+          "questionOrder": 17,
+          "answer": "na",
+          "answerLabel": "Não se aplica",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7ky8d_o5ofcp",
+          "question": "Número do pedido (quando CCS)",
+          "questionOrder": 18,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7l4dl_b2vk0u",
+          "question": "Empresa contratante do link (lik nosso ou do cliente)",
+          "questionOrder": 19,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7l8pf_3u3mfk",
+          "question": "Em caso de link/equipamento temporário deverá constar data de término do monitoramento:",
+          "questionOrder": 20,
+          "answer": "na",
+          "answerLabel": "Não se aplica",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7lmqp_xcrmyd",
+          "question": "Em caso de link/equipamento temporário deverá constar se é brinde ou será faturado, pois se for faturado, deverá haver e-mail de cancelamento:",
+          "questionOrder": 21,
+          "answer": "na",
+          "answerLabel": "Não se aplica",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7qktm_c781v1",
+          "question": "Procedimento padrão",
+          "questionOrder": 22,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7qppu_kgu50c",
+          "question": "Procedimento específico",
+          "questionOrder": 23,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7qu4e_5tomar",
+          "question": "Escalonamento do cliente",
+          "questionOrder": 24,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7qz54_e5063k",
+          "question": "Escalonamento interno (M7)",
+          "questionOrder": 25,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7r3bm_7yrt5f",
+          "question": "Dias específicos para o escalonamento",
+          "questionOrder": 26,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7rbcc_ytmak8",
+          "question": "Horários específicos de acionamento do escalonamento",
+          "questionOrder": 27,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7rh6j_ufpxf2",
+          "question": "Especificação de qual meio principal de contato do escalonamento. (Ligação, WhatsApp)",
+          "questionOrder": 28,
+          "answer": "quarta",
+          "answerLabel": "Parcialmente conforme",
+          "observation": "Contatos são todos fixos, sem indicação que haveria algum WhatsApp."
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7rnrm_g12ppu",
+          "question": "Informações de integração",
+          "questionOrder": 29,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7rscq_pw0jk1",
+          "question": "Informação de prioridade (VIP ou não) do cliente",
+          "questionOrder": 30,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7rv4v_thvgl6",
+          "question": "Galeria de imagens",
+          "questionOrder": 31,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7s4ii_43tymc",
+          "question": "Parceiros homologados quando CCS",
+          "questionOrder": 32,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7s8x1_fxuh1y",
+          "question": "Inventário do host (no Zabbix)",
+          "questionOrder": 33,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7sejy_f1hphy",
+          "question": "Nome do cliente completo do OTRS",
+          "questionOrder": 34,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7sive_p7udso",
+          "question": "Apelido (código cliente)",
+          "questionOrder": 35,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7stai_4q3yq7",
+          "question": "URL A (Link para a página no OTRS)",
+          "questionOrder": 36,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7sxfd_b0ge6t",
+          "question": "URL B (Código da página no OTRS)",
+          "questionOrder": 37,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7t0lc_jk2huj",
+          "question": "Imagem da topologia",
+          "questionOrder": 38,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_ea7glb",
+          "block": "Intranet",
+          "blockOrder": 4,
+          "questionId": "question_muy7t4fn_knnrv4",
+          "question": "Orientação (quando houver)",
+          "questionOrder": 39,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_8zn3ke",
+          "block": "Backup de Dispositivos",
+          "blockOrder": 5,
+          "questionId": "question_muy7w3n9_cpeth0",
+          "question": "Execução da rotina de backup das configurações:",
+          "questionOrder": 1,
+          "answer": "nao-conforme",
+          "answerLabel": "Não conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_jrks77",
+          "block": "Homologação",
+          "blockOrder": 6,
+          "questionId": "question_muy7xd31_44o0ce",
+          "question": "Checa envio de aviso no grupo B.O. Primeiro atendimento.",
+          "questionOrder": 1,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_jrks77",
+          "block": "Homologação",
+          "blockOrder": 6,
+          "questionId": "question_muy7xrpn_vgr03y",
+          "question": "Checa envio de aviso no grupo Escalation GN",
+          "questionOrder": 2,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_jrks77",
+          "block": "Homologação",
+          "blockOrder": 6,
+          "questionId": "question_muy7xz7n_l69z50",
+          "question": "Checa envio de aviso no grupo Escalation Riberto",
+          "questionOrder": 3,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_jrks77",
+          "block": "Homologação",
+          "blockOrder": 6,
+          "questionId": "question_muy7y48b_jfx7rl",
+          "question": "Força alerta de abertura automática de chamado.",
+          "questionOrder": 4,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": ""
+        },
+        {
+          "blockId": "block_muy55qdf_r2ysc2",
+          "block": "Qualidade",
+          "blockOrder": 7,
+          "questionId": "question_muy8irex_8ndykt",
+          "question": "Observações sobre este ticket.",
+          "questionOrder": 1,
+          "answer": "conforme",
+          "answerLabel": "Conforme",
+          "observation": "Nenhuma, por hora. Este ticket é o primeiro sendo avaliado pela nova checklist em HTML."
+        }
+      ],
+      "synced": false,
+      "templateVersion": "2026-10-07T16:11:15.744Z",
+      "reviewNeeded": false,
+      "reviewReason": ""
+    }
+  ],
+  "draft": {
+    "ticket": "883088241",
+    "date": "2026-10-07",
+    "answers": {
+      "question_muy56ikh_ctuirx": "nao-conforme",
+      "question_muy5745u_lk2ikr": "conforme",
+      "question_muy5c5x0_kt8gzw": "conforme",
+      "question_muy5d5vv_tw0y68": "conforme",
+      "question_muy5d8g7_u9ntbn": "conforme",
+      "question_muy5dbkn_fyk4vm": "conforme",
+      "question_muy5gags_xle5ed": "conforme",
+      "question_muy5gg08_dmmvz3": "conforme",
+      "question_muy5gqsg_h9c2a9": "conforme",
+      "question_muy5i6b4_3fnhgd": "nao-conforme",
+      "question_muy5il0u_fi0lxv": "nao-conforme",
+      "question_muy5kf9p_y55wqr": "nao-conforme",
+      "question_muy5ks2t_wsm6gt": "nao-conforme",
+      "question_muy5l0oy_9oc8m9": "nao-conforme",
+      "question_muy5r6sm_9f2iq9": "conforme",
+      "question_muy5rgp6_aimeyw": "conforme",
+      "question_muy5u7hy_bdlxam": "nao-conforme",
+      "question_muy5ugxq_5qv7k2": "nao-conforme",
+      "question_muy5uqtt_mqvl3u": "conforme",
+      "question_muy5uync_c6trcl": "conforme",
+      "question_muy5vayq_uz0h8s": "na",
+      "question_muy5vmwn_14o3na": "conforme",
+      "question_muy5vwp7_6nw34i": "nao-conforme",
+      "question_muy5x030_5r2qeb": "conforme",
+      "question_muy5xaew_tmentr": "conforme",
+      "question_muy5xfg4_8k9pon": "conforme",
+      "question_muy5xqrh_kot2w8": "conforme",
+      "question_muy5y077_z7c61p": "conforme",
+      "question_muy5yp41_ggl031": "conforme",
+      "question_muy63ba9_oxcde1": "conforme",
+      "question_muy644du_asvx6u": "nao-conforme",
+      "question_muy64k72_4pawqs": "conforme",
+      "question_muy65haq_d14zdv": "nao-conforme",
+      "question_muy65zkz_y5smbr": "nao-conforme",
+      "question_muy66eg5_fiwuyb": "nao-conforme",
+      "question_muy66hxn_zievjb": "nao-conforme",
+      "question_muy66mc8_oiaxt7": "nao-conforme",
+      "question_muy7gc3y_4imqn5": "conforme",
+      "question_muy7gg7f_wnrcci": "conforme",
+      "question_muy7gguw_oy08f2": "conforme",
+      "question_muy7wiry_bs1wwd": "conforme",
+      "question_muy7wlu6_rl6xr3": "conforme",
+      "question_muy7wsc4_nwoabe": "conforme",
+      "question_muy7wwt4_rd8opr": "conforme",
+      "question_muy7x5us_ki2tkz": "conforme",
+      "question_muy7h57l_p274uu": "conforme",
+      "question_muy7h8nt_85b9cs": "conforme",
+      "question_muy7hcbh_gqfpli": "conforme",
+      "question_muy7henx_b99luk": "conforme",
+      "question_muy7hhah_ul1vdr": "conforme",
+      "question_muy7hqc5_at5ges": "conforme",
+      "question_muy7hyv4_lxivjf": "conforme",
+      "question_muy7i5hl_54701s": "conforme",
+      "question_muy7jokf_spossx": "nao-conforme",
+      "question_muy7jz2p_cb07ld": "nao-conforme",
+      "question_muy7k3lt_gblm26": "nao-conforme",
+      "question_muy7kae9_vt5ixd": "conforme",
+      "question_muy7kc4v_o71j2g": "conforme",
+      "question_muy7kie9_o6kdj1": "nao-conforme",
+      "question_muy7klkl_9koto5": "conforme",
+      "question_muy7koru_kk3j11": "conforme",
+      "question_muy7ksh5_7jf2a8": "na",
+      "question_muy7ky8d_o5ofcp": "conforme",
+      "question_muy7l4dl_b2vk0u": "conforme",
+      "question_muy7l8pf_3u3mfk": "na",
+      "question_muy7lmqp_xcrmyd": "na",
+      "question_muy7qktm_c781v1": "conforme",
+      "question_muy7qppu_kgu50c": "conforme",
+      "question_muy7qu4e_5tomar": "conforme",
+      "question_muy7qz54_e5063k": "nao-conforme",
+      "question_muy7r3bm_7yrt5f": "conforme",
+      "question_muy7rbcc_ytmak8": "conforme",
+      "question_muy7rh6j_ufpxf2": "quarta",
+      "question_muy7rnrm_g12ppu": "conforme",
+      "question_muy7rscq_pw0jk1": "conforme",
+      "question_muy7rv4v_thvgl6": "conforme",
+      "question_muy7s4ii_43tymc": "conforme",
+      "question_muy7s8x1_fxuh1y": "conforme",
+      "question_muy7sejy_f1hphy": "conforme",
+      "question_muy7sive_p7udso": "conforme",
+      "question_muy7stai_4q3yq7": "conforme",
+      "question_muy7sxfd_b0ge6t": "conforme",
+      "question_muy7t0lc_jk2huj": "conforme",
+      "question_muy7t4fn_knnrv4": "conforme",
+      "question_muy7w3n9_cpeth0": "nao-conforme",
+      "question_muy7xd31_44o0ce": "conforme",
+      "question_muy7xrpn_vgr03y": "conforme",
+      "question_muy7xz7n_l69z50": "conforme",
+      "question_muy7y48b_jfx7rl": "conforme",
+      "question_muy8irex_8ndykt": "conforme"
+    },
+    "notes": {
+      "question_muy56ikh_ctuirx": "",
+      "question_muy5745u_lk2ikr": "",
+      "question_muy5c5x0_kt8gzw": "",
+      "question_muy5d5vv_tw0y68": "",
+      "question_muy5d8g7_u9ntbn": "",
+      "question_muy5dbkn_fyk4vm": "",
+      "question_muy5gags_xle5ed": "",
+      "question_muy5gg08_dmmvz3": "",
+      "question_muy5gqsg_h9c2a9": "",
+      "question_muy5i6b4_3fnhgd": "",
+      "question_muy5il0u_fi0lxv": "",
+      "question_muy5kf9p_y55wqr": "",
+      "question_muy5ks2t_wsm6gt": "",
+      "question_muy5l0oy_9oc8m9": "",
+      "question_muy5r6sm_9f2iq9": "",
+      "question_muy5rgp6_aimeyw": "",
+      "question_muy5u7hy_bdlxam": "",
+      "question_muy5ugxq_5qv7k2": "",
+      "question_muy5uqtt_mqvl3u": "",
+      "question_muy5uync_c6trcl": "",
+      "question_muy5vayq_uz0h8s": "",
+      "question_muy5vmwn_14o3na": "",
+      "question_muy5vwp7_6nw34i": "",
+      "question_muy5x030_5r2qeb": "",
+      "question_muy5xaew_tmentr": "",
+      "question_muy5xfg4_8k9pon": "",
+      "question_muy5xqrh_kot2w8": "",
+      "question_muy5y077_z7c61p": "Ativação CCS, equipamentos M7 já no local.",
+      "question_muy5yp41_ggl031": "",
+      "question_muy63ba9_oxcde1": "",
+      "question_muy644du_asvx6u": "",
+      "question_muy64k72_4pawqs": "",
+      "question_muy65haq_d14zdv": "",
+      "question_muy65zkz_y5smbr": "",
+      "question_muy66eg5_fiwuyb": "",
+      "question_muy66hxn_zievjb": "",
+      "question_muy66mc8_oiaxt7": "",
+      "question_muy7gc3y_4imqn5": "",
+      "question_muy7gg7f_wnrcci": "",
+      "question_muy7gguw_oy08f2": "Técnico parceiro envioufoto dos equipamentos M7 no local.",
+      "question_muy7wiry_bs1wwd": "",
+      "question_muy7wlu6_rl6xr3": "",
+      "question_muy7wsc4_nwoabe": "",
+      "question_muy7wwt4_rd8opr": "",
+      "question_muy7x5us_ki2tkz": "",
+      "question_muy7h57l_p274uu": "",
+      "question_muy7h8nt_85b9cs": "",
+      "question_muy7hcbh_gqfpli": "",
+      "question_muy7henx_b99luk": "",
+      "question_muy7hhah_ul1vdr": "",
+      "question_muy7hqc5_at5ges": "",
+      "question_muy7hyv4_lxivjf": "",
+      "question_muy7i5hl_54701s": "",
+      "question_muy7jokf_spossx": "",
+      "question_muy7jz2p_cb07ld": "",
+      "question_muy7k3lt_gblm26": "",
+      "question_muy7kae9_vt5ixd": "",
+      "question_muy7kc4v_o71j2g": "",
+      "question_muy7kie9_o6kdj1": "",
+      "question_muy7klkl_9koto5": "",
+      "question_muy7koru_kk3j11": "",
+      "question_muy7ksh5_7jf2a8": "",
+      "question_muy7ky8d_o5ofcp": "",
+      "question_muy7l4dl_b2vk0u": "",
+      "question_muy7l8pf_3u3mfk": "",
+      "question_muy7lmqp_xcrmyd": "",
+      "question_muy7qktm_c781v1": "",
+      "question_muy7qppu_kgu50c": "",
+      "question_muy7qu4e_5tomar": "",
+      "question_muy7qz54_e5063k": "",
+      "question_muy7r3bm_7yrt5f": "",
+      "question_muy7rbcc_ytmak8": "",
+      "question_muy7rh6j_ufpxf2": "Contatos são todos fixos, sem indicação que haveria algum WhatsApp.",
+      "question_muy7rnrm_g12ppu": "",
+      "question_muy7rscq_pw0jk1": "",
+      "question_muy7rv4v_thvgl6": "",
+      "question_muy7s4ii_43tymc": "",
+      "question_muy7s8x1_fxuh1y": "",
+      "question_muy7sejy_f1hphy": "",
+      "question_muy7sive_p7udso": "",
+      "question_muy7stai_4q3yq7": "",
+      "question_muy7sxfd_b0ge6t": "",
+      "question_muy7t0lc_jk2huj": "",
+      "question_muy7t4fn_knnrv4": "",
+      "question_muy7w3n9_cpeth0": "",
+      "question_muy7xd31_44o0ce": "",
+      "question_muy7xrpn_vgr03y": "",
+      "question_muy7xz7n_l69z50": "",
+      "question_muy7y48b_jfx7rl": "",
+      "question_muy8irex_8ndykt": "Nenhuma, por hora. Este ticket é o primeiro sendo avaliado pela nova checklist em HTML."
+    },
+    "openNotes": {
+      "question_muy56ikh_ctuirx": false,
+      "question_muy5745u_lk2ikr": false,
+      "question_muy5c5x0_kt8gzw": false,
+      "question_muy5d5vv_tw0y68": false,
+      "question_muy5d8g7_u9ntbn": false,
+      "question_muy5dbkn_fyk4vm": false,
+      "question_muy5gags_xle5ed": false,
+      "question_muy5gg08_dmmvz3": false,
+      "question_muy5gqsg_h9c2a9": false,
+      "question_muy5i6b4_3fnhgd": false,
+      "question_muy5il0u_fi0lxv": false,
+      "question_muy5kf9p_y55wqr": false,
+      "question_muy5ks2t_wsm6gt": false,
+      "question_muy5l0oy_9oc8m9": false,
+      "question_muy5r6sm_9f2iq9": false,
+      "question_muy5rgp6_aimeyw": false,
+      "question_muy5u7hy_bdlxam": false,
+      "question_muy5ugxq_5qv7k2": false,
+      "question_muy5uqtt_mqvl3u": false,
+      "question_muy5uync_c6trcl": false,
+      "question_muy5vayq_uz0h8s": false,
+      "question_muy5vmwn_14o3na": false,
+      "question_muy5vwp7_6nw34i": false,
+      "question_muy5x030_5r2qeb": false,
+      "question_muy5xaew_tmentr": false,
+      "question_muy5xfg4_8k9pon": false,
+      "question_muy5xqrh_kot2w8": false,
+      "question_muy5y077_z7c61p": true,
+      "question_muy5yp41_ggl031": false,
+      "question_muy63ba9_oxcde1": false,
+      "question_muy644du_asvx6u": false,
+      "question_muy64k72_4pawqs": false,
+      "question_muy65haq_d14zdv": false,
+      "question_muy65zkz_y5smbr": false,
+      "question_muy66eg5_fiwuyb": false,
+      "question_muy66hxn_zievjb": false,
+      "question_muy66mc8_oiaxt7": false,
+      "question_muy7gc3y_4imqn5": false,
+      "question_muy7gg7f_wnrcci": false,
+      "question_muy7gguw_oy08f2": true,
+      "question_muy7wiry_bs1wwd": false,
+      "question_muy7wlu6_rl6xr3": false,
+      "question_muy7wsc4_nwoabe": false,
+      "question_muy7wwt4_rd8opr": false,
+      "question_muy7x5us_ki2tkz": false,
+      "question_muy7h57l_p274uu": false,
+      "question_muy7h8nt_85b9cs": false,
+      "question_muy7hcbh_gqfpli": false,
+      "question_muy7henx_b99luk": false,
+      "question_muy7hhah_ul1vdr": false,
+      "question_muy7hqc5_at5ges": false,
+      "question_muy7hyv4_lxivjf": false,
+      "question_muy7i5hl_54701s": false,
+      "question_muy7jokf_spossx": false,
+      "question_muy7jz2p_cb07ld": false,
+      "question_muy7k3lt_gblm26": false,
+      "question_muy7kae9_vt5ixd": false,
+      "question_muy7kc4v_o71j2g": false,
+      "question_muy7kie9_o6kdj1": false,
+      "question_muy7klkl_9koto5": false,
+      "question_muy7koru_kk3j11": false,
+      "question_muy7ksh5_7jf2a8": false,
+      "question_muy7ky8d_o5ofcp": false,
+      "question_muy7l4dl_b2vk0u": false,
+      "question_muy7l8pf_3u3mfk": false,
+      "question_muy7lmqp_xcrmyd": false,
+      "question_muy7qktm_c781v1": false,
+      "question_muy7qppu_kgu50c": false,
+      "question_muy7qu4e_5tomar": false,
+      "question_muy7qz54_e5063k": false,
+      "question_muy7r3bm_7yrt5f": false,
+      "question_muy7rbcc_ytmak8": false,
+      "question_muy7rh6j_ufpxf2": true,
+      "question_muy7rnrm_g12ppu": false,
+      "question_muy7rscq_pw0jk1": false,
+      "question_muy7rv4v_thvgl6": false,
+      "question_muy7s4ii_43tymc": false,
+      "question_muy7s8x1_fxuh1y": false,
+      "question_muy7sejy_f1hphy": false,
+      "question_muy7sive_p7udso": false,
+      "question_muy7stai_4q3yq7": false,
+      "question_muy7sxfd_b0ge6t": false,
+      "question_muy7t0lc_jk2huj": false,
+      "question_muy7t4fn_knnrv4": false,
+      "question_muy7w3n9_cpeth0": false,
+      "question_muy7xd31_44o0ce": false,
+      "question_muy7xrpn_vgr03y": false,
+      "question_muy7xz7n_l69z50": false,
+      "question_muy7y48b_jfx7rl": false,
+      "question_muy8irex_8ndykt": true
+    },
+    "slideIndex": 0,
+    "reviewNeeded": false,
+    "reviewReason": ""
+  },
+  "meta": {
+    "createdAt": "2026-10-07T16:25:36.143Z",
+    "migrationHistory": [
+      {
+        "fromSchema": 1,
+        "toSchema": 2,
+        "steps": [
+          "1→2"
+        ],
+        "migratedAt": "2026-10-07T16:42:58.888Z",
+        "appVersion": "2.1.0"
+      }
+    ],
+    "lastMigratedAt": "2026-10-07T16:42:58.888Z"
+  }
+}

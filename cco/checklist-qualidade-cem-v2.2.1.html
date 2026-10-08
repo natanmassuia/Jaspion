@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>CEM | Checklist de Qualidade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../brandbook.css">
+  <style>
+    :root {
+      --navy: #2e2d4d;
+      --navy-2: #3a3b7d;
+      --blue: #5f6ec3;
+      --orange: #ef7f22;
+      --yellow: #fabe49;
+      --ink: #2e2d4d;
+      --muted: #6f7488;
+      --line: #e2e3ee;
+      --surface: #f7f7fb;
+      --white: #fff;
+      --green: #21824c;
+      --green-bg: #eaf7f0;
+      --red: #bd3c42;
+      --red-bg: #fff0f1;
+      --beige: #c49a68;
+      --gray: #798090;
+      --shadow: 0 18px 45px rgba(46,45,77,.10);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--surface); font-family: Ubuntu, Arial, sans-serif; font-size: 15px; line-height: 1.5; }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    [hidden] { display: none !important; }
+    .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+
+    .cco-hero { position: relative; overflow: hidden; color: #fff; background: linear-gradient(115deg,#2e2d4d 0%,#3a3b7d 72%,#2e2d4d 100%); }
+    .cco-hero::before { content: ""; position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; height: 4px; background: linear-gradient(90deg,#5f6ec3 0 58%,#ef7f22 58% 79%,#fabe49 79% 100%); }
+    .cco-hero::after { content: ""; position: absolute; width: 330px; height: 170px; right: 3%; top: 0; opacity: .9; background: linear-gradient(125deg,transparent 0 45%,#ef7f22 45% 47%,transparent 47% 51%,#fabe49 51% 53%,transparent 53% 58%,#5f6ec3 58% 60%,transparent 60%) no-repeat,linear-gradient(90deg,transparent 0 62%,#ef7f22 62% 79%,transparent 79%) 0 42px/260px 5px no-repeat,linear-gradient(90deg,transparent 0 55%,#fabe49 55% 72%,transparent 72%) 0 58px/210px 4px no-repeat,linear-gradient(90deg,transparent 0 48%,#5f6ec3 48% 76%,transparent 76%) 0 75px/270px 4px no-repeat; }
+    .header-content { min-height: 154px; padding: 20px 0 18px; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 24px; position: relative; z-index: 2; }
+    .cco-brand { display: flex; align-items: center; gap: 22px; }
+    .logo-shell { padding: 7px 18px; background: #fff; clip-path: polygon(7% 0,100% 0,93% 100%,0 100%); filter: drop-shadow(0 10px 13px rgba(20,20,42,.22)); }
+    .cem-logo { display: block; width: 260px; height: auto; max-height: 70px; object-fit: contain; object-position: left center; }
+    .brand-copy { padding-left: 22px; border-left: 1px solid rgba(255,255,255,.22); }
+    .eyebrow { margin: 0 0 4px; color: var(--yellow); font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(27px,4vw,40px); line-height: 1.08; letter-spacing: -.04em; }
+    .subtitle { margin: 7px 0 0; color: rgba(255,255,255,.72); font-size: 14px; }
+    .version { flex: 0 0 auto; padding: 8px 13px; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; background: rgba(255,255,255,.07); font-size: 11px; font-weight: 800; }
+    .header-visual { display: flex; align-items: center; gap: 14px; }
+    .mascot-crop { width: 108px; height: 122px; position: relative; overflow: hidden; background: #fff; border: 3px solid rgba(255,255,255,.88); border-radius: 24px 7px 24px 7px; box-shadow: 0 12px 28px rgba(20,20,42,.23); }
+    .mascot-crop img { position: absolute; width: 390px; max-width: none; height: auto; left: -1px; top: -3px; }
+
+    .view-nav { position: sticky; z-index: 30; top: 82px; background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line); box-shadow: 0 6px 18px rgba(46,45,77,.06); backdrop-filter: blur(8px); }
+    .view-nav-inner { display: flex; gap: 4px; min-height: 58px; align-items: center; overflow-x: auto; }
+    .intranet-back { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; margin-right: 6px; color: var(--navy); background: #f4f4f8; border: 1px solid var(--line); border-radius: 9px; text-decoration: none; font-size: 10px; font-weight: 800; white-space: nowrap; }
+    .intranet-back:hover { color: #fff; background: var(--navy); }
+    .nav-button { min-height: 40px; padding: 8px 14px; color: var(--muted); border: 0; border-radius: 10px; background: transparent; font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .nav-button.active { color: #fff; background: var(--navy-2); }
+    .db-status { margin-left: auto; display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .db-status i { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); }
+    .db-status.connected i { background: #35a56b; }
+
+    .portal-topbar { min-height: 82px; padding: 0 32px; display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 18px; color: #fff; background: #2e2d4d; border-bottom: 4px solid transparent; border-image: linear-gradient(90deg,#5f6ec3 0 58%,#ef7f22 58% 79%,#fabe49 79% 100%) 1; box-shadow: 0 8px 24px rgba(46,45,77,.18); position: sticky; top: 0; z-index: 60; }
+    .portal-brand { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
+    .portal-logo { display: block; width: 164px; height: 50px; object-fit: contain; object-position: left center; }
+    .portal-nav { display: flex; align-items: stretch; justify-content: center; overflow-x: auto; }
+    .portal-nav a { display: flex; align-items: center; align-self: stretch; padding: 0 10px; color: rgba(255,255,255,.77); text-decoration: none; font-size: 12px; font-weight: 600; white-space: nowrap; border-bottom: 3px solid transparent; }
+    .portal-nav a:hover { color: #fff; background: rgba(255,255,255,.05); }
+    .portal-nav a.active { color: #fff; border-bottom-color: #ef7f22; }
+    .portal-user { display: flex; align-items: center; justify-content: flex-end; gap: 11px; }
+    .portal-icon { width: 34px; height: 34px; padding: 8px; color: #fff; background: transparent; border: 0; border-radius: 50%; }
+    .portal-icon svg { width: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; }
+    .portal-avatar { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: #2e2d4d; background: #fff; font-size: 11px; font-weight: 900; }
+    .portal-user-copy { display: grid; line-height: 1.15; }
+    .portal-user-copy strong { font-size: 11px; }
+    .portal-user-copy small { color: #c7c9dd; font-size: 9px; }
+
+    main { padding: 28px 0 100px; }
+    .panel { margin-bottom: 20px; padding: 23px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 10px 28px rgba(46,45,77,.055); }
+    .panel-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
+    .panel-heading h2 { margin: 0; font-size: 20px; }
+    .panel-heading p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .kicker { display: block; margin-bottom: 4px; color: var(--blue); font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+
+    .identity-grid { display: grid; grid-template-columns: 1fr 230px; gap: 16px; }
+    .field-label { display: block; margin-bottom: 6px; color: #4d4d68; font-size: 12px; font-weight: 800; }
+    .req { color: var(--red); }
+    input[type="text"], input[type="url"], input[type="date"], textarea, select { width: 100%; color: var(--ink); background: #fff; border: 1px solid #cfd1df; border-radius: 10px; outline: 0; transition: border-color .15s,box-shadow .15s; }
+    input[type="text"], input[type="url"], input[type="date"], select { min-height: 44px; padding: 0 12px; }
+    input[readonly] { color: #5f6376; background: #f2f2f7; }
+    textarea { min-height: 78px; padding: 10px 12px; resize: vertical; }
+    input:focus, textarea:focus, select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(95,110,195,.15); }
+
+    .summary { display: grid; grid-template-columns: 1.4fr repeat(5,1fr); gap: 10px; margin-bottom: 20px; }
+    .score, .metric { min-height: 86px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+    .score { color: #fff; background: linear-gradient(135deg,var(--navy),var(--navy-2)); }
+    .score span, .metric span { display: block; color: inherit; opacity: .72; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+    .score strong, .metric strong { display: block; margin-top: 7px; font-size: 25px; line-height: 1; }
+    .score-line { height: 5px; margin-top: 11px; overflow: hidden; background: rgba(255,255,255,.18); border-radius: 99px; }
+    .score-line i { display: block; width: 0; height: 100%; background: var(--orange); }
+    .metric-line { display: block; width: 100%; height: 4px; margin-top: 11px; overflow: hidden; background: #ececf3; border-radius: 99px; box-sizing: border-box; }
+    .metric-line i { display: block; width: 0; height: 100%; background: var(--metric-color,var(--blue)); }
+    .metric.good { border-bottom: 4px solid var(--green); }
+    .metric.bad { border-bottom: 4px solid var(--red); }
+    .metric.na { border-bottom: 4px solid var(--gray); }
+    .metric.fourth { border-bottom: 4px solid var(--blue); }
+    .metric.pending { border-bottom: 4px solid var(--yellow); }
+    .metric.good { --metric-color: var(--green); }
+    .metric.bad { --metric-color: var(--red); }
+    .metric.na { --metric-color: var(--gray); }
+    .metric.fourth { --metric-color: var(--blue); }
+    .metric.pending { --metric-color: var(--yellow); }
+    button.metric { color: var(--ink); text-align: left; cursor: pointer; transition: transform .15s,box-shadow .15s,border-color .15s; }
+    button.metric:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(46,45,77,.09); }
+    button.metric.active { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(95,110,195,.13); }
+    button.metric span::after { content: "⌄"; float: right; margin-left: 5px; font-size: 13px; }
+    button.metric.active span::after { content: "⌃"; }
+    .summary-details { margin: -10px 0 20px; padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 0 0 16px 16px; box-shadow: 0 12px 28px rgba(46,45,77,.06); }
+    .summary-details-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .summary-details-head h3 { margin: 0; font-size: 15px; }
+    .summary-details-head button { padding: 0; color: var(--muted); background: transparent; border: 0; font-size: 11px; font-weight: 800; }
+    .summary-item { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 11px 0; border-top: 1px solid #ececf3; }
+    .summary-item:first-child { border-top: 0; }
+    .summary-item strong { display: block; font-size: 12px; }
+    .summary-item small { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; }
+    .summary-note { margin: 6px 0 0; padding: 7px 9px; color: #565a70; background: #f6f6fa; border-left: 3px solid var(--blue); border-radius: 5px; font-size: 11px; }
+    .summary-link { align-self: center; padding: 6px 9px; color: var(--blue); background: #fff; border: 1px solid #c9cce0; border-radius: 8px; font-size: 10px; font-weight: 800; }
+    .summary-empty { margin: 0; color: var(--muted); font-size: 12px; }
+
+    .slide-progress { display: flex; gap: 8px; margin-bottom: 14px; padding: 4px 2px 8px; overflow-x: auto; scrollbar-width: thin; }
+    .slide-chip { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 6px 11px 6px 7px; color: var(--muted); background: #fff; border: 1px solid var(--line); border-radius: 999px; font-size: 11px; font-weight: 800; }
+    .slide-chip b { display: grid; place-items: center; width: 25px; height: 25px; color: #fff; border-radius: 50%; background: var(--slide-color,var(--blue)); }
+    .slide-chip.active { color: var(--navy); border-color: var(--slide-color,var(--blue)); box-shadow: 0 5px 16px rgba(46,45,77,.09); }
+    .slide-chip.complete::after { content: "✓"; color: var(--green); }
+
+    .slides-stack { position: relative; }
+    .slide { display: none; position: relative; min-height: 380px; padding: 26px; background: #fff; border: 1px solid var(--line); border-top: 6px solid var(--slide-color,var(--blue)); border-radius: 20px; box-shadow: var(--shadow); }
+    .slide.active { display: block; animation: slideIn .22s ease; }
+    .slide::before, .slide::after { content: ""; position: absolute; z-index: -1; left: 16px; right: 16px; bottom: -9px; height: 18px; background: #ececf4; border: 1px solid #dedfeb; border-radius: 0 0 17px 17px; }
+    .slide::after { left: 29px; right: 29px; bottom: -16px; z-index: -2; background: #e5e5ef; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
+    .slide-header { display: grid; grid-template-columns: auto 1fr; gap: 14px; margin-bottom: 21px; }
+    .slide-number { display: grid; place-items: center; width: 42px; height: 42px; color: #fff; background: var(--slide-color,var(--blue)); border-radius: 12px; font-weight: 800; }
+    .slide-header h2 { margin: 0; font-size: 23px; }
+    .slide-header p { max-width: 900px; margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .question-card { margin: 11px 0; padding: 17px; border: 1px solid var(--line); border-left: 4px solid transparent; border-radius: 13px; background: #fcfcfe; transition: .15s; }
+    .question-card.nonconforming { border-color: #efb7ba; border-left-color: var(--red); background: var(--red-bg); }
+    .question-card.missing { border-color: #e5bd4f; background: #fffbef; }
+    .question-row { display: grid; grid-template-columns: minmax(230px,1fr) auto; gap: 18px; align-items: center; }
+    .question-text { margin: 0; font-weight: 700; }
+    .question-id { display: block; margin-bottom: 3px; color: var(--slide-color,var(--blue)); font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+    .options { display: flex; flex-wrap: wrap; gap: 7px; margin: 0; padding: 0; border: 0; }
+    .option { position: relative; }
+    .option input { position: absolute; opacity: 0; }
+    .option label { display: flex; align-items: center; gap: 6px; min-height: 36px; padding: 6px 10px; color: #5f6376; background: #fff; border: 1px solid #cfd1df; border-radius: 9px; font-size: 11px; font-weight: 800; cursor: pointer; }
+    .option label::before { content: ""; width: 12px; height: 12px; border: 2px solid #a4a7b7; border-radius: 50%; }
+    .option input:focus-visible + label { outline: 3px solid rgba(95,110,195,.2); outline-offset: 2px; }
+    .option input:checked + label { color: var(--navy-2); border-color: var(--blue); background: #f0f1fb; }
+    .option input[value="conforme"]:checked + label { color: var(--green); border-color: var(--green); background: var(--green-bg); }
+    .option input[value="nao-conforme"]:checked + label { color: var(--red); border-color: var(--red); background: var(--red-bg); }
+    .option input:checked + label::before { border-width: 4px; border-color: currentColor; background: #fff; }
+    .obs-toggle { margin-top: 10px; padding: 0; color: var(--blue); background: transparent; border: 0; font-size: 11px; font-weight: 800; }
+    .obs-toggle:hover { text-decoration: underline; }
+    .observation { margin-top: 9px; }
+    .observation label { display: block; margin-bottom: 5px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .quality-review { margin-top: 22px; padding: 18px; background: #fffaf0; border: 1px solid #ead39b; border-left: 5px solid #b8860b; border-radius: 13px; }
+    .review-check { display: flex; align-items: center; gap: 9px; font-weight: 800; cursor: pointer; }
+    .review-check input { width: 18px; height: 18px; accent-color: var(--orange); }
+    .review-reason { margin-top: 13px; }
+    .review-reason label { display: block; margin-bottom: 6px; color: #5b4a20; font-size: 12px; font-weight: 800; }
+    .review-reason textarea { min-height: 86px; }
+    .empty-state { padding: 48px 20px; text-align: center; color: var(--muted); border: 1px dashed #c7cadb; border-radius: 16px; }
+    .empty-state strong { display: block; margin-bottom: 6px; color: var(--navy); font-size: 18px; }
+    .slide-actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
+    .actions-right { display: flex; gap: 9px; margin-left: auto; }
+
+    .btn { min-height: 42px; padding: 8px 15px; border: 1px solid transparent; border-radius: 10px; font-size: 12px; font-weight: 800; }
+    .btn-primary { color: #fff; background: var(--orange); }
+    .btn-primary:hover { background: #d86e20; }
+    .btn-dark { color: #fff; background: var(--navy-2); }
+    .btn-secondary { color: var(--navy); background: #fff; border-color: #c8cada; }
+    .btn-danger { color: var(--red); background: #fff; border-color: #e2b8bb; }
+    .btn-small { min-height: 34px; padding: 6px 10px; font-size: 10px; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .admin-grid .panel.full { grid-column: 1 / -1; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+    .form-field.full { grid-column: 1 / -1; }
+    .help { margin: 6px 0 0; color: var(--muted); font-size: 10px; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .storage-note { margin-top: 12px; padding: 11px 13px; color: #6d5410; background: #fff9e7; border: 1px solid #edda9f; border-radius: 10px; font-size: 11px; }
+    .admin-block { display: none; position: relative; min-height: 330px; margin: 0; border: 1px solid var(--line); border-top: 6px solid var(--slide-color,var(--blue)); border-radius: 18px; background: #fff; box-shadow: var(--shadow); overflow: hidden; }
+    .admin-block.active { display: block; animation: slideIn .22s ease; }
+    .admin-block::before, .admin-block::after { content: ""; position: absolute; z-index: -1; left: 16px; right: 16px; bottom: -9px; height: 18px; background: #ececf4; border: 1px solid #dedfeb; border-radius: 0 0 17px 17px; }
+    .admin-block::after { left: 29px; right: 29px; bottom: -16px; z-index: -2; background: #e5e5ef; }
+    .admin-slides-stack { position: relative; margin-bottom: 18px; padding-bottom: 16px; }
+    .slide-chip.drag-target { background: #f0f1fb; outline: 3px solid rgba(95,110,195,.18); }
+    .admin-block-head { display: grid; grid-template-columns: 46px minmax(150px,1fr) auto; gap: 11px; align-items: center; padding: 13px; background: #fafafd; border-bottom: 1px solid var(--line); }
+    .color-input { width: 46px !important; height: 40px; padding: 3px; border: 1px solid #cfd1df; border-radius: 9px; background: #fff; }
+    .admin-block-body { padding: 13px; }
+    .admin-description { margin-bottom: 12px; }
+    .admin-question { display: grid; grid-template-columns: 38px 1fr auto; gap: 9px; align-items: center; padding: 8px 0; border-top: 1px solid #eff0f5; transition: background .15s,transform .15s; }
+    .admin-question:first-child { border-top: 0; }
+    .admin-question input { min-height: 39px; }
+    .admin-question.dragging { opacity: .42; }
+    .admin-question.drag-over { background: #f0f1fb; transform: translateY(2px); }
+    .questions-admin.drop-zone { min-height: 54px; outline: 2px dashed var(--blue); outline-offset: 3px; border-radius: 10px; }
+    .drag-handle { width: 34px; height: 34px; display: grid; place-items: center; padding: 0; color: var(--muted); background: #f3f3f8; border: 1px solid #d9dae5; border-radius: 9px; cursor: grab; font-size: 16px; font-weight: 900; letter-spacing: -3px; }
+    .drag-handle:active { cursor: grabbing; }
+    .admin-empty { padding: 17px; color: var(--muted); background: #fafafd; border-radius: 10px; text-align: center; font-size: 11px; }
+
+    .instructions-hero { display: grid; grid-template-columns: 1fr 260px; align-items: center; gap: 24px; overflow: hidden; color: #fff; background: linear-gradient(135deg,var(--navy),var(--navy-2)); }
+    .instructions-hero h2 { margin: 0; font-size: 27px; }
+    .instructions-hero p { margin: 8px 0 0; color: rgba(255,255,255,.73); font-size: 13px; }
+    .instructions-mascot { height: 160px; position: relative; overflow: hidden; border-radius: 16px; background: #fff; }
+    .instructions-mascot img { position: absolute; width: 520px; max-width: none; left: -3px; top: -5px; }
+    .instructions-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 15px; }
+    .instruction-card { padding: 20px; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 8px 22px rgba(46,45,77,.045); }
+    .instruction-card.full { grid-column: 1 / -1; }
+    .instruction-card h3 { margin: 0 0 10px; color: var(--navy); font-size: 16px; }
+    .instruction-card p, .instruction-card li { color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .instruction-card ol, .instruction-card ul { margin: 8px 0 0; padding-left: 19px; }
+    .instruction-card code { padding: 2px 5px; color: var(--navy-2); background: #f0f1fb; border-radius: 5px; font-family: Consolas,monospace; font-size: 11px; }
+    .tip { margin-top: 12px; padding: 10px 12px; color: #6d5410; background: #fff9e7; border: 1px solid #edda9f; border-radius: 9px; font-size: 11px; }
+
+    .records-table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 11px 10px; border-bottom: 1px solid #ececf3; text-align: left; font-size: 11px; }
+    th { color: var(--muted); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+    .badge { display: inline-flex; padding: 3px 7px; border-radius: 999px; font-size: 9px; font-weight: 800; }
+    .badge.synced { color: #176c47; background: #e5f5ed; }
+    .badge.local { color: #785d13; background: #fff5d8; }
+    .history-row { cursor: pointer; transition: background .16s; }
+    .history-row:hover, .history-row:focus-visible, .history-row.expanded { background: #f7f7fb; }
+    .history-row:focus-visible { outline: 3px solid rgba(95,110,195,.2); outline-offset: -3px; }
+    .history-ticket::after { content: "⌄"; margin-left: 8px; color: var(--blue); }
+    .history-row.expanded .history-ticket::after { content: "⌃"; }
+    .history-detail-cell { padding: 0 10px 24px; background: #f7f7fb; }
+    .history-detail { padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 12px 28px rgba(46,45,77,.07); animation: historyOpen .24s ease; }
+    @keyframes historyOpen { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+    .history-summary { margin-bottom: 18px; }
+    .history-summary .metric { color: var(--ink); }
+    .history-review { margin: 0 0 15px; padding: 12px 14px; color: #6d5410; background: #fff9e7; border: 1px solid #edda9f; border-radius: 10px; font-size: 11px; }
+    .history-slide { min-height: 260px; }
+    .history-answer { display: grid; grid-template-columns: minmax(220px,1fr) auto; gap: 13px; align-items: start; padding: 13px 0; border-top: 1px solid #ececf3; }
+    .history-answer:first-child { border-top: 0; }
+    .history-answer strong { display: block; font-size: 12px; }
+    .history-answer small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .history-answer .summary-note { grid-column: 1 / -1; }
+    .answer-badge { display: inline-flex; padding: 5px 9px; border-radius: 999px; font-size: 9px; font-weight: 900; white-space: nowrap; }
+    .answer-badge.conforme { color: #176c47; background: #e5f5ed; }
+    .answer-badge.nao-conforme { color: #9d3037; background: #fdebed; }
+    .answer-badge.na { color: #5f6376; background: #ececf3; }
+    .answer-badge.quarta { color: #39458e; background: #eef0ff; }
+    .answer-badge.pending { color: #785d13; background: #fff5d8; }
+    .toast { position: fixed; z-index: 100; right: 20px; bottom: 20px; max-width: 360px; padding: 13px 16px; color: #fff; background: #20203c; border-radius: 12px; box-shadow: 0 18px 45px rgba(20,20,40,.25); transform: translateY(140%); opacity: 0; transition: .23s; font-size: 12px; }
+    .toast.show { transform: none; opacity: 1; }
+    .toast.error { background: #8f3036; }
+    .footer { padding: 0 0 24px; color: var(--muted); text-align: center; font-size: 10px; }
+
+    @media (max-width: 980px) {
+      .summary { grid-template-columns: repeat(3,1fr); }
+      .score { grid-column: 1 / -1; }
+      .question-row { grid-template-columns: 1fr; }
+      .admin-grid { grid-template-columns: 1fr; }
+      .admin-grid .panel.full { grid-column: auto; }
+    }
+    @media (max-width: 640px) {
+      .portal-topbar { grid-template-columns: 1fr auto; padding: 0 14px; }
+      .portal-nav { grid-column: 1/-1; order: 3; justify-content: flex-start; min-height: 44px; }
+      .portal-user-copy, .portal-icon { display: none; }
+      .page { width: min(100% - 20px,1180px); }
+      .header-content { min-height: 132px; padding: 18px 0; align-items: flex-start; }
+      .logo-shell { padding: 5px 11px; }
+      .cem-logo { width: 160px; max-height: 52px; }
+      .cco-brand { gap: 12px; }
+      .brand-copy { padding-left: 12px; }
+      .header-visual { display: none; }
+      .db-status { margin-left: 6px; }
+      .identity-grid, .form-grid { grid-template-columns: 1fr; }
+      .form-field.full { grid-column: auto; }
+      .summary { grid-template-columns: repeat(2,1fr); }
+      .slide { padding: 19px 13px; }
+      .options { display: grid; grid-template-columns: 1fr 1fr; }
+      .option label { justify-content: flex-start; }
+      .slide-actions { flex-direction: column; }
+      .actions-right { width: 100%; display: grid; grid-template-columns: 1fr 1fr; margin: 0; }
+      .admin-block-head { grid-template-columns: 42px 1fr; }
+      .admin-block-head .btn { grid-column: 1 / -1; }
+      .instructions-hero, .instructions-grid { grid-template-columns: 1fr; }
+      .instructions-mascot { height: 150px; }
+      .instruction-card.full { grid-column: auto; }
+      main { padding-top: 18px; }
+    }
+    @media print {
+      @page { size: A4; margin: 11mm; }
+      body { background: #fff; font-size: 9pt; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .topbar, .portal-topbar, .view-nav, .slide-progress, .slide-actions, .obs-toggle, .toast, .summary-details, #adminView, #historyView, #instructionsView, .mascot-crop { display: none !important; }
+      .cco-hero::after { display: none; }
+      .header-content { min-height: 85px; padding: 11px 0; }
+      .logo-shell { padding: 4px 9px; filter: none; }
+      .cem-logo { width: 190px; max-height: 55px; }
+      main { padding: 12px 0; }
+      .panel { padding: 12px; margin-bottom: 12px; box-shadow: none; }
+      .summary { grid-template-columns: repeat(6,1fr); gap: 5px; }
+      .score, .metric { min-height: 60px; padding: 8px; }
+      .score strong, .metric strong { font-size: 18px; }
+      .slide { display: block !important; min-height: 0; margin: 0 0 12px; padding: 13px; box-shadow: none; break-inside: avoid; }
+      .slide::before, .slide::after { display: none; }
+      .slide-header { margin-bottom: 10px; }
+      .slide-header h2 { font-size: 16px; }
+      .question-card { padding: 9px; margin: 6px 0; break-inside: avoid; }
+      .question-row { grid-template-columns: 1fr auto; gap: 8px; }
+      .option label { min-height: 27px; padding: 3px 6px; font-size: 7pt; }
+      .observation[hidden] { display: none !important; }
+      .observation:not([hidden]) textarea { min-height: 34px; }
+    }
+</style>
+  <script src="../theme.js"></script>
+  <link rel="stylesheet" href="../theme.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__brand">
+      <button class="icon-button menu-button" id="menuButton" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <a class="brand" href="../index.html" aria-label="Microset Intranet">
+        <div class="brand__symbol" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="brand__text"><strong>microset</strong><small>INTRANET • CEM</small></div>
+      </a>
+    </div>
+    <nav class="main-nav" id="mainNav" aria-label="Navegação principal">
+      <a href="../index.html">Início</a>
+      <a href="checklist-qualidade-cem-v2.2.1.html" class="active">CCO</a>
+      <a href="../clientes.html">Clientes</a>
+      <a href="../index.html#quick-access">Parceiros</a>
+      <a href="../index.html#quick-access">Repetidoras</a>
+      <a href="../documentacao.html">Documentação</a>
+      <a href="../index.html#notices">Operação</a>
+      <a href="../index.html#knowledge">Base de conhecimento</a>
+    </nav>
+    <div class="topbar__actions">
+      <button class="icon-button search-toggle" aria-label="Pesquisar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg></button>
+      <button class="icon-button notification-button" aria-label="Notificações"><span class="notification-dot"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+      <button class="profile-button" type="button"><span class="avatar">AP</span><span class="profile-copy"><strong>Administrador POC</strong><small>Administração • Administrador</small></span><svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button>
+    </div>
+  </header>
+  <header class="cco-hero">
+    <div class="page header-content">
+      <div class="cco-brand">
+        <div class="logo-shell"><img class="cem-logo" src="logo-CEM-composicaoM7.png" alt="Microset CEM — Central de Excelência Microset"></div>
+        <div class="brand-copy">
+          <p class="eyebrow">Central de Excelência Microset</p>
+          <h1>Checklist de Qualidade</h1>
+          <p class="subtitle">Auditoria do fluxo de projetos e entregas</p>
+        </div>
+      </div>
+      <div class="header-visual">
+        <div class="version">VERSÃO 2.2.1</div>
+        <div class="mascot-crop" aria-label="Mascote de Qualidade CEM"><img src="mascote-CEM-qualidade.png" alt="Mascote de Qualidade CEM"></div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="view-nav" aria-label="Áreas do sistema">
+    <div class="page view-nav-inner">
+      <button class="nav-button active" data-view="evaluationView">Avaliação</button>
+      <button class="nav-button" data-view="historyView">Histórico</button>
+      <button class="nav-button" data-view="adminView">Administração</button>
+      <button class="nav-button" data-view="instructionsView">Instruções</button>
+      <span class="db-status connected" id="dbStatus"><i></i><span>Dados salvos neste navegador</span></span>
+    </div>
+  </nav>
+
+  <main class="page">
+    <section id="evaluationView" class="app-view">
+      <div class="panel">
+        <div class="panel-heading">
+          <div><span class="kicker">Identificação</span><h2>Dados da avaliação</h2><p>A data é preenchida automaticamente.</p></div>
+          <button class="btn btn-secondary btn-small" id="newEvaluationBtn" type="button">Nova avaliação</button>
+        </div>
+        <div class="identity-grid">
+          <div><label class="field-label" for="ticket">Número do chamado <span class="req">*</span></label><input id="ticket" type="text" autocomplete="off" required placeholder="Informe o número do chamado"></div>
+          <div><label class="field-label" for="evaluationDate">Data</label><input id="evaluationDate" type="date" readonly></div>
+        </div>
+      </div>
+
+      <div class="summary" aria-live="polite">
+        <div class="score"><span>Conformidade</span><strong id="scoreValue">0%</strong><div class="score-line"><i id="scoreLine"></i></div></div>
+        <button class="metric good" type="button" data-filter="conforme" aria-expanded="false"><span>Conformes</span><strong id="goodCount">0</strong><small class="metric-line"><i id="goodLine"></i></small></button>
+        <button class="metric bad" type="button" data-filter="nao-conforme" aria-expanded="false"><span>Não conformes</span><strong id="badCount">0</strong><small class="metric-line"><i id="badLine"></i></small></button>
+        <button class="metric na" type="button" data-filter="na" aria-expanded="false"><span>Não se aplica</span><strong id="naCount">0</strong><small class="metric-line"><i id="naLine"></i></small></button>
+        <button class="metric fourth" type="button" data-filter="quarta" aria-expanded="false"><span id="fourthMetricLabel">Parcial</span><strong id="fourthCount">0</strong><small class="metric-line"><i id="fourthLine"></i></small></button>
+        <button class="metric pending" type="button" data-filter="pending" aria-expanded="false"><span>Pendentes</span><strong id="pendingCount">0</strong><small class="metric-line"><i id="pendingLine"></i></small></button>
+      </div>
+      <section class="summary-details" id="summaryDetails" hidden aria-live="polite"></section>
+
+      <div id="slideProgress" class="slide-progress" aria-label="Navegação entre lâminas"></div>
+      <div id="slidesContainer" class="slides-stack"></div>
+      <div id="evaluationEmpty" class="panel empty-state" hidden><strong>Nenhuma pergunta cadastrada</strong>Entre na Administração, abra uma lâmina e cadastre as perguntas que serão avaliadas.</div>
+      <div class="slide-actions" id="globalActions">
+        <button class="btn btn-secondary" id="prevBtn" type="button">← Lâmina anterior</button>
+        <div class="actions-right">
+          <button class="btn btn-secondary" id="printBtn" type="button">Imprimir / Salvar PDF</button>
+          <button class="btn btn-dark" id="nextBtn" type="button">Próxima lâmina →</button>
+          <button class="btn btn-primary" id="saveTicketBtn" type="button" hidden>Salvar ticket</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="historyView" class="app-view" hidden>
+      <div class="panel">
+        <div class="panel-heading">
+          <div><span class="kicker">Registros locais</span><h2>Histórico de avaliações</h2><p>Os tickets permanecem salvos neste navegador e podem ser exportados.</p></div>
+          <button class="btn btn-secondary btn-small" id="exportCsvBtn" type="button">Exportar CSV</button>
+        </div>
+        <div class="records-table-wrap"><table><thead><tr><th>Ticket</th><th>Data</th><th>Conformidade</th><th>Itens</th><th>Google Sheets</th><th>Ação</th></tr></thead><tbody id="recordsBody"></tbody></table></div>
+        <div id="historyEmpty" class="empty-state"><strong>Nenhuma avaliação salva</strong>Os tickets concluídos aparecerão aqui.</div>
+      </div>
+    </section>
+
+    <section id="adminView" class="app-view" hidden>
+      <div class="admin-grid">
+        <section class="panel">
+          <div class="panel-heading"><div><span class="kicker">Armazenamento</span><h2>Backup do banco de dados</h2><p>Baixe um único arquivo de backup e carregue-o manualmente quando precisar restaurar ou trocar de computador.</p></div></div>
+          <div class="button-row">
+            <button class="btn btn-dark btn-small" id="exportJsonBtn" type="button">Baixar backup</button>
+            <button class="btn btn-secondary btn-small" id="importJsonBtn" type="button">Carregar backup</button>
+            <input id="importJsonInput" type="file" accept="application/json,.json" hidden>
+          </div>
+          <div class="storage-note">O preenchimento é salvo automaticamente neste navegador. Para ter uma cópia portátil, clique em <strong>Baixar backup</strong>. O arquivo gerado chama-se sempre <code>backup-checklist-cem.json</code>.</div>
+          <div class="storage-note" id="migrationStatus">Esquema atual: v2. Bancos de versões anteriores são migrados automaticamente durante a abertura ou importação.</div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><div><span class="kicker">Integração</span><h2>Google Sheets</h2><p>Informe a URL publicada do Google Apps Script para enviar cada ticket.</p></div></div>
+          <div class="form-grid">
+            <div class="form-field full"><label class="field-label" for="sheetEndpoint">URL do aplicativo da web</label><input id="sheetEndpoint" type="url" placeholder="https://script.google.com/macros/s/.../exec"></div>
+            <div><label class="field-label" for="sheetToken">Token de integração</label><input id="sheetToken" type="text" autocomplete="off"></div>
+            <div><label class="field-label" for="fourthAnswer">Quarta resposta</label><input id="fourthAnswer" type="text" value="Parcialmente conforme"></div>
+          </div>
+          <p class="help">As três respostas fixas são Conforme, Não conforme e Não se aplica. A quarta resposta pode ser personalizada.</p>
+          <div class="button-row" style="margin-top:12px"><button class="btn btn-primary btn-small" id="saveSettingsBtn" type="button">Salvar configurações</button><button class="btn btn-secondary btn-small" id="testSheetBtn" type="button">Testar integração</button></div>
+        </section>
+
+        <section class="panel full">
+          <div class="panel-heading">
+            <div><span class="kicker">Estrutura do formulário</span><h2>Lâminas e perguntas</h2><p>Edite os blocos existentes ou crie novas lâminas. As perguntas começam vazias.</p></div>
+            <button class="btn btn-primary btn-small" id="addBlockBtn" type="button">+ Nova lâmina</button>
+          </div>
+          <div id="adminSlideProgress" class="slide-progress" aria-label="Navegação entre lâminas da administração"></div>
+          <div id="adminBlocks" class="admin-slides-stack"></div>
+          <div class="slide-actions" id="adminSlideActions">
+            <button class="btn btn-secondary" id="adminPrevBtn" type="button">← Lâmina anterior</button>
+            <button class="btn btn-dark" id="adminNextBtn" type="button">Próxima lâmina →</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="instructionsView" class="app-view" hidden>
+      <section class="panel instructions-hero">
+        <div><span class="kicker" style="color:#fabe49">Guia de uso</span><h2>Instruções do Checklist CEM</h2><p>Configuração, cadastro, integração, backup e uso diário do sistema.</p></div>
+        <div class="instructions-mascot"><img src="mascote-CEM-qualidade.png" alt="Mascote CEM apresentando o checklist"></div>
+      </section>
+      <div class="instructions-grid">
+        <section class="instruction-card">
+          <h3>Como abrir e restaurar os dados</h3>
+          <ol>
+            <li>Abra <code>checklist-qualidade-cem-v2.2.1.html</code> no Microsoft Edge ou Google Chrome.</li>
+            <li>Os dados deste computador são carregados automaticamente.</li>
+            <li>Para restaurar dados, acesse <strong>Administração</strong>, clique em <strong>Carregar backup</strong> e escolha <code>backup-checklist-cem.json</code>.</li>
+          </ol>
+          <div class="tip">Não é necessário conectar pastas nem abrir um arquivo de banco a cada uso.</div>
+        </section>
+        <section class="instruction-card">
+          <h3>Perguntas e lâminas</h3>
+          <ul>
+            <li>Os sete blocos solicitados já estão cadastrados, inicialmente sem perguntas.</li>
+            <li>Na Administração, apenas uma lâmina fica visível por vez. Use os indicadores ou os botões de navegação para trocar de setor.</li>
+            <li>Use <strong>+ Adicionar pergunta</strong> dentro de qualquer lâmina.</li>
+            <li>Arraste as perguntas pelo controle <strong>⋮⋮</strong> para mudar a ordem. Para movê-las a outro setor, arraste até o indicador da lâmina desejada.</li>
+            <li>Use <strong>+ Nova lâmina</strong> para criar outros blocos.</li>
+            <li>Cada pergunta exige uma resposta: Conforme, Não conforme, Não se aplica ou a quarta opção personalizável.</li>
+            <li>A observação é opcional e aparece somente ao clicar em <strong>+ Observação</strong>.</li>
+            <li>Na lâmina Qualidade, marque <strong>Precisa de revisão?</strong> e informe o motivo quando necessário.</li>
+          </ul>
+        </section>
+        <section class="instruction-card full">
+          <h3>Integração com Google Sheets</h3>
+          <ol>
+            <li>Abra a planilha de destino no Google Sheets e acesse <strong>Extensões › Apps Script</strong>.</li>
+            <li>Cole o conteúdo de <code>GoogleAppsScript_Code_v2.2.1.gs</code> em <code>Code.gs</code>.</li>
+            <li>No script, troque <code>TOKEN</code> por uma senha longa.</li>
+            <li>Selecione <strong>Implantar › Nova implantação › Aplicativo da web</strong>.</li>
+            <li>Configure “Executar como” você e permita acesso a qualquer pessoa com o link.</li>
+            <li>Copie a URL terminada em <code>/exec</code>.</li>
+            <li>No checklist, acesse <strong>Administração › Google Sheets</strong>, cole a URL, informe o mesmo token e salve.</li>
+            <li>Use <strong>Testar integração</strong> e confirme o registro na planilha.</li>
+          </ol>
+        </section>
+        <section class="instruction-card full">
+          <h3>Histórico detalhado</h3>
+          <ul>
+            <li>Clique em qualquer linha de ticket para abrir ou fechar seus detalhes.</li>
+            <li>Os cards mostram conformidade, conformes, não conformes, não se aplica, parcialmente conforme e pendentes.</li>
+            <li>Os números e as linhas coloridas são animados conforme o resultado.</li>
+            <li>Use os indicadores de lâmina para consultar as respostas e observações de cada setor.</li>
+            <li>O botão <strong>Carregar</strong> leva o ticket novamente para a área de Avaliação.</li>
+          </ul>
+        </section>
+        <section class="instruction-card">
+          <h3>Backup e mudança de computador</h3>
+          <ul>
+            <li>Clique em <strong>Baixar backup</strong> para gerar somente o arquivo <code>backup-checklist-cem.json</code>.</li>
+            <li>Guarde esse arquivo no local desejado. Ao gerar outro, substitua o arquivo anterior.</li>
+            <li>No novo computador, abra o HTML e use <strong>Carregar backup</strong>.</li>
+            <li>O histórico pode ser exportado separadamente em CSV.</li>
+          </ul>
+        </section>
+        <section class="instruction-card">
+          <h3>Impressão e PDF</h3>
+          <p>Durante uma avaliação, use <strong>Imprimir / Salvar PDF</strong>. Todas as lâminas são incluídas no documento, mesmo que apenas uma permaneça visível durante o preenchimento.</p>
+          <h3 style="margin-top:17px">Arquivos visuais</h3>
+          <p>Mantenha <code>logo-CEM-composicaoM7.png</code> e <code>mascote-CEM-qualidade.png</code> na mesma pasta do HTML.</p>
+        </section>
+        <section class="instruction-card full">
+          <h3>Migração entre versões do banco</h3>
+          <p>Ao carregar um backup de uma versão anterior, o sistema identifica o número do esquema e executa automaticamente todas as migrações necessárias, uma após a outra, até chegar ao esquema atual.</p>
+          <ul>
+            <li>O arquivo selecionado não é alterado; apenas uma cópia migrada é carregada no navegador.</li>
+            <li>O histórico de migrações fica registrado dentro do próprio banco.</li>
+            <li>Bancos de versões futuras não são alterados por uma versão antiga do sistema.</li>
+            <li>Detalhes técnicos estão em <code>MIGRACOES_BANCO_v2.2.1.md</code>.</li>
+          </ul>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page footer">CEM · Central de Excelência Microset · Checklist de Qualidade v2.2.1</footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="../shared-database.js"></script>
+    <script src="../unified-db.js"></script>
+    <script src="../data-persistence.js"></script>
+  <script src="../site-navigation.js"></script>
+  <script>
+    const APP_VERSION = "2.2.1";
+    const DB_SCHEMA_VERSION = 2;
+    const today = () => {
+      const now = new Date();
+      const offset = now.getTimezoneOffset();
+      return new Date(now.getTime() - offset * 60000).toISOString().slice(0, 10);
+    };
+    const uid = (prefix) => `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+    const defaultDatabase = () => ({
+      schemaVersion: DB_SCHEMA_VERSION,
+      appVersion: APP_VERSION,
+      updatedAt: new Date().toISOString(),
+      meta: { createdAt: new Date().toISOString(), migrationHistory: [] },
+      settings: { sheetEndpoint: "", sheetToken: "", fourthAnswer: "Parcialmente conforme" },
+      blocks: [
+        { id: uid("block"), name: "Chamado de Projetos", color: "#5f6ec3", description: "Esta etapa verifica se no chamado de projetos há as informações necessárias para a correta continuidade do fluxo. Aqui serão verificadas informações como código do projeto, informações cadastrais do cliente, parceiros e escalonamentos, atividades a serem feitas etc.", questions: [] },
+        { id: uid("block"), name: "Ativações", color: "#21824c", description: "Nesta etapa é verificado se o N2 efetuou de forma correta todas as ativações técnicas do projeto: configurações, serviços, links, firewalls, roteadores, testes e validações.", questions: [] },
+        { id: uid("block"), name: "Desenvolvimento", color: "#1592a6", description: "No Desenvolvimento é verificado se o especialista incluiu e configurou todos os hosts, IPs e equipamentos no Zabbix, incluindo sensores, templates e triggers para o monitoramento proativo do serviço.", questions: [] },
+        { id: uid("block"), name: "Intranet", color: "#6a3ca2", description: "Na fila de Intranet, o responsável documenta todo o projeto e o cliente na intranet colaborativa: escalation GN, cliente e parceiro; procedimentos e criticidade do atendimento; horários de expediente e plantão; regras de acesso e necessidade de integração. Também configura o link para a intranet no inventário do host e realiza a adequação de cadastros Sankhya.", questions: [] },
+        { id: uid("block"), name: "Backup de Dispositivos", color: "#ef7f22", description: "Nesta etapa o responsável realiza o backup de todas as configurações dos equipamentos, registra e armazena os backups, garantindo segurança e rastreabilidade técnica.", questions: [] },
+        { id: uid("block"), name: "Homologação", color: "#c49a68", description: "A etapa de homologação constrói e configura os bots de WhatsApp que realizam testes de envio automático de notas ou notificações de SLA para os grupos de Gerentes de Negócio: 15 minutos, 2 horas e 4 horas. Também valida o envio e o funcionamento dos bots junto aos grupos.", questions: [] },
+        { id: uid("block"), name: "Qualidade", color: "#b8860b", description: "O analista responsável pela qualidade checa se as evidências de cumprimento de cada etapa foram aplicadas conforme os critérios definidos: documentação, monitoramento, backups, integração e conformidade do projeto.", questions: [] }
+      ],
+      records: [],
+      draft: { ticket: "", date: today(), answers: {}, notes: {}, openNotes: {}, slideIndex: 0, reviewNeeded: false, reviewReason: "" }
+    });
+
+    let database = defaultDatabase();
+    let saveTimer = null;
+    let toastTimer = null;
+    let draggedQuestion = null;
+    let activeSummaryFilter = null;
+    let adminSlideIndex = 0;
+    let expandedHistoryRecordId = null;
+    const historySlideIndexes = new Map();
+    const activeAnimations = new WeakMap();
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+    const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+    const formatDate = (value) => value ? value.split("-").reverse().join("/") : "—";
+
+    function showToast(message, error = false) {
+      const toast = $("#toast");
+      toast.textContent = message;
+      toast.className = `toast show${error ? " error" : ""}`;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.className = "toast", 3200);
+    }
+
+    function animateNumber(element, target, suffix = "", duration = 650) {
+      if (!element) return;
+      const previous = activeAnimations.get(element);
+      if (previous) cancelAnimationFrame(previous);
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        element.textContent = `${target}${suffix}`;
+        return;
+      }
+      const start = performance.now();
+      const step = now => {
+        const progress = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        element.textContent = `${Math.round(target * eased)}${suffix}`;
+        if (progress < 1) activeAnimations.set(element, requestAnimationFrame(step));
+        else activeAnimations.delete(element);
+      };
+      element.textContent = `0${suffix}`;
+      activeAnimations.set(element, requestAnimationFrame(step));
+    }
+
+    function animateBar(element, percent, duration = 650) {
+      if (!element) return;
+      element.style.transition = "none";
+      element.style.width = "0%";
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        element.style.transition = `width ${duration}ms cubic-bezier(.22,.8,.3,1)`;
+        element.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+      }));
+    }
+
+    async function idbGet(key) {
+      await window.MicrosetDB.ready;
+      return MicrosetDB.get(MicrosetDB.stores.cco, key);
+    }
+    async function idbSet(key, value) {
+      await window.MicrosetDB.ready;
+      return MicrosetDB.set(MicrosetDB.stores.cco, key, value);
+    }
+
+    const databaseMigrations = {
+      0: data => {
+        data.blocks = Array.isArray(data.blocks) ? data.blocks : (Array.isArray(data.sections) ? data.sections : []);
+        data.records = Array.isArray(data.records) ? data.records : (Array.isArray(data.tickets) ? data.tickets : []);
+        data.settings ||= {};
+        data.draft ||= {};
+        data.schemaVersion = 1;
+        return data;
+      },
+      1: data => {
+        data.meta ||= { createdAt: data.updatedAt || new Date().toISOString(), migrationHistory: [] };
+        data.meta.migrationHistory ||= [];
+        data.settings ||= {};
+        data.settings.sheetEndpoint ||= "";
+        data.settings.sheetToken ||= "";
+        data.settings.fourthAnswer ||= "Parcialmente conforme";
+        data.blocks ||= [];
+        data.blocks.forEach(block => {
+          block.id ||= uid("block");
+          block.name ||= "Lâmina sem nome";
+          block.description ||= "";
+          block.color ||= "#5f6ec3";
+          block.questions = (block.questions || []).map(question => typeof question === "string" ? { id: uid("question"), text: question } : { ...question, id: question.id || uid("question"), text: question.text || question.question || "Pergunta sem texto" });
+        });
+        data.records ||= [];
+        data.records.forEach(record => {
+          record.id ||= uid("record");
+          if (!Array.isArray(record.answers)) {
+            record.answers = Object.entries(record.answers || {}).map(([questionId, answer]) => ({ questionId, answer, answerLabel: ({ "conforme":"Conforme", "nao-conforme":"Não conforme", "na":"Não se aplica", "quarta":data.settings.fourthAnswer })[answer] || answer, observation: "" }));
+          }
+          record.reviewNeeded = Boolean(record.reviewNeeded);
+          record.reviewReason ||= "";
+        });
+        data.draft ||= {};
+        data.draft.reviewNeeded = Boolean(data.draft.reviewNeeded);
+        data.draft.reviewReason ||= "";
+        data.schemaVersion = 2;
+        return data;
+      }
+    };
+
+    function runDatabaseMigrations(rawData) {
+      if (!rawData || typeof rawData !== "object") throw new Error("Arquivo de banco inválido.");
+      let data = typeof structuredClone === "function" ? structuredClone(rawData) : JSON.parse(JSON.stringify(rawData));
+      const fromVersion = Number.isInteger(data.schemaVersion) ? data.schemaVersion : 0;
+      if (fromVersion > DB_SCHEMA_VERSION) throw new Error(`Este banco usa o esquema v${fromVersion}, mais novo que o esquema v${DB_SCHEMA_VERSION} suportado por esta versão.`);
+      const steps = [];
+      while ((data.schemaVersion || 0) < DB_SCHEMA_VERSION) {
+        const current = data.schemaVersion || 0;
+        const migrate = databaseMigrations[current];
+        if (!migrate) throw new Error(`Não existe migração disponível do esquema v${current}.`);
+        data = migrate(data);
+        steps.push(`${current}→${data.schemaVersion}`);
+      }
+      data = normalizeCurrentDatabase(data);
+      if (steps.length) {
+        const migratedAt = new Date().toISOString();
+        data.meta.migrationHistory.push({ fromSchema: fromVersion, toSchema: DB_SCHEMA_VERSION, steps, migratedAt, appVersion: APP_VERSION });
+        data.meta.lastMigratedAt = migratedAt;
+      }
+      return { data, migrated: steps.length > 0, fromVersion, toVersion: DB_SCHEMA_VERSION, steps };
+    }
+
+    function normalizeCurrentDatabase(data) {
+      if (!Array.isArray(data.blocks) || !Array.isArray(data.records)) throw new Error("Arquivo de banco inválido: blocos ou registros ausentes.");
+      data.schemaVersion = DB_SCHEMA_VERSION;
+      data.appVersion ||= APP_VERSION;
+      data.meta ||= { createdAt: data.updatedAt || new Date().toISOString(), migrationHistory: [] };
+      data.meta.createdAt ||= data.updatedAt || new Date().toISOString();
+      data.meta.migrationHistory ||= [];
+      data.settings ||= {};
+      data.settings.sheetEndpoint ||= "";
+      data.settings.sheetToken ||= "";
+      data.settings.fourthAnswer ||= "Parcialmente conforme";
+      data.blocks.forEach(block => {
+        block.id ||= uid("block");
+        block.questions ||= [];
+        block.questions.forEach(question => { question.id ||= uid("question"); question.text ||= "Pergunta sem texto"; });
+      });
+      data.records.forEach(record => { record.reviewNeeded = Boolean(record.reviewNeeded); record.reviewReason ||= ""; record.answers ||= []; });
+      data.draft ||= { ticket: "", date: today(), answers: {}, notes: {}, openNotes: {}, slideIndex: 0, reviewNeeded: false, reviewReason: "" };
+      data.draft.date = today();
+      data.draft.answers ||= {};
+      data.draft.notes ||= {};
+      data.draft.openNotes ||= {};
+      data.draft.reviewNeeded = Boolean(data.draft.reviewNeeded);
+      data.draft.reviewReason ||= "";
+      return data;
+    }
+
+    async function prepareImportedDatabase(rawData) {
+      return runDatabaseMigrations(rawData);
+    }
+
+    async function loadDatabase() {
+      let migrationResult = null;
+      try {
+        const stored = await idbGet("database");
+        if (stored) { migrationResult = await prepareImportedDatabase(stored); database = migrationResult.data; }
+        setDbStatus();
+      } catch (error) {
+        console.warn(error);
+        setDbStatus();
+      }
+      database.draft.date = today();
+      renderAll();
+      if (migrationResult?.migrated) {
+        await persistNow();
+        showToast(`Banco migrado automaticamente do esquema v${migrationResult.fromVersion} para v${migrationResult.toVersion}.`);
+      }
+    }
+
+    async function persistNow() {
+      database.updatedAt = new Date().toISOString();
+      database.appVersion = APP_VERSION;
+      database.schemaVersion = DB_SCHEMA_VERSION;
+      await idbSet("database", database);
+    }
+    function schedulePersist() { clearTimeout(saveTimer); saveTimer = setTimeout(() => persistNow().catch(console.warn), 220); }
+    function setDbStatus() {
+      const status = $("#dbStatus");
+      status.classList.add("connected");
+      $("span", status).textContent = "Dados salvos neste navegador";
+    }
+
+    function download(content, name, type) {
+      const blob = new Blob([content], { type });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = name;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    }
+
+    function renderAll() {
+      $("#ticket").value = database.draft.ticket || "";
+      $("#evaluationDate").value = today();
+      $("#sheetEndpoint").value = database.settings.sheetEndpoint || "";
+      $("#sheetToken").value = database.settings.sheetToken || "";
+      $("#fourthAnswer").value = database.settings.fourthAnswer || "Parcialmente conforme";
+      $("#fourthMetricLabel").textContent = database.settings.fourthAnswer || "Quarta resposta";
+      const migrations = database.meta?.migrationHistory?.length || 0;
+      $("#migrationStatus").textContent = `Esquema atual: v${database.schemaVersion}. ${migrations ? `${migrations} migração(ões) registrada(s).` : "Nenhuma migração necessária neste banco."}`;
+      renderEvaluation();
+      renderAdmin();
+      renderHistory();
+    }
+
+    function totalQuestions() { return database.blocks.reduce((sum, block) => sum + block.questions.length, 0); }
+    function renderEvaluation() {
+      const progress = $("#slideProgress");
+      const container = $("#slidesContainer");
+      progress.innerHTML = "";
+      container.innerHTML = "";
+      const hasQuestions = totalQuestions() > 0;
+      $("#evaluationEmpty").hidden = hasQuestions;
+      $("#globalActions").hidden = !hasQuestions;
+      progress.hidden = !hasQuestions;
+      database.draft.slideIndex = Math.min(Math.max(0, database.draft.slideIndex || 0), Math.max(0, database.blocks.length - 1));
+
+      database.blocks.forEach((block, blockIndex) => {
+        const complete = block.questions.length > 0 && block.questions.every(q => database.draft.answers[q.id]);
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = `slide-chip${blockIndex === database.draft.slideIndex ? " active" : ""}${complete ? " complete" : ""}`;
+        chip.style.setProperty("--slide-color", block.color);
+        chip.innerHTML = `<b>${blockIndex + 1}</b>${escapeHtml(block.name)}`;
+        chip.addEventListener("click", () => goToSlide(blockIndex));
+        progress.appendChild(chip);
+
+        const slide = document.createElement("section");
+        slide.className = `slide${blockIndex === database.draft.slideIndex ? " active" : ""}`;
+        slide.style.setProperty("--slide-color", block.color);
+        slide.dataset.blockId = block.id;
+        slide.innerHTML = `<header class="slide-header"><span class="slide-number">${blockIndex + 1}</span><div><span class="kicker">Lâmina ${blockIndex + 1} de ${database.blocks.length}</span><h2>${escapeHtml(block.name)}</h2><p>${escapeHtml(block.description)}</p></div></header>`;
+        if (!block.questions.length) {
+          slide.insertAdjacentHTML("beforeend", '<div class="empty-state"><strong>Nenhuma pergunta nesta lâmina</strong>Cadastre perguntas na área de Administração.</div>');
+        }
+        block.questions.forEach((question, questionIndex) => slide.appendChild(createQuestionCard(block, question, questionIndex)));
+        if (block.name.trim().toLocaleLowerCase("pt-BR") === "qualidade") slide.appendChild(createQualityReview());
+        container.appendChild(slide);
+      });
+      updateNavigation();
+      updateSummary();
+    }
+
+    function createQualityReview() {
+      const wrapper = document.createElement("section");
+      wrapper.className = "quality-review";
+      wrapper.innerHTML = `<label class="review-check"><input id="reviewNeeded" type="checkbox" ${database.draft.reviewNeeded ? "checked" : ""}>Precisa de revisão?</label><div class="review-reason" ${database.draft.reviewNeeded ? "" : "hidden"}><label for="reviewReason">Motivo <span class="req">*</span></label><textarea id="reviewReason" placeholder="Descreva o motivo da revisão.">${escapeHtml(database.draft.reviewReason || "")}</textarea></div>`;
+      const checkbox = $("#reviewNeeded", wrapper);
+      const reasonWrap = $(".review-reason", wrapper);
+      const reason = $("#reviewReason", wrapper);
+      checkbox.addEventListener("change", () => {
+        database.draft.reviewNeeded = checkbox.checked;
+        reasonWrap.hidden = !checkbox.checked;
+        if (!checkbox.checked) database.draft.reviewReason = "";
+        schedulePersist();
+        if (checkbox.checked) setTimeout(() => reason.focus(), 0);
+      });
+      reason.addEventListener("input", () => { database.draft.reviewReason = reason.value; schedulePersist(); });
+      return wrapper;
+    }
+
+    function createQuestionCard(block, question, index) {
+      const answer = database.draft.answers[question.id] || "";
+      const card = document.createElement("article");
+      card.className = `question-card${answer === "nao-conforme" ? " nonconforming" : ""}`;
+      card.dataset.questionId = question.id;
+      const options = [
+        ["conforme", "Conforme"],
+        ["nao-conforme", "Não conforme"],
+        ["na", "Não se aplica"],
+        ["quarta", database.settings.fourthAnswer || "Parcialmente conforme"]
+      ];
+      card.innerHTML = `<div class="question-row"><p class="question-text"><span class="question-id">ITEM ${String(index + 1).padStart(2,"0")}</span>${escapeHtml(question.text)}</p><fieldset class="options" aria-label="Resposta obrigatória">${options.map(([value,label]) => `<div class="option"><input type="radio" id="${question.id}-${value}" name="${question.id}" value="${value}" ${answer === value ? "checked" : ""}><label for="${question.id}-${value}">${escapeHtml(label)}</label></div>`).join("")}</fieldset></div><button class="obs-toggle" type="button" aria-expanded="${database.draft.openNotes[question.id] ? "true" : "false"}">${database.draft.openNotes[question.id] ? "Ocultar observação" : "+ Observação"}</button><div class="observation" ${database.draft.openNotes[question.id] ? "" : "hidden"}><label for="note-${question.id}">Observação (opcional)</label><textarea id="note-${question.id}" placeholder="Registre evidências ou contexto, se necessário.">${escapeHtml(database.draft.notes[question.id] || "")}</textarea></div>`;
+      $$('input[type="radio"]', card).forEach(input => input.addEventListener("change", () => {
+        database.draft.answers[question.id] = input.value;
+        card.classList.toggle("nonconforming", input.value === "nao-conforme");
+        card.classList.remove("missing");
+        schedulePersist(); updateSummary(); updateProgressOnly();
+      }));
+      $(".obs-toggle", card).addEventListener("click", event => {
+        database.draft.openNotes[question.id] = !database.draft.openNotes[question.id];
+        $(".observation", card).hidden = !database.draft.openNotes[question.id];
+        event.currentTarget.textContent = database.draft.openNotes[question.id] ? "Ocultar observação" : "+ Observação";
+        event.currentTarget.setAttribute("aria-expanded", String(database.draft.openNotes[question.id]));
+        schedulePersist();
+      });
+      $("textarea", card).addEventListener("input", event => { database.draft.notes[question.id] = event.target.value; schedulePersist(); if (activeSummaryFilter) renderSummaryDetails(); });
+      return card;
+    }
+
+    function goToSlide(index) {
+      database.draft.slideIndex = Math.min(Math.max(0,index),database.blocks.length - 1);
+      $$(".slide").forEach((slide,i) => slide.classList.toggle("active", i === database.draft.slideIndex));
+      $$(".slide-chip", $("#slideProgress")).forEach((chip,i) => chip.classList.toggle("active", i === database.draft.slideIndex));
+      updateNavigation();
+      schedulePersist();
+      window.scrollTo({ top: $("#slideProgress").getBoundingClientRect().top + window.scrollY - 72, behavior: "smooth" });
+    }
+    function updateNavigation() {
+      const last = database.blocks.length - 1;
+      $("#prevBtn").disabled = database.draft.slideIndex <= 0;
+      $("#nextBtn").hidden = database.draft.slideIndex >= last;
+      $("#saveTicketBtn").hidden = database.draft.slideIndex < last;
+    }
+    function updateProgressOnly() {
+      database.blocks.forEach((block,i) => {
+        const complete = block.questions.length > 0 && block.questions.every(q => database.draft.answers[q.id]);
+        $$(".slide-chip", $("#slideProgress"))[i]?.classList.toggle("complete", complete);
+      });
+    }
+    function updateSummary() {
+      const values = Object.values(database.draft.answers);
+      const total = totalQuestions();
+      const good = values.filter(v => v === "conforme").length;
+      const bad = values.filter(v => v === "nao-conforme").length;
+      const na = values.filter(v => v === "na").length;
+      const fourth = values.filter(v => v === "quarta").length;
+      const applicable = good + bad + fourth;
+      const score = applicable ? Math.round((good / applicable) * 100) : 0;
+      const pending = Math.max(0,total - values.filter(Boolean).length);
+      animateNumber($("#goodCount"), good);
+      animateNumber($("#badCount"), bad);
+      animateNumber($("#naCount"), na);
+      animateNumber($("#fourthCount"), fourth);
+      animateNumber($("#pendingCount"), pending);
+      animateNumber($("#scoreValue"), score, "%");
+      animateBar($("#scoreLine"), score);
+      const itemPercent = value => total ? Math.round((value / total) * 100) : 0;
+      animateBar($("#goodLine"), itemPercent(good));
+      animateBar($("#badLine"), itemPercent(bad));
+      animateBar($("#naLine"), itemPercent(na));
+      animateBar($("#fourthLine"), itemPercent(fourth));
+      animateBar($("#pendingLine"), itemPercent(pending));
+      if (activeSummaryFilter) renderSummaryDetails();
+    }
+
+    function getQuestionsWithStatus() {
+      const items = [];
+      database.blocks.forEach((block, blockIndex) => block.questions.forEach((question, questionIndex) => {
+        items.push({
+          block: block.name,
+          blockIndex,
+          question: question.text,
+          questionIndex,
+          questionId: question.id,
+          answer: database.draft.answers[question.id] || "pending",
+          observation: database.draft.notes[question.id] || ""
+        });
+      }));
+      return items;
+    }
+
+    function toggleSummaryDetails(filter) {
+      activeSummaryFilter = activeSummaryFilter === filter ? null : filter;
+      $$(".metric[data-filter]").forEach(card => {
+        const active = card.dataset.filter === activeSummaryFilter;
+        card.classList.toggle("active", active);
+        card.setAttribute("aria-expanded", String(active));
+      });
+      renderSummaryDetails();
+    }
+
+    function renderSummaryDetails() {
+      const panel = $("#summaryDetails");
+      if (!activeSummaryFilter) { panel.hidden = true; panel.innerHTML = ""; return; }
+      const labels = {
+        "conforme": "Perguntas conformes",
+        "nao-conforme": "Perguntas não conformes",
+        "na": "Perguntas que não se aplicam",
+        "quarta": `Perguntas: ${database.settings.fourthAnswer || "Parcialmente conforme"}`,
+        "pending": "Perguntas pendentes"
+      };
+      const items = getQuestionsWithStatus().filter(item => item.answer === activeSummaryFilter);
+      panel.hidden = false;
+      panel.innerHTML = `<div class="summary-details-head"><h3>${escapeHtml(labels[activeSummaryFilter])} (${items.length})</h3><button type="button" id="closeSummaryDetails">Fechar ×</button></div><div class="summary-details-list">${items.length ? items.map(item => `<article class="summary-item"><div><strong>${escapeHtml(item.question)}</strong><small>Lâmina ${item.blockIndex + 1}: ${escapeHtml(item.block)} · Item ${item.questionIndex + 1}</small>${item.observation ? `<p class="summary-note"><strong>Observação:</strong> ${escapeHtml(item.observation)}</p>` : ""}</div><button class="summary-link" type="button" data-block-index="${item.blockIndex}" data-question-id="${item.questionId}">Ir para o item →</button></article>`).join("") : '<p class="summary-empty">Nenhuma pergunta corresponde a este resultado.</p>'}</div>`;
+      $("#closeSummaryDetails", panel).addEventListener("click", () => toggleSummaryDetails(activeSummaryFilter));
+      $$(".summary-link", panel).forEach(link => link.addEventListener("click", () => {
+        goToSlide(Number(link.dataset.blockIndex));
+        setTimeout(() => $(`[data-question-id="${link.dataset.questionId}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 280);
+      }));
+    }
+
+    function moveQuestion(sourceBlockId, questionId, targetBlockId, targetIndex) {
+      const sourceBlock = database.blocks.find(block => block.id === sourceBlockId);
+      const targetBlock = database.blocks.find(block => block.id === targetBlockId);
+      if (!sourceBlock || !targetBlock) return;
+      const sourceIndex = sourceBlock.questions.findIndex(question => question.id === questionId);
+      if (sourceIndex < 0) return;
+      const [question] = sourceBlock.questions.splice(sourceIndex, 1);
+      if (sourceBlock === targetBlock && sourceIndex < targetIndex) targetIndex -= 1;
+      targetBlock.questions.splice(Math.max(0, Math.min(targetIndex, targetBlock.questions.length)), 0, question);
+      draggedQuestion = null;
+      adminSlideIndex = Math.max(0, database.blocks.findIndex(block => block.id === targetBlockId));
+      schedulePersist();
+      renderAdmin();
+      renderEvaluation();
+      showToast("Posição da pergunta atualizada.");
+    }
+
+    function renderAdmin() {
+      const container = $("#adminBlocks");
+      const progress = $("#adminSlideProgress");
+      container.innerHTML = "";
+      progress.innerHTML = "";
+      adminSlideIndex = Math.min(Math.max(0, adminSlideIndex), Math.max(0, database.blocks.length - 1));
+      $("#adminSlideActions").hidden = database.blocks.length === 0;
+      $("#adminSlideProgress").hidden = database.blocks.length === 0;
+      $("#adminPrevBtn").disabled = adminSlideIndex <= 0;
+      $("#adminNextBtn").disabled = adminSlideIndex >= database.blocks.length - 1;
+      if (!database.blocks.length) {
+        container.innerHTML = '<div class="admin-empty">Nenhuma lâmina cadastrada.</div>';
+        return;
+      }
+      database.blocks.forEach((block, blockIndex) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = `slide-chip${blockIndex === adminSlideIndex ? " active" : ""}`;
+        chip.style.setProperty("--slide-color", block.color);
+        chip.innerHTML = `<b>${blockIndex + 1}</b><span>${escapeHtml(block.name)}</span>`;
+        chip.addEventListener("click", () => { adminSlideIndex = blockIndex; renderAdmin(); });
+        chip.addEventListener("dragover", event => { if (!draggedQuestion) return; event.preventDefault(); chip.classList.add("drag-target"); });
+        chip.addEventListener("dragleave", () => chip.classList.remove("drag-target"));
+        chip.addEventListener("drop", event => {
+          event.preventDefault(); chip.classList.remove("drag-target");
+          if (draggedQuestion) moveQuestion(draggedQuestion.blockId, draggedQuestion.questionId, block.id, block.questions.length);
+        });
+        progress.appendChild(chip);
+
+        const article = document.createElement("article");
+        article.className = `admin-block${blockIndex === adminSlideIndex ? " active" : ""}`;
+        article.style.setProperty("--slide-color", block.color);
+        article.innerHTML = `<div class="admin-block-head"><input class="color-input" type="color" value="${escapeHtml(block.color)}" aria-label="Cor da lâmina"><input class="block-name" type="text" value="${escapeHtml(block.name)}" aria-label="Nome da lâmina"><button class="btn btn-danger btn-small delete-block" type="button">Excluir lâmina</button></div><div class="admin-block-body"><div class="admin-description"><label class="field-label">Descrição da lâmina</label><textarea class="block-description">${escapeHtml(block.description)}</textarea></div><div class="questions-admin"></div><button class="btn btn-secondary btn-small add-question" type="button">+ Adicionar pergunta</button></div>`;
+        $(".color-input", article).addEventListener("input", e => { block.color = e.target.value; article.style.setProperty("--slide-color", block.color); chip.style.setProperty("--slide-color", block.color); schedulePersist(); renderEvaluation(); });
+        $(".block-name", article).addEventListener("input", e => { block.name = e.target.value; $("span", chip).textContent = block.name; schedulePersist(); });
+        $(".block-description", article).addEventListener("input", e => { block.description = e.target.value; schedulePersist(); });
+        $(".delete-block", article).addEventListener("click", () => {
+          if (!confirm(`Excluir a lâmina “${block.name}” e suas perguntas?`)) return;
+          database.blocks.splice(blockIndex,1);
+          adminSlideIndex = Math.min(adminSlideIndex, Math.max(0, database.blocks.length - 1));
+          database.draft.slideIndex = Math.min(database.draft.slideIndex, Math.max(0, database.blocks.length - 1));
+          schedulePersist(); renderAll();
+        });
+        $(".add-question", article).addEventListener("click", () => {
+          block.questions.push({ id: uid("question"), text: "Nova pergunta" }); adminSlideIndex = blockIndex; schedulePersist(); renderAll();
+          setTimeout(() => $(".admin-block.active .admin-question:last-child input")?.select(),0);
+        });
+        const list = $(".questions-admin", article);
+        list.dataset.blockId = block.id;
+        list.addEventListener("dragover", event => { event.preventDefault(); list.classList.add("drop-zone"); });
+        list.addEventListener("dragleave", event => { if (!list.contains(event.relatedTarget)) list.classList.remove("drop-zone"); });
+        list.addEventListener("drop", event => {
+          event.preventDefault();
+          list.classList.remove("drop-zone");
+          if (draggedQuestion && (event.target === list || event.target.closest(".admin-empty"))) {
+            moveQuestion(draggedQuestion.blockId, draggedQuestion.questionId, block.id, block.questions.length);
+          }
+        });
+        if (!block.questions.length) list.innerHTML = '<div class="admin-empty">Nenhuma pergunta cadastrada nesta lâmina.</div>';
+        block.questions.forEach((question, questionIndex) => {
+          const row = document.createElement("div");
+          row.className = "admin-question";
+          row.dataset.questionId = question.id;
+          row.innerHTML = `<button class="drag-handle" type="button" draggable="true" aria-label="Arrastar pergunta ${questionIndex + 1}" title="Arraste para mudar a posição">⋮⋮</button><input type="text" value="${escapeHtml(question.text)}" aria-label="Texto da pergunta ${questionIndex + 1}"><button class="btn btn-danger btn-small delete-question" type="button">Excluir</button>`;
+          $("input", row).addEventListener("input", e => { question.text = e.target.value; schedulePersist(); });
+          $(".delete-question", row).addEventListener("click", () => {
+            if (!confirm("Excluir esta pergunta?")) return;
+            block.questions.splice(questionIndex,1); delete database.draft.answers[question.id]; delete database.draft.notes[question.id]; schedulePersist(); renderAll();
+          });
+          const handle = $(".drag-handle", row);
+          handle.addEventListener("dragstart", event => {
+            draggedQuestion = { blockId: block.id, questionId: question.id };
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData("text/plain", question.id);
+            setTimeout(() => row.classList.add("dragging"), 0);
+          });
+          handle.addEventListener("dragend", () => {
+            draggedQuestion = null;
+            row.classList.remove("dragging");
+            $$(".admin-question").forEach(item => item.classList.remove("drag-over"));
+            $$(".questions-admin").forEach(item => item.classList.remove("drop-zone"));
+            $$(".slide-chip", $("#adminSlideProgress")).forEach(item => item.classList.remove("drag-target"));
+          });
+          row.addEventListener("dragover", event => { event.preventDefault(); event.stopPropagation(); row.classList.add("drag-over"); });
+          row.addEventListener("dragleave", () => row.classList.remove("drag-over"));
+          row.addEventListener("drop", event => {
+            event.preventDefault(); event.stopPropagation(); row.classList.remove("drag-over");
+            if (draggedQuestion) moveQuestion(draggedQuestion.blockId, draggedQuestion.questionId, block.id, questionIndex);
+          });
+          list.appendChild(row);
+        });
+        container.appendChild(article);
+      });
+    }
+
+    function historyMetrics(record) {
+      const answers = Array.isArray(record.answers) ? record.answers : [];
+      const count = status => answers.filter(item => (item.answer || "pending") === status).length;
+      const good = count("conforme");
+      const bad = count("nao-conforme");
+      const na = count("na");
+      const fourth = count("quarta");
+      const pending = answers.filter(item => !item.answer || item.answer === "pending").length;
+      const applicable = good + bad + fourth;
+      const score = applicable ? Math.round((good / applicable) * 100) : Number(record.score) || 0;
+      return { total: answers.length, good, bad, na, fourth, pending, score };
+    }
+
+    function historyGroups(record) {
+      const groups = new Map();
+      (record.answers || []).slice().sort((a,b) => (a.blockOrder || 0) - (b.blockOrder || 0) || (a.questionOrder || 0) - (b.questionOrder || 0)).forEach(answer => {
+        const key = answer.blockId || answer.block || "sem-bloco";
+        if (!groups.has(key)) groups.set(key, { id: key, name: answer.block || "Setor", order: answer.blockOrder || groups.size + 1, answers: [] });
+        groups.get(key).answers.push(answer);
+      });
+      return [...groups.values()].sort((a,b) => a.order - b.order);
+    }
+
+    function renderHistoryDetails(record) {
+      const metrics = historyMetrics(record);
+      const groups = historyGroups(record);
+      const selectedIndex = Math.min(Math.max(0, historySlideIndexes.get(record.id) || 0), Math.max(0, groups.length - 1));
+      historySlideIndexes.set(record.id, selectedIndex);
+      const itemPercent = value => metrics.total ? Math.round((value / metrics.total) * 100) : 0;
+      const detail = document.createElement("div");
+      detail.className = "history-detail";
+      detail.innerHTML = `
+        <div class="summary history-summary" aria-label="Resumo do ticket ${escapeHtml(record.ticket)}">
+          <div class="score"><span>Conformidade</span><strong data-value="${metrics.score}" data-suffix="%">0%</strong><div class="score-line"><i data-bar="${metrics.score}"></i></div></div>
+          <div class="metric good"><span>Conformes</span><strong data-value="${metrics.good}">0</strong><small class="metric-line"><i data-bar="${itemPercent(metrics.good)}"></i></small></div>
+          <div class="metric bad"><span>Não conformes</span><strong data-value="${metrics.bad}">0</strong><small class="metric-line"><i data-bar="${itemPercent(metrics.bad)}"></i></small></div>
+          <div class="metric na"><span>Não se aplica</span><strong data-value="${metrics.na}">0</strong><small class="metric-line"><i data-bar="${itemPercent(metrics.na)}"></i></small></div>
+          <div class="metric fourth"><span>${escapeHtml(database.settings.fourthAnswer || "Parcialmente conforme")}</span><strong data-value="${metrics.fourth}">0</strong><small class="metric-line"><i data-bar="${itemPercent(metrics.fourth)}"></i></small></div>
+          <div class="metric pending"><span>Pendentes</span><strong data-value="${metrics.pending}">0</strong><small class="metric-line"><i data-bar="${itemPercent(metrics.pending)}"></i></small></div>
+        </div>
+        ${record.reviewNeeded ? `<div class="history-review"><strong>Precisa de revisão:</strong> Sim${record.reviewReason ? ` · ${escapeHtml(record.reviewReason)}` : ""}</div>` : ""}
+        ${groups.length ? `<div class="slide-progress history-slide-progress" aria-label="Setores do ticket">${groups.map((group,index) => `<button class="slide-chip${index === selectedIndex ? " active" : ""}" type="button" data-history-slide="${index}" style="--slide-color:${escapeHtml(database.blocks.find(block => block.id === group.id)?.color || "#5f6ec3")}"><b>${index + 1}</b><span>${escapeHtml(group.name)}</span></button>`).join("")}</div><div class="slides-stack">${groups.map((group,index) => `<section class="slide history-slide${index === selectedIndex ? " active" : ""}" style="--slide-color:${escapeHtml(database.blocks.find(block => block.id === group.id)?.color || "#5f6ec3")}"><header class="slide-header"><span class="slide-number">${index + 1}</span><div><span class="kicker">Setor ${index + 1} de ${groups.length}</span><h2>${escapeHtml(group.name)}</h2><p>${group.answers.length} item(ns) registrado(s) nesta avaliação.</p></div></header><div>${group.answers.map((answer,questionIndex) => { const status = answer.answer || "pending"; const label = answer.answerLabel || ({conforme:"Conforme","nao-conforme":"Não conforme",na:"Não se aplica",quarta:database.settings.fourthAnswer || "Parcialmente conforme",pending:"Pendente"})[status] || "Pendente"; return `<article class="history-answer"><div><strong>${escapeHtml(answer.question || `Pergunta ${questionIndex + 1}`)}</strong><small>Item ${answer.questionOrder || questionIndex + 1}</small>${answer.observation ? `<p class="summary-note"><strong>Observação:</strong> ${escapeHtml(answer.observation)}</p>` : ""}</div><span class="answer-badge ${escapeHtml(status)}">${escapeHtml(label)}</span></article>`; }).join("")}</div></section>`).join("")}</div>` : '<div class="empty-state"><strong>Sem itens registrados</strong>Este ticket não possui respostas armazenadas.</div>'}`;
+      $$('[data-value]', detail).forEach(element => animateNumber(element, Number(element.dataset.value) || 0, element.dataset.suffix || ""));
+      $$('[data-bar]', detail).forEach(element => animateBar(element, Number(element.dataset.bar) || 0));
+      $$('[data-history-slide]', detail).forEach(button => button.addEventListener("click", event => {
+        event.stopPropagation();
+        historySlideIndexes.set(record.id, Number(button.dataset.historySlide));
+        renderHistory();
+      }));
+      return detail;
+    }
+
+    function renderHistory() {
+      const body = $("#recordsBody");
+      body.innerHTML = "";
+      $("#historyEmpty").hidden = database.records.length > 0;
+      database.records.slice().reverse().forEach(record => {
+        const expanded = record.id === expandedHistoryRecordId;
+        const row = document.createElement("tr");
+        row.className = `history-row${expanded ? " expanded" : ""}`;
+        row.tabIndex = 0;
+        row.setAttribute("role", "button");
+        row.setAttribute("aria-expanded", String(expanded));
+        row.innerHTML = `<td><strong class="history-ticket">${escapeHtml(record.ticket)}</strong></td><td>${formatDate(record.date)}</td><td>${record.score}%</td><td>${(record.answers || []).length}</td><td><span class="badge ${record.synced ? "synced" : "local"}">${record.synced ? "Sincronizado" : "Somente local"}</span></td><td><button class="btn btn-secondary btn-small load-record" type="button">Carregar</button></td>`;
+        const toggle = () => { expandedHistoryRecordId = expanded ? null : record.id; renderHistory(); };
+        row.addEventListener("click", event => { if (!event.target.closest("button")) toggle(); });
+        row.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggle(); } });
+        $(".load-record", row).addEventListener("click", event => { event.stopPropagation(); loadRecord(record); });
+        body.appendChild(row);
+        if (expanded) {
+          const detailRow = document.createElement("tr");
+          const detailCell = document.createElement("td");
+          detailCell.colSpan = 6;
+          detailCell.className = "history-detail-cell";
+          detailCell.appendChild(renderHistoryDetails(record));
+          detailRow.appendChild(detailCell);
+          body.appendChild(detailRow);
+        }
+      });
+    }
+    function loadRecord(record) {
+      database.draft = { ticket: record.ticket, date: today(), answers: {}, notes: {}, openNotes: {}, slideIndex: 0, reviewNeeded: Boolean(record.reviewNeeded), reviewReason: record.reviewReason || "" };
+      record.answers.forEach(item => { database.draft.answers[item.questionId] = item.answer; database.draft.notes[item.questionId] = item.observation || ""; database.draft.openNotes[item.questionId] = Boolean(item.observation); });
+      showView("evaluationView"); renderEvaluation(); $("#ticket").value = record.ticket; window.scrollTo({top:0,behavior:"smooth"});
+    }
+
+    function buildRecord() {
+      const answers = [];
+      database.blocks.forEach((block, blockIndex) => block.questions.forEach((question, questionIndex) => {
+        answers.push({ blockId: block.id, block: block.name, blockOrder: blockIndex + 1, questionId: question.id, question: question.text, questionOrder: questionIndex + 1, answer: database.draft.answers[question.id] || "", answerLabel: answerLabel(database.draft.answers[question.id]), observation: database.draft.notes[question.id] || "" });
+      }));
+      const applicable = answers.filter(a => ["conforme","nao-conforme","quarta"].includes(a.answer));
+      const good = applicable.filter(a => a.answer === "conforme").length;
+      return { id: uid("record"), ticket: database.draft.ticket.trim(), date: today(), createdAt: new Date().toISOString(), score: applicable.length ? Math.round((good / applicable.length) * 100) : 0, answers, reviewNeeded: database.draft.reviewNeeded, reviewReason: database.draft.reviewReason || "", synced: false, templateVersion: database.updatedAt };
+    }
+    function answerLabel(value) {
+      return ({ "conforme":"Conforme", "nao-conforme":"Não conforme", "na":"Não se aplica", "quarta":database.settings.fourthAnswer || "Parcialmente conforme" })[value] || "";
+    }
+
+    async function saveTicket() {
+      database.draft.ticket = $("#ticket").value.trim();
+      if (!database.draft.ticket) { $("#ticket").focus(); return showToast("Informe o número do chamado.", true); }
+      const missing = [];
+      database.blocks.forEach((block,blockIndex) => block.questions.forEach(q => { if (!database.draft.answers[q.id]) missing.push({blockIndex,id:q.id}); }));
+      if (missing.length) {
+        goToSlide(missing[0].blockIndex);
+        const card = $(`[data-question-id="${missing[0].id}"]`);
+        card?.classList.add("missing"); card?.scrollIntoView({behavior:"smooth",block:"center"});
+        return showToast(`Responda todos os itens. Faltam ${missing.length}.`, true);
+      }
+      if (database.draft.reviewNeeded && !database.draft.reviewReason.trim()) {
+        const qualityIndex = database.blocks.findIndex(block => block.name.trim().toLocaleLowerCase("pt-BR") === "qualidade");
+        if (qualityIndex >= 0) goToSlide(qualityIndex);
+        setTimeout(() => $("#reviewReason")?.focus(), 280);
+        return showToast("Informe o motivo da revisão.", true);
+      }
+      const existing = database.records.findIndex(r => r.ticket === database.draft.ticket);
+      if (existing >= 0 && !confirm("Já existe uma avaliação para este ticket. Deseja substituí-la?")) return;
+      const record = buildRecord();
+      if (existing >= 0) database.records.splice(existing,1,record); else database.records.push(record);
+      await persistNow();
+      if (database.settings.sheetEndpoint) {
+        record.synced = await sendToSheet(record);
+        await persistNow();
+      }
+      renderHistory();
+      showToast(record.synced ? "Ticket salvo e enviado ao Google Sheets." : "Ticket salvo neste navegador.");
+    }
+
+    async function sendToSheet(record, test = false) {
+      const endpoint = database.settings.sheetEndpoint.trim();
+      if (!endpoint) { showToast("Informe a URL do Google Apps Script.", true); return false; }
+      const payload = { action: test ? "test" : "save", token: database.settings.sheetToken, source: "CEM Checklist", version: APP_VERSION, record };
+      try {
+        await fetch(endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
+        if (test) showToast("Solicitação de teste enviada. Verifique a planilha.");
+        return true;
+      } catch (error) { showToast("Não foi possível enviar ao Google Sheets. O registro continua salvo localmente.", true); return false; }
+    }
+
+    function newEvaluation() {
+      if ((database.draft.ticket || Object.keys(database.draft.answers).length) && !confirm("Iniciar uma nova avaliação e limpar o preenchimento atual?")) return;
+      database.draft = { ticket: "", date: today(), answers: {}, notes: {}, openNotes: {}, slideIndex: 0, reviewNeeded: false, reviewReason: "" };
+      activeSummaryFilter = null;
+      $$(".metric[data-filter]").forEach(card => { card.classList.remove("active"); card.setAttribute("aria-expanded", "false"); });
+      renderSummaryDetails();
+      schedulePersist(); renderEvaluation(); $("#ticket").value = ""; $("#evaluationDate").value = today(); $("#ticket").focus();
+    }
+    function showView(id) {
+      $$(".app-view").forEach(view => view.hidden = view.id !== id);
+      $$(".nav-button").forEach(button => button.classList.toggle("active", button.dataset.view === id));
+      if (id === "evaluationView") renderEvaluation();
+      if (id === "adminView") renderAdmin();
+      if (id === "historyView") renderHistory();
+    }
+
+    function exportCsv() {
+      const rows = [["ticket","data","conformidade","bloco","pergunta","resposta","observacao","precisa_revisao","motivo_revisao"]];
+      database.records.forEach(record => record.answers.forEach(answer => rows.push([record.ticket,record.date,record.score,answer.block,answer.question,answer.answerLabel,answer.observation,record.reviewNeeded ? "Sim" : "Não",record.reviewReason || ""])));
+      const csv = rows.map(row => row.map(value => `"${String(value ?? "").replace(/"/g,'""')}"`).join(";")).join("\r\n");
+      download("\ufeff" + csv, `cem-avaliacoes-${today()}.csv`, "text/csv;charset=utf-8");
+    }
+
+    $$(".nav-button").forEach(button => button.addEventListener("click", () => showView(button.dataset.view)));
+    $$(".metric[data-filter]").forEach(card => card.addEventListener("click", () => toggleSummaryDetails(card.dataset.filter)));
+    $("#ticket").addEventListener("input", e => { database.draft.ticket = e.target.value; schedulePersist(); });
+    $("#prevBtn").addEventListener("click", () => goToSlide(database.draft.slideIndex - 1));
+    $("#nextBtn").addEventListener("click", () => goToSlide(database.draft.slideIndex + 1));
+    $("#saveTicketBtn").addEventListener("click", saveTicket);
+    $("#printBtn").addEventListener("click", () => window.print());
+    $("#newEvaluationBtn").addEventListener("click", newEvaluation);
+    $("#exportJsonBtn").addEventListener("click", async () => {
+      await persistNow();
+      await MicrosetPersistence.exportData();
+      showToast("Backup unificado da Intranet e do CCO baixado.");
+    });
+    $("#importJsonBtn").addEventListener("click", () => $("#importJsonInput").click());
+    $("#importJsonInput").addEventListener("change", async e => {
+      try {
+        const selectedFile = e.target.files[0];
+        const rawData = JSON.parse(await selectedFile.text());
+        if (rawData?.format === "microset-intranet-cco-backup" || rawData?.format === "microset-intranet-backup") {
+          await MicrosetPersistence.importData(selectedFile);
+          return;
+        }
+        const result = await prepareImportedDatabase(rawData);
+        database = result.data;
+        await persistNow();
+        renderAll();
+        showToast(result.migrated ? `Backup migrado do esquema v${result.fromVersion} para v${result.toVersion} e importado.` : "Backup importado com sucesso.");
+      }
+      catch (error) { showToast(error.message || "Backup inválido.", true); }
+      e.target.value = "";
+    });
+    $("#saveSettingsBtn").addEventListener("click", async () => {
+      database.settings.sheetEndpoint = $("#sheetEndpoint").value.trim();
+      database.settings.sheetToken = $("#sheetToken").value.trim();
+      database.settings.fourthAnswer = $("#fourthAnswer").value.trim() || "Parcialmente conforme";
+      await persistNow(); renderEvaluation(); showToast("Configurações salvas.");
+    });
+    $("#testSheetBtn").addEventListener("click", () => {
+      database.settings.sheetEndpoint = $("#sheetEndpoint").value.trim();
+      database.settings.sheetToken = $("#sheetToken").value.trim();
+      sendToSheet({ ticket: "TESTE", date: today(), score: 100, answers: [{ block: "Teste de integração", question: "Conexão com a planilha", answerLabel: "Conforme", observation: "Registro de teste" }] }, true);
+    });
+    $("#adminPrevBtn").addEventListener("click", () => { adminSlideIndex = Math.max(0, adminSlideIndex - 1); renderAdmin(); });
+    $("#adminNextBtn").addEventListener("click", () => { adminSlideIndex = Math.min(database.blocks.length - 1, adminSlideIndex + 1); renderAdmin(); });
+    $("#addBlockBtn").addEventListener("click", () => { database.blocks.push({ id: uid("block"), name: "Nova lâmina", color: "#5f6ec3", description: "Descreva o objetivo desta etapa.", questions: [] }); adminSlideIndex = database.blocks.length - 1; schedulePersist(); renderAll(); setTimeout(() => $(".admin-block.active .block-name")?.select(),0); });
+    $("#exportCsvBtn").addEventListener("click", exportCsv);
+
+    loadDatabase();
+  </script>
+</body>
+</html>

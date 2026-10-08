@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#082f63" />
+  <title>Login — Intranet Microset</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="login.css" />
+  <link rel="stylesheet" href="brandbook.css" />
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-brand-panel">
+      <div class="login-brand">
+        <div class="brand__symbol" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="brand__text"><strong>microset</strong><small>INTRANET • CEM</small></div>
+      </div>
+
+      <div class="login-brand-copy">
+        <span class="login-kicker">CENTRAL DE EXCELÊNCIA MICROSET</span>
+        <h1>Informação segura.<br><em>Acesso sob controle.</em></h1>
+        <p>Entre com seu usuário para acessar clientes, procedimentos, escalonamentos e demais informações da intranet.</p>
+      </div>
+
+      <img class="login-mascot" src="assets/mascote-m7.png" alt="Mascote Microset" />
+      <div class="login-brand-foot">POC • Controle de acesso por perfil</div>
+    </section>
+
+    <section class="login-form-panel">
+      <div class="login-card">
+        <span class="section-kicker">ACESSO À INTRANET</span>
+        <h2>Bem-vindo</h2>
+        <p class="login-card__subtitle">Informe suas credenciais para continuar.</p>
+
+        <form id="loginForm" class="login-form">
+          <label>
+            <span>Usuário</span>
+            <input id="loginEmail" type="email" autocomplete="username" placeholder="nome@microset.com.br" required />
+          </label>
+          <label>
+            <span>Senha</span>
+            <div class="password-field">
+              <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Sua senha" required />
+              <button type="button" id="togglePassword" aria-label="Mostrar ou ocultar senha">👁</button>
+            </div>
+          </label>
+          <div id="loginError" class="login-error" hidden></div>
+          <button id="loginButton" type="submit" class="login-submit">Entrar</button>
+        </form>
+
+        <div class="demo-access">
+          <div class="demo-access__heading">
+            <strong>Acessos de demonstração</strong>
+            <span>Somente para esta POC</span>
+          </div>
+          <button class="demo-user" data-email="admin@microset.local" data-password="Admin@123"><b>Administrador</b><span>Gerencia usuários e clientes</span></button>
+          <button class="demo-user" data-email="editor@microset.local" data-password="Editor@123"><b>Editor</b><span>Cadastra e edita clientes</span></button>
+          <button class="demo-user" data-email="consulta@microset.local" data-password="Consulta@123"><b>Consulta</b><span>Apenas visualização</span></button>
+        </div>
+
+        <p class="login-security-note"><strong>POC:</strong> nesta versão o login e os dados são mantidos localmente no navegador. Em produção, a autenticação deverá ser integrada a um backend/SSO corporativo.</p>
+      </div>
+    </section>
+  </main>
+  <script src="shared-database.js"></script>
+  <script src="unified-db.js"></script>
+  <script src="data-persistence.js"></script>
+  <script src="auth.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#082f63" />
+  <title>Documentação — Intranet Microset</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="clientes.css" />
+  <link rel="stylesheet" href="documentacao.css" />
+  <link rel="stylesheet" href="brandbook.css" />
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body data-auth="required" data-permission="content.view">
+  <header class="topbar">
+    <div class="topbar__brand">
+      <button class="icon-button menu-button" id="menuButton" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <a class="brand" href="index.html" aria-label="Microset Intranet">
+        <div class="brand__symbol" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="brand__text"><strong>microset</strong><small>INTRANET • CEM</small></div>
+      </a>
+    </div>
+
+    <nav class="main-nav" id="mainNav" aria-label="Navegação principal">
+      <a href="index.html">Início</a>
+      <a href="cco/checklist-qualidade-cem-v2.2.1.html">CCO</a>
+      <a href="clientes.html">Clientes</a>
+      <a href="#">Parceiros</a>
+      <a href="#">Repetidoras</a>
+      <a href="documentacao.html" class="active">Documentação</a>
+      <a href="#">Operação</a>
+      <a href="#">Base de conhecimento</a>
+    </nav>
+
+    <div class="topbar__actions">
+      <button class="icon-button" id="notificationButton" aria-label="Notificações">
+        <span class="notification-dot"></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <button class="profile-button" id="profileButton">
+        <span class="avatar">ER</span>
+        <span class="profile-copy"><strong>Everlin Ribeiro</strong><small>Q.A. CCO</small></span>
+        <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="clients-page documentation-page">
+    <section class="clients-hero documentation-hero">
+      <div class="clients-hero__copy">
+        <div class="eyebrow"><span></span> CENTRAL DE DOCUMENTAÇÃO</div>
+        <h1>Documentação de clientes</h1>
+        <p>Selecione um cliente para acessar seus procedimentos e documentos operacionais em uma única página.</p>
+        <div class="clients-search-wrap">
+          <div class="clients-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+            <input id="documentationSearch" type="search" placeholder="Procurar cliente ou gerente de negócios..." autocomplete="off" />
+          </div>
+        </div>
+      </div>
+      <div class="clients-hero__mascot documentation-hero__visual">
+        <img src="assets/mascote-m7.png" alt="Mascote Microset" />
+      </div>
+    </section>
+
+    <section class="clients-shell">
+      <div class="clients-toolbar">
+        <div><span class="section-kicker">CLIENTES</span><h2>Selecione um cliente</h2></div>
+        <div class="clients-stats">
+          <div class="clients-stat"><strong id="documentationClientCount">0</strong><span>Clientes</span></div>
+          <div class="clients-stat"><strong id="documentationUnitCount">0</strong><span>Unidades</span></div>
+        </div>
+      </div>
+      <div class="client-grid" id="documentationClientGrid"></div>
+      <div class="clients-empty" id="documentationEmpty" hidden>
+        <div class="clients-empty__icon">⌕</div><h3>Nenhum cliente encontrado</h3><p>Tente pesquisar por outro nome.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><strong id="toastTitle">Notificações</strong><span id="toastText">Você tem novos avisos operacionais.</span></div>
+  <script src="shared-database.js"></script>
+  <script src="unified-db.js"></script>
+  <script src="data-persistence.js"></script>
+  <script src="auth.js"></script>
+  <script src="grupo-balbo.js"></script>
+  <script src="documentacao.js"></script>
+  <script src="site-navigation.js"></script>
+</body>
+</html>

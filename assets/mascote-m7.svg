@@ -1,0 +1,74 @@
+<svg width="760" height="980" viewBox="0 0 760 980" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="navy" x1="214" y1="438" x2="584" y2="882" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#0B376D"/><stop offset="1" stop-color="#031B3D"/>
+  </linearGradient>
+  <linearGradient id="metal" x1="245" y1="89" x2="511" y2="406" gradientUnits="userSpaceOnUse">
+    <stop stop-color="white"/><stop offset=".5" stop-color="#DBE7F1"/><stop offset="1" stop-color="#99AFC5"/>
+  </linearGradient>
+  <linearGradient id="visor" x1="256" y1="178" x2="532" y2="312" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#011126"/><stop offset="1" stop-color="#06294F"/>
+  </linearGradient>
+  <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+    <feGaussianBlur stdDeviation="10" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<!-- antenna -->
+<path d="M381 86V38" stroke="#DCEBF7" stroke-width="16" stroke-linecap="round"/>
+<circle cx="381" cy="28" r="21" fill="#00B9E8" stroke="#EAF9FF" stroke-width="8" filter="url(#glow)"/>
+
+<!-- ears -->
+<rect x="180" y="190" width="61" height="121" rx="30" fill="#D4E2EE" stroke="#0B376D" stroke-width="15"/>
+<rect x="519" y="190" width="61" height="121" rx="30" fill="#D4E2EE" stroke="#0B376D" stroke-width="15"/>
+<circle cx="210" cy="249" r="20" fill="#00B9E8"/>
+<circle cx="550" cy="249" r="20" fill="#00B9E8"/>
+
+<!-- head -->
+<rect x="214" y="83" width="332" height="351" rx="145" fill="url(#metal)" stroke="#082F63" stroke-width="17"/>
+<path d="M258 116C310 79 439 75 502 118L476 170H280L258 116Z" fill="#102F71"/>
+<rect x="244" y="163" width="272" height="180" rx="80" fill="url(#visor)"/>
+
+<!-- eyes -->
+<path d="M296 241C324 218 354 218 380 241C354 267 324 267 296 241Z" fill="#5FEAFF" filter="url(#glow)"/>
+<path d="M409 241C437 218 467 218 493 241C467 267 437 267 409 241Z" fill="#5FEAFF" filter="url(#glow)"/>
+<circle cx="340" cy="242" r="9" fill="white"/>
+<circle cx="453" cy="242" r="9" fill="white"/>
+<path d="M353 310C374 323 399 323 420 310" stroke="#082F63" stroke-width="9" stroke-linecap="round"/>
+
+<!-- neck -->
+<rect x="331" y="409" width="97" height="64" rx="24" fill="#B9CBD9" stroke="#082F63" stroke-width="12"/>
+
+<!-- body -->
+<path d="M245 482C277 445 329 431 380 431C434 431 486 445 516 482C552 526 566 639 558 786H202C194 640 209 525 245 482Z" fill="url(#navy)" stroke="#02142F" stroke-width="14"/>
+<!-- shirt -->
+<path d="M325 447L380 519L435 447L410 431H350L325 447Z" fill="#F8FAFC"/>
+<path d="M380 519L354 579L380 612L406 579L380 519Z" fill="#0B5CAB"/>
+<path d="M380 519L357 475H403L380 519Z" fill="#F36F21"/>
+
+<!-- lapels -->
+<path d="M253 486L329 448L380 519L313 550L253 486Z" fill="#0D3C77"/>
+<path d="M507 486L431 448L380 519L447 550L507 486Z" fill="#0D3C77"/>
+
+<!-- M7 badge -->
+<rect x="438" y="520" width="70" height="42" rx="12" fill="#F8FAFC" stroke="#00B9E8" stroke-width="4"/>
+<text x="473" y="548" text-anchor="middle" fill="#082F63" font-family="Arial, sans-serif" font-size="22" font-style="italic" font-weight="900">M7</text>
+
+<!-- arms -->
+<path d="M250 536C192 582 174 674 207 729C228 763 264 744 277 713L315 619L250 536Z" fill="#0A3368" stroke="#02142F" stroke-width="14"/>
+<path d="M510 536C568 582 586 674 553 729C532 763 496 744 483 713L445 619L510 536Z" fill="#0A3368" stroke="#02142F" stroke-width="14"/>
+
+<!-- hands crossed -->
+<rect x="267" y="619" width="173" height="68" rx="34" transform="rotate(14 267 619)" fill="#DDE9F2" stroke="#082F63" stroke-width="11"/>
+<rect x="319" y="643" width="173" height="68" rx="34" transform="rotate(-14 319 643)" fill="#DDE9F2" stroke="#082F63" stroke-width="11"/>
+
+<!-- legs -->
+<path d="M265 772H365L350 931H238L265 772Z" fill="#041D42" stroke="#02142F" stroke-width="13"/>
+<path d="M395 772H495L522 931H410L395 772Z" fill="#041D42" stroke="#02142F" stroke-width="13"/>
+<!-- shoes -->
+<path d="M236 904H353L370 944C374 955 367 967 355 967H213C197 967 188 949 198 937L236 904Z" fill="#D7E4EF" stroke="#082F63" stroke-width="13"/>
+<path d="M407 904H524L562 937C572 949 563 967 547 967H405C393 967 386 955 390 944L407 904Z" fill="#D7E4EF" stroke="#082F63" stroke-width="13"/>
+<circle cx="280" cy="932" r="12" fill="#00B9E8"/>
+<circle cx="480" cy="932" r="12" fill="#00B9E8"/>
+</svg>

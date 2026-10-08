@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#082f63" />
+  <title>Usuários e Permissões — Intranet Microset</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="usuarios.css" />
+  <link rel="stylesheet" href="brandbook.css" />
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body data-auth="required" data-permission="users.manage">
+  <header class="topbar">
+    <div class="topbar__brand">
+      <button class="icon-button menu-button" id="menuButton" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <a class="brand" href="index.html" aria-label="Microset Intranet">
+        <div class="brand__symbol" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="brand__text"><strong>microset</strong><small>INTRANET • CEM</small></div>
+      </a>
+    </div>
+    <nav class="main-nav" id="mainNav" aria-label="Navegação principal">
+      <a href="index.html">Início</a><a href="cco/checklist-qualidade-cem-v2.2.1.html">CCO</a><a href="clientes.html">Clientes</a><a href="#">Parceiros</a><a href="#">Repetidoras</a><a href="documentacao.html">Documentação</a><a href="#">Operação</a><a href="#">Base de conhecimento</a>
+    </nav>
+    <div class="topbar__actions">
+      <button class="profile-button" id="profileButton"><span class="avatar">MS</span><span class="profile-copy"><strong>Usuário</strong><small>Microset</small></span><svg class="chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></button>
+    </div>
+  </header>
+
+  <main class="users-page">
+    <section class="users-hero">
+      <div>
+        <div class="eyebrow"><span></span> CONTROLE DE ACESSO</div>
+        <h1>Usuários e permissões</h1>
+        <p>Gerencie quem pode consultar, cadastrar ou editar informações na intranet.</p>
+      </div>
+      <button class="primary-action" id="newUserButton"><span class="primary-action__plus">+</span>Novo usuário</button>
+    </section>
+
+    <section class="users-shell">
+      <div class="role-grid" id="roleGrid"></div>
+      <div class="users-toolbar">
+        <div><span class="section-kicker">USUÁRIOS</span><h2>Contas cadastradas</h2></div>
+        <div class="users-search"><span>⌕</span><input id="userSearch" type="search" placeholder="Procurar por nome, usuário ou setor..." /></div>
+      </div>
+      <div class="users-table-wrap">
+        <table class="users-table">
+          <thead><tr><th>Usuário</th><th>Setor</th><th>Nível</th><th>Status</th><th></th></tr></thead>
+          <tbody id="usersTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="userModal" aria-hidden="true">
+    <section class="user-modal" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
+      <div class="user-modal__header"><div><span class="section-kicker" id="userModalKicker">NOVO USUÁRIO</span><h2 id="userModalTitle">Cadastrar usuário</h2></div><button id="closeUserModal" class="modal-close" type="button">×</button></div>
+      <form id="userForm" class="user-form">
+        <input type="hidden" id="userId" />
+        <label><span>Nome</span><input id="userName" required maxlength="80" placeholder="Nome completo" /></label>
+        <label><span>Usuário / e-mail</span><input id="userEmail" type="email" required maxlength="120" placeholder="nome@microset.com.br" /></label>
+        <label><span>Setor</span><input id="userDepartment" required maxlength="60" placeholder="Ex.: Q.A. CCO" /></label>
+        <label><span>Nível de permissão</span><select id="userRole" required><option value="viewer">Consulta</option><option value="editor">Editor</option><option value="admin">Administrador</option></select></label>
+        <label><span>Senha <small id="passwordHint">obrigatória no cadastro</small></span><input id="userPassword" type="password" minlength="6" placeholder="Mínimo de 6 caracteres" /></label>
+        <label class="toggle-row"><span><b>Usuário ativo</b><small>Usuários inativos não conseguem entrar.</small></span><input id="userActive" type="checkbox" checked /></label>
+        <div class="user-form__actions"><button type="button" class="secondary-action" id="cancelUserButton">Cancelar</button><button type="submit" class="primary-action" id="saveUserButton">Salvar usuário</button></div>
+      </form>
+    </section>
+  </div>
+
+
+  <div class="confirm-backdrop" id="userCancelConfirm" aria-hidden="true">
+    <section class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="userCancelTitle">
+      <div class="confirm-dialog__icon">!</div>
+      <h3 id="userCancelTitle">Cancelar edição do usuário?</h3>
+      <p>Os dados preenchidos neste formulário serão descartados.</p>
+      <div class="confirm-dialog__actions">
+        <button type="button" class="secondary-action" id="continueUserEditing">Continuar editando</button>
+        <button type="button" class="danger-action" id="confirmUserCancel">Descartar</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><strong id="toastTitle"></strong><span id="toastText"></span></div>
+  <script src="shared-database.js"></script>
+  <script src="unified-db.js"></script>
+  <script src="data-persistence.js"></script>
+  <script src="auth.js"></script>
+  <script src="usuarios.js"></script>
+  <script src="site-navigation.js"></script>
+</body>
+</html>

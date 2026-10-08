@@ -1,0 +1,36 @@
+CHECKLIST DE QUALIDADE CEM — VERSÃO 2.2.1
+============================================================
+
+COMO ABRIR
+Abra checklist-qualidade-cem-v2.2.1.html no Microsoft Edge ou Google Chrome.
+Os dados deste computador são salvos automaticamente no navegador.
+
+ADMINISTRAÇÃO EM LÂMINAS
+- As perguntas ficam separadas por setor, com apenas uma lâmina visível por vez.
+- Use os indicadores superiores ou os botões "Lâmina anterior" e "Próxima lâmina".
+- Arraste uma pergunta dentro da lâmina para mudar sua posição.
+- Para mover uma pergunta para outro setor, arraste-a até o indicador da lâmina desejada.
+
+HISTÓRICO DETALHADO
+- Clique na linha de um ticket para abrir os detalhes abaixo dela.
+- Serão exibidos os cards de conformidade, conformes, não conformes,
+  não se aplica, parcialmente conforme e pendentes.
+- Os números e as linhas coloridas são animados conforme os resultados.
+- As respostas e observações ficam separadas em lâminas por setor.
+- Use o botão "Carregar" para levar o ticket novamente à área de Avaliação.
+
+BACKUP SIMPLIFICADO
+- Em Administração, clique em "Baixar backup".
+- É gerado somente o arquivo backup-checklist-cem.json.
+- Para restaurar ou mudar de computador, clique em "Carregar backup"
+  e selecione esse arquivo manualmente.
+- Não existem backups automáticos nem a pasta DB Backup.
+
+GOOGLE SHEETS
+Use GoogleAppsScript_Code_v2.2.1.gs conforme as instruções do checklist.
+
+PDF
+Use "Imprimir / Salvar PDF" durante uma avaliação.
+
+ARQUIVOS VISUAIS
+Mantenha logo-CEM-composicaoM7.png e mascote-CEM-qualidade.png na mesma pasta do HTML.

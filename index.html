@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#082f63" />
+  <title>Intranet Microset — POC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="brandbook.css" />
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body data-auth="required">
+  <header class="topbar">
+    <div class="topbar__brand">
+      <button class="icon-button menu-button" id="menuButton" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <a class="brand" href="#" aria-label="Microset Intranet">
+        <div class="brand__symbol" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="brand__text">
+          <strong>microset</strong>
+          <small>INTRANET • CEM</small>
+        </div>
+      </a>
+    </div>
+
+    <nav class="main-nav" id="mainNav" aria-label="Navegação principal">
+      <a href="#" class="active">Início</a>
+      <a href="cco/checklist-qualidade-cem-v2.2.1.html">CCO</a>
+      <a href="clientes.html">Clientes</a>
+      <a href="#quick-access">Parceiros</a>
+      <a href="#quick-access">Repetidoras</a>
+      <a href="documentacao.html">Documentação</a>
+      <a href="#notices">Operação</a>
+      <a href="#knowledge">Base de conhecimento</a>
+    </nav>
+
+    <div class="topbar__actions">
+      <button class="icon-button search-toggle" id="searchToggle" aria-label="Pesquisar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+      </button>
+
+      <button class="icon-button notification-button" id="notificationButton" aria-label="Notificações">
+        <span class="notification-dot"></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+
+      <button class="profile-button" id="profileButton">
+        <span class="avatar">ER</span>
+        <span class="profile-copy">
+          <strong>Everlin Ribeiro</strong>
+          <small>Q.A. CCO</small>
+        </span>
+        <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="search-panel" id="searchPanel" aria-hidden="true">
+    <div class="search-panel__inner">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+      <input id="globalSearch" type="search" placeholder="Pesquisar clientes, procedimentos, escalonamentos..." autocomplete="off" />
+      <kbd>ESC</kbd>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero">
+      <div class="hero__content">
+        <div class="eyebrow"><span></span> Central de Excelência Microset</div>
+        <h1>Informação certa.<br><em>Operação mais forte.</em></h1>
+        <p>
+          Acesse rapidamente clientes, procedimentos, escalonamentos,
+          documentação e informações essenciais para o CCO.
+        </p>
+
+        <div class="hero__search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+          <input id="heroSearch" type="search" placeholder="O que você está procurando?" autocomplete="off" />
+          <button id="heroSearchButton">Buscar</button>
+        </div>
+
+        <div class="hero__meta">
+          <span class="status-pill"><i></i> Sistemas operacionais</span>
+          <span id="dateTime">--</span>
+        </div>
+      </div>
+
+      <div class="hero__visual" aria-label="Mascote M7 da Microset">
+        <div class="mascot-glow"></div>
+        <img src="assets/mascote-m7.png" alt="Mascote M7 Microset" class="mascot">
+        <div class="mascot-message">
+          <span class="mascot-message__icon">M7</span>
+          <div>
+            <strong>Olá! 👋</strong>
+            <small>Encontre procedimentos e informações mais rápido.</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard shell">
+      <div class="section-heading" id="quick-access">
+        <div>
+          <span class="section-kicker">ATALHOS</span>
+          <h2>Acesso rápido</h2>
+        </div>
+        <a href="#" class="text-link">Ver todos <span>→</span></a>
+      </div>
+
+      <div class="quick-grid" id="quickGrid">
+        <a class="quick-card" href="clientes.html" data-search="clientes unidades contratos links inventário">
+          <div class="quick-card__icon blue">
+            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <strong>Clientes</strong>
+            <span>Informações, unidades, links e responsáveis.</span>
+          </div>
+          <span class="quick-card__arrow">→</span>
+        </a>
+
+        <a class="quick-card" href="#" data-search="procedimentos pop fluxos operação regras">
+          <div class="quick-card__icon cyan">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h8M8 9h2"/></svg>
+          </div>
+          <div>
+            <strong>Procedimentos</strong>
+            <span>POPs, fluxos operacionais e regras vigentes.</span>
+          </div>
+          <span class="quick-card__arrow">→</span>
+        </a>
+
+        <a class="quick-card" href="#" data-search="escalonamentos contatos telefone acionamento plantão horários">
+          <div class="quick-card__icon orange">
+            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div>
+            <strong>Escalonamentos</strong>
+            <span>Contatos, horários e ordem de acionamento.</span>
+          </div>
+          <span class="quick-card__arrow">→</span>
+        </a>
+
+        <a class="quick-card" href="#" data-search="base conhecimento documentação manuais artigos solução">
+          <div class="quick-card__icon purple">
+            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5z"/></svg>
+          </div>
+          <div>
+            <strong>Base de conhecimento</strong>
+            <span>Manuais, artigos técnicos e soluções recorrentes.</span>
+          </div>
+          <span class="quick-card__arrow">→</span>
+        </a>
+      </div>
+
+      <div class="content-grid">
+        <section class="panel" id="notices">
+          <div class="panel__heading">
+            <div>
+              <span class="section-kicker">OPERAÇÃO</span>
+              <h2>Avisos importantes</h2>
+            </div>
+            <button class="ghost-button">Todos os avisos</button>
+          </div>
+
+          <div class="notice-list">
+            <article class="notice notice--warning" data-search="procedimento backup dispositivos homologação intranet">
+              <div class="notice__marker">
+                <svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+              </div>
+              <div class="notice__body">
+                <div class="notice__topline">
+                  <span class="badge badge--warning">ATENÇÃO</span>
+                  <time>Hoje</time>
+                </div>
+                <h3>Procedimento de backup de dispositivos</h3>
+                <p>Chamados que exigirem backup devem seguir o fluxo definido entre Intranet, BKP-Dispositivos e Homologação.</p>
+              </div>
+              <button class="notice__open" aria-label="Abrir aviso">→</button>
+            </article>
+
+            <article class="notice notice--info" data-search="intranet atualização escalonamento cliente">
+              <div class="notice__marker">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              </div>
+              <div class="notice__body">
+                <div class="notice__topline">
+                  <span class="badge badge--info">INFORMAÇÃO</span>
+                  <time>23/09</time>
+                </div>
+                <h3>Consulte sempre o escalonamento vigente</h3>
+                <p>A Intranet deve ser a fonte de referência antes de qualquer acionamento operacional.</p>
+              </div>
+              <button class="notice__open" aria-label="Abrir aviso">→</button>
+            </article>
+
+            <article class="notice notice--success" data-search="qualidade qa validação informações revisão">
+              <div class="notice__marker">
+                <svg viewBox="0 0 24 24"><path d="m9 12 2 2 4-4M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"/></svg>
+              </div>
+              <div class="notice__body">
+                <div class="notice__topline">
+                  <span class="badge badge--success">Q.A.</span>
+                  <time>22/09</time>
+                </div>
+                <h3>Validação das informações operacionais</h3>
+                <p>Revise cliente, links, parceiros, procedimentos e responsáveis antes de concluir uma atualização.</p>
+              </div>
+              <button class="notice__open" aria-label="Abrir aviso">→</button>
+            </article>
+          </div>
+        </section>
+
+        <aside class="side-stack">
+          <section class="panel compact-panel">
+            <div class="panel__heading">
+              <div>
+                <span class="section-kicker">MEU DIA</span>
+                <h2>Resumo</h2>
+              </div>
+            </div>
+            <div class="metric-grid">
+              <div class="metric">
+                <span class="metric__value">12</span>
+                <span class="metric__label">Atualizações</span>
+              </div>
+              <div class="metric">
+                <span class="metric__value">03</span>
+                <span class="metric__label">Avisos novos</span>
+              </div>
+              <div class="metric">
+                <span class="metric__value">98%</span>
+                <span class="metric__label">Base revisada</span>
+              </div>
+              <div class="metric">
+                <span class="metric__value">07</span>
+                <span class="metric__label">Pendências</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="help-card" id="knowledge">
+            <div class="help-card__copy">
+              <span class="section-kicker section-kicker--light">CENTRAL DE EXCELÊNCIA</span>
+              <h2>Não encontrou o que precisa?</h2>
+              <p>Consulte a base de conhecimento ou fale com a equipe responsável pela informação.</p>
+              <button>Consultar base <span>→</span></button>
+            </div>
+            <div class="help-card__mark">M7</div>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <strong>Notificações</strong>
+    <span>Você tem 3 novos avisos operacionais.</span>
+  </div>
+
+  <script src="shared-database.js"></script>
+  <script src="unified-db.js"></script>
+  <script src="data-persistence.js"></script>
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
+  <script src="site-navigation.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "version": "v0.122",
+  "source": "Handover fornecido pelo usuário e Intranet CCO pública: http://www.microset.net.br/?p=81712",
+  "client": {"id":"grupo-balbo","name":"Grupo Balbo","units":11,"gn":"Luis Henrique","vip":true},
+  "unitIds": ["balbo-usa-concentrador","balbo-usina-uberaba","balbo-ufra-usina-sao-francisco","balbo-native-guarulhos","balbo-native-fiusa","balbo-barrinha-deposito","balbo-santa-ernestina","balbo-torre-sertaozinho","balbo-barueri-gupe","balbo-cantagalo","balbo-torre-altinopolis"],
+  "excludedDeactivated": ["IMOBILIARIA (4394)","QUIOSQUE NATIVE (28392)"],
+  "dataFile": "grupo-balbo.js",
+  "note": "Dados públicos consolidados sem copiar credenciais. Santa Ernestina foi preservada do cadastro anterior e permanece com validações pendentes."
+}
