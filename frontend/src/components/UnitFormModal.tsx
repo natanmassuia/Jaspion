@@ -376,11 +376,11 @@ export function UnitFormModal({
 
               <div className="sm:col-span-3">
                 <label className="block text-xs font-bold text-micro-navy dark:text-white mb-1.5">
-                  Dependências / Observações Técnicas
+                  Aviso de Integração / Requisitos de Acesso Local
                 </label>
                 <input
                   type="text"
-                  placeholder="Ex: Concentrador de rádio para unidades rurais, gerador próprio..."
+                  placeholder="Ex: Necessita de integração técnica de técnicos, ou Não necessita de integração..."
                   value={dependencies}
                   onChange={e => setDependencies(e.target.value)}
                   className="w-full bg-micro-bg dark:bg-white/5 border border-micro-line dark:border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-micro-ink dark:text-white outline-none focus:ring-2 focus:ring-micro-cyan"

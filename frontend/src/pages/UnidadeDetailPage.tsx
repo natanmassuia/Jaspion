@@ -5,7 +5,8 @@ import {
   ArrowLeft, Radio, Phone, MapPin, Cpu, Camera, Building2, BookOpen, 
   Image as ImageIcon, AlertTriangle, ChevronDown, ChevronRight, 
   Copy, Check, ShieldAlert, Sparkles, ExternalLink, ChevronsUpDown,
-  PhoneCall, MessageSquare, Layers, Clock, Globe, Info, AlertCircle, X, ZoomIn
+  PhoneCall, MessageSquare, Layers, Clock, Globe, Info, AlertCircle, X, ZoomIn,
+  UserCheck, ShieldCheck
 } from 'lucide-react';
 import vipBadge from '../assets/vip-badge.png';
 import m7Lightbulb from '../assets/mascote/m7-lightbulb.png';
@@ -243,6 +244,52 @@ export function UnidadeDetailPage() {
 
   const totalContatosLocais = contatosComerciais.length + contatosPlantao.length + contatosMicroset.length;
 
+  // Determina se a unidade necessita de integração de técnicos para atendimento local
+  const getIntegrationStatus = (u: any) => {
+    if (!u) return { required: false, observation: '' };
+    
+    const deps = (u.dependencies || '').trim();
+    const depsLower = deps.toLowerCase();
+    const idLower = (u.id || '').toLowerCase();
+    const nameLower = (u.name || '').toLowerCase();
+
+    // Se explicitamente indicado no campo
+    if (depsLower.includes('não necessita') || depsLower.includes('nao necessita') || depsLower.includes('dispensa integração')) {
+      return { required: false, observation: deps };
+    }
+    
+    if (depsLower.includes('necessita de integração') || depsLower.includes('necessita integracao') || depsLower.includes('integração')) {
+      return { required: true, observation: deps };
+    }
+
+    // Unidades industriais / usinas / CD que obrigatoriamente exigem integração de técnicos Microset/Parceiro
+    const isIndustrialOrPlant = 
+      idLower.includes('usa') ||
+      idLower.includes('uberaba') ||
+      idLower.includes('ufra') ||
+      idLower.includes('barracao') ||
+      idLower.includes('guarulhos') ||
+      nameLower.includes('usina') ||
+      nameLower.includes('concentrador') ||
+      nameLower.includes('cd guarulhos') ||
+      nameLower.includes('barracão');
+
+    // Unidades comerciais, escritórios remotos, desativadas ou torres não necessitam
+    const isOfficeOrInactive = 
+      idLower.includes('gupe') ||
+      idLower.includes('cantagalo') ||
+      idLower.includes('sede') ||
+      idLower.includes('fiusa') ||
+      idLower.includes('escritorio') ||
+      idLower.includes('torre') ||
+      idLower.includes('imobiliaria') ||
+      idLower.includes('quiosque') ||
+      depsLower.includes('desativada');
+
+    const required = isIndustrialOrPlant && !isOfficeOrInactive;
+    return { required, observation: deps };
+  };
+
   return (
     <div className="space-y-6">
       {/* 1. Breadcrumb & Navegação Superior */}
@@ -456,35 +503,102 @@ export function UnidadeDetailPage() {
             </button>
           </div>
 
-          {/* Card 3: Dependências Técnicas Críticas */}
-          <div className="bg-amber-500/10 dark:bg-amber-400/10 p-4 rounded-2xl border border-amber-500/30 flex items-start justify-between gap-3 shadow-xs group relative">
-            <div className="flex items-start gap-3.5 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
-                <Cpu className="w-5 h-5" />
-              </div>
-              <div className="min-w-0">
-                <span className="text-[10px] uppercase font-black tracking-wider text-amber-700 dark:text-amber-300 block">
-                  Dependências Técnicas Críticas
-                </span>
-                <p className="text-xs font-bold text-micro-navy dark:text-white leading-relaxed mt-1">
-                  {unit.dependencies ? String(unit.dependencies) : 'Nenhuma dependência técnica adicional registrada para esta unidade.'}
-                </p>
-              </div>
-            </div>
+          {/* Card 3: Aviso de Integração / Atendimento Local */}
+          {(() => {
+            const intStatus = getIntegrationStatus(unit);
+            const copyText = intStatus.required
+              ? '• Esta unidade necessita de integração de técnico Microset/Parceiro para atendimento local. Para acessar o sistema de controle de integração de técnicos https://hub.microset.net.br/ • Dúvidas quanto ao tema, questionar no grupo de WhatsApp: INTERNOM7-CCO/Integração M7-Fornecedores'
+              : `• Esta unidade não necessita de integração de técnico Microset/Parceiro para atendimento local.${intStatus.observation ? ` (Obs: ${intStatus.observation})` : ''}`;
 
-            <button
-              type="button"
-              onClick={() => copyCardText('urgencia-dependencias', unit.dependencies ? String(unit.dependencies) : 'Nenhuma dependência técnica adicional registrada')}
-              className="p-2 rounded-xl text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 border border-transparent hover:border-amber-500/30 transition-all shrink-0 cursor-pointer shadow-xs"
-              title="Copiar dependências técnicas"
-            >
-              {copiedCardId === 'urgencia-dependencias' ? (
-                <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-scaleIn" />
-              ) : (
-                <Copy className="w-4 h-4" />
-              )}
-            </button>
-          </div>
+            return (
+              <div className={`p-4 rounded-2xl border flex items-start justify-between gap-3 shadow-xs group relative transition-all ${
+                intStatus.required
+                  ? 'bg-amber-500/10 dark:bg-amber-400/10 border-amber-500/30'
+                  : 'bg-emerald-500/10 dark:bg-emerald-500/5 border-emerald-500/20'
+              }`}>
+                <div className="flex items-start gap-3.5 min-w-0">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
+                    intStatus.required
+                      ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
+                      : 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                  }`}>
+                    {intStatus.required ? (
+                      <ShieldCheck className="w-5 h-5" />
+                    ) : (
+                      <UserCheck className="w-5 h-5" />
+                    )}
+                  </div>
+                  <div className="min-w-0 space-y-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className={`text-[10px] uppercase font-black tracking-wider ${
+                        intStatus.required ? 'text-amber-700 dark:text-amber-300' : 'text-emerald-700 dark:text-emerald-400'
+                      }`}>
+                        Aviso de Integração
+                      </span>
+                      <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${
+                        intStatus.required
+                          ? 'bg-amber-500/20 text-amber-800 dark:text-amber-200 border border-amber-500/30'
+                          : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25'
+                      }`}>
+                        {intStatus.required ? '⚠️ Integração Obrigatória' : '✓ Não Necessita de Integração'}
+                      </span>
+                    </div>
+
+                    {intStatus.required ? (
+                      <div className="text-xs text-micro-navy dark:text-white leading-relaxed space-y-1 font-medium">
+                        <p>
+                          • Esta unidade necessita de integração de técnico Microset/Parceiro para atendimento local. Para acessar o sistema de controle de integração de técnicos{' '}
+                          <a 
+                            href="https://hub.microset.net.br/" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-0.5 font-bold text-micro-cyan hover:underline decoration-micro-cyan"
+                          >
+                            <span>clique aqui</span>
+                            <ExternalLink className="w-3 h-3 inline" />
+                          </a>.
+                        </p>
+                        <p className="text-[11px] text-micro-muted">
+                          • Dúvidas quanto ao tema, questionar no grupo de WhatsApp:{' '}
+                          <strong className="text-micro-navy dark:text-white font-bold">
+                            INTERNOM7-CCO/Integração M7-Fornecedores
+                          </strong>
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="text-xs text-micro-navy dark:text-white leading-relaxed font-medium">
+                        <p>
+                          • Esta unidade não necessita de integração de técnico Microset/Parceiro para atendimento local.
+                        </p>
+                        {intStatus.observation && (
+                          <p className="text-[11px] text-micro-muted mt-1">
+                            Obs: <span className="italic font-semibold text-micro-navy dark:text-white/80">{intStatus.observation}</span>
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => copyCardText('urgencia-integracao', copyText)}
+                  className={`p-2 rounded-xl transition-all shrink-0 cursor-pointer shadow-xs border ${
+                    intStatus.required
+                      ? 'text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 border-transparent hover:border-amber-500/30'
+                      : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 border-transparent hover:border-emerald-500/30'
+                  }`}
+                  title="Copiar aviso de integração"
+                >
+                  {copiedCardId === 'urgencia-integracao' ? (
+                    <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-scaleIn" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            );
+          })()}
         </div>
       </div>
 
