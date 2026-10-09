@@ -238,7 +238,7 @@ export function ClienteDetailPage() {
                 Cliente Estratégico Agro
               </div>
               <div className="text-[11px] text-micro-muted">
-                11 Unidades (8 operacionais) • Suporte CCO Prioritário
+                {client.units?.length || 0} Unidades ({client.units?.filter((u: any) => u.isActive).length || 0} ativas) • Suporte CCO Prioritário
               </div>
             </div>
           </div>

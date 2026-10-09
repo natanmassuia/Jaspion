@@ -359,6 +359,11 @@ export function UnidadeDetailPage() {
       idLower.includes('cantagalo') ||
       idLower.includes('sede') ||
       idLower.includes('fiusa') ||
+      idLower.includes('escritorio') ||
+      nameLower.includes('escritório') ||
+      nameLower.includes('escritorio') ||
+      nameLower.includes('fiusa') ||
+      nameLower.includes('fiúsa') ||
       idLower.includes('torre') ||
       idLower.includes('imobiliaria') ||
       idLower.includes('quiosque');
@@ -1110,6 +1115,9 @@ export function UnidadeDetailPage() {
                         {(() => {
                           const isAlgar = c.operator?.toLowerCase().includes('algar');
                           const isVivo = c.operator?.toLowerCase().includes('vivo');
+                          const isWcs = c.operator?.toLowerCase().includes('wcs');
+                          const isMicroset = c.operator?.toLowerCase().includes('microset');
+                          const isNicnet = c.operator?.toLowerCase().includes('nicnet') || c.operator?.toLowerCase().includes('client');
                           
                           // Procura se tem procedimento específico no cadastro da unidade
                           const matchingProc = (unit.procedures || []).find((p: any) => {
@@ -1160,7 +1168,43 @@ De posse do número do chamado (protocolo), encaminhar e-mail solicitando apoio 
 - **Cópia Obrigatória:**
   \`relacionamentoempresas.br@vivo.com.br; andre.sandron@telefonica.com; maria.luisa@telefonica.com\``;
 
-                          const displayContent = matchingProc?.content || (isAlgar ? defaultAlgarContent : (isVivo ? defaultVivoContent : null));
+                          const defaultWcsContent = `### Procedimento de Abertura de Chamado — WCS Telecom
+
+> [!NOTE]
+> Em caso de indisponibilidade ou oscilação do enlace MPLS, abrir chamado imediatamente junto ao NOC WCS e registrar o protocolo nos grupos WhatsApp CCO.
+
+#### Contatos & Diretrizes WCS Telecom:
+- **Central NOC 24x7:** (11) 4003-8200
+- **E-mail de Acionamento:** \`suporte@wcstelecom.com.br\` / \`noc@wcstelecom.com.br\`
+- **Contrato Referência:** \`ZZ63504023001\`
+- **CNPJ Titular:** 71.324.792/0001-06 (Usina São Francisco)`;
+
+                          const defaultMicrosetContent = `### Diretriz Operacional de Enlace Interno — Microset Telecom
+
+> [!NOTE]
+> Circuito de transporte de dados via rádio digital / MPLS sob gestão direta do NOC CCO Microset. Antes de qualquer deslocamento, validar telemetria e visada com o monitoramento.
+
+#### Suporte & Escalonamento Microset Telecom:
+- **Central CCO 24x7:** (16) 3946-4000
+- **Plantão Celular / WhatsApp:** (16) 99770-4584
+- **Registro de Ocorrência:** Avisar nos grupos \`GB-MICROSET - NOC - INF\` e \`INT - Balbo CCO\` com data/hora e alarme`;
+
+                          const defaultNicnetContent = `### Procedimento Operacional — Provedor Local / Client / Nicnet
+
+> [!NOTE]
+> Em caso de indisponibilidade da conexão por fibra dedicada ou trânsito IP, acionar a central do provedor munido do ID do circuito.
+
+#### Suporte Técnico:
+- **Central Telefônica NOC:** (16) 3946-8000
+- **Contrato:** Mais Web Provider (CNPJ 28.303.684/0001-10) ou Client Telecom`;
+
+                          const displayContent = matchingProc?.content || (
+                            isAlgar ? defaultAlgarContent : 
+                            isVivo ? defaultVivoContent : 
+                            isWcs ? defaultWcsContent : 
+                            isMicroset ? defaultMicrosetContent : 
+                            isNicnet ? defaultNicnetContent : null
+                          );
                           if (!displayContent) return null;
 
                           return (
@@ -1169,7 +1213,7 @@ De posse do número do chamado (protocolo), encaminhar e-mail solicitando apoio 
                                 <div className="flex items-center gap-2">
                                   <BookOpen className="w-4 h-4 text-micro-cyan" />
                                   <span className="text-xs font-black uppercase tracking-wider text-micro-navy dark:text-white">
-                                    {isAlgar ? 'Escalonamento & Matriz SDM — Algar Telecom' : `Procedimento Operacional — ${c.operator}`}
+                                    {isAlgar ? 'Escalonamento & Matriz SDM — Algar Telecom' : isVivo ? 'Procedimento de Abertura de Chamado — Vivo Empresas' : isWcs ? 'Procedimento de Chamado — WCS Telecom' : isMicroset ? 'Diretriz de Monitoramento — Microset NOC' : `Procedimento Operacional — ${c.operator}`}
                                   </span>
                                 </div>
                                 <button
