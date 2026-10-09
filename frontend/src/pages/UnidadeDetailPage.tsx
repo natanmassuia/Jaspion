@@ -32,23 +32,22 @@ export function UnidadeDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Estados dos Acordeões / Seções Colapsáveis
+  // 1. As seções operacionais sempre iniciam RECOLHIDAS ao abrir a página
   const [openSections, setOpenSections] = useState<{
     circuitos: boolean;
     procedimentos: boolean;
     escalonamentos: boolean;
   }>({
-    circuitos: true,
-    procedimentos: true,
-    escalonamentos: true
+    circuitos: false,
+    procedimentos: false,
+    escalonamentos: false
   });
 
   const [openCircuits, setOpenCircuits] = useState<Record<string, boolean>>({});
   const [openProcedures, setOpenProcedures] = useState<Record<string, boolean>>({});
   const [openEscalations, setOpenEscalations] = useState<Record<string, boolean>>({
-    comercial: true,
-    plantao: true,
-    operadoras: true,
+    comercial: false,
+    plantao: false,
     microset: false
   });
 
@@ -69,13 +68,9 @@ export function UnidadeDetailPage() {
       .then(d => {
         if (d.success) {
           setUnit(d.data);
-          // Abre o primeiro circuito e primeiro procedimento por padrão
-          if (d.data.circuits && d.data.circuits.length > 0) {
-            setOpenCircuits({ [d.data.circuits[0].id]: true });
-          }
-          if (d.data.procedures && d.data.procedures.length > 0) {
-            setOpenProcedures({ [d.data.procedures[0].id || 'proc-0']: true });
-          }
+          // Sempre fechado por padrão ao abrir a página
+          setOpenCircuits({});
+          setOpenProcedures({});
         }
         setLoading(false);
       })
@@ -139,14 +134,14 @@ export function UnidadeDetailPage() {
       unit.procedures.forEach((p: any, i: number) => { allProc[p.id || `proc-${i}`] = true; });
       setOpenProcedures(allProc);
     }
-    setOpenEscalations({ comercial: true, plantao: true, operadoras: true, microset: true });
+    setOpenEscalations({ comercial: true, plantao: true, microset: true });
   };
 
   const collapseAll = () => {
     setOpenSections({ circuitos: false, procedimentos: false, escalonamentos: false });
     setOpenCircuits({});
     setOpenProcedures({});
-    setOpenEscalations({ comercial: false, plantao: false, operadoras: false, microset: false });
+    setOpenEscalations({ comercial: false, plantao: false, microset: false });
   };
 
   const copyCircuitDetails = (c: any) => {
@@ -156,25 +151,69 @@ export function UnidadeDetailPage() {
 
   // Separação inteligente dos contatos por grupos
   const contacts = unit.contacts || [];
+
+  // Função para vincular contatos da operadora diretamente dentro do "balaio" do circuito
+  const getOperatorContactsForCircuit = (operatorName: string) => {
+    const op = (operatorName || '').toLowerCase().trim();
+    const matched = contacts.filter((ct: any) => {
+      const role = (ct.roleDescription || '').toLowerCase();
+      const name = (ct.name || '').toLowerCase();
+      const notes = (ct.notes || '').toLowerCase();
+      if (op.includes('algar') && (role.includes('algar') || role.includes('sdm') || notes.includes('algar'))) return true;
+      if (op.includes('vivo') && (role.includes('vivo') || notes.includes('vivo'))) return true;
+      if (op.includes('claro') && (role.includes('claro') || notes.includes('claro'))) return true;
+      if (op.includes('nicnet') && (role.includes('nicnet') || notes.includes('nicnet'))) return true;
+      if (op.includes('client') && (role.includes('client') || notes.includes('client'))) return true;
+      return role.includes(op) || name.includes(op);
+    });
+
+    if (matched.length === 0 && op.includes('algar')) {
+      return [
+        {
+          id: 'algar-sdm-diego',
+          name: 'Diego Ribeiro',
+          roleDescription: 'SDM Algar Telecom — Gerente de Atendimento Exclusivo',
+          phone: '(34) 99880-0382',
+          mobile: '(34) 99880-0382',
+          whatsapp: '34998800382',
+          schedule: 'Seg a Sex (08:00 às 18:00)'
+        },
+        {
+          id: 'algar-suporte-0800',
+          name: 'Central de Suporte Algar Telecom',
+          roleDescription: '0800 942 1212 / Suporte Técnico Corporativo',
+          phone: '0800 942 1212',
+          mobile: null,
+          whatsapp: null,
+          schedule: 'Plantão 24x7 NOC Operadora'
+        }
+      ];
+    }
+
+    return matched;
+  };
+
+  // Na aba de Escalonamentos da Unidade, NÃO misturamos operadoras; apenas contatos locais e governança
   const contatosComerciais = contacts.filter((ct: any) => 
     !ct.schedule?.toLowerCase().includes('plantão') && 
     !ct.schedule?.toLowerCase().includes('fora') &&
     !ct.roleDescription?.toLowerCase().includes('algar') &&
+    !ct.roleDescription?.toLowerCase().includes('sdm') &&
+    !ct.roleDescription?.toLowerCase().includes('vivo') &&
+    !ct.roleDescription?.toLowerCase().includes('claro') &&
+    !ct.roleDescription?.toLowerCase().includes('nicnet') &&
     !ct.roleDescription?.toLowerCase().includes('gn microset') &&
     !ct.roleDescription?.toLowerCase().includes('escalonamento interno')
   );
 
   const contatosPlantao = contacts.filter((ct: any) => 
-    ct.schedule?.toLowerCase().includes('plantão') || 
-    ct.schedule?.toLowerCase().includes('fora') ||
-    ct.roleDescription?.toLowerCase().includes('plantão')
-  );
-
-  const contatosOperadoras = contacts.filter((ct: any) => 
-    ct.roleDescription?.toLowerCase().includes('algar') ||
-    ct.roleDescription?.toLowerCase().includes('sdm') ||
-    ct.roleDescription?.toLowerCase().includes('vivo') ||
-    ct.roleDescription?.toLowerCase().includes('claro')
+    (ct.schedule?.toLowerCase().includes('plantão') || 
+     ct.schedule?.toLowerCase().includes('fora') ||
+     ct.roleDescription?.toLowerCase().includes('plantão')) &&
+    !ct.roleDescription?.toLowerCase().includes('algar') &&
+    !ct.roleDescription?.toLowerCase().includes('sdm') &&
+    !ct.roleDescription?.toLowerCase().includes('vivo') &&
+    !ct.roleDescription?.toLowerCase().includes('claro')
   );
 
   const contatosMicroset = contacts.filter((ct: any) => 
@@ -182,6 +221,8 @@ export function UnidadeDetailPage() {
     ct.roleDescription?.toLowerCase().includes('escalonamento interno') ||
     ct.roleDescription?.toLowerCase().includes('cco')
   );
+
+  const totalContatosLocais = contatosComerciais.length + contatosPlantao.length + contatosMicroset.length;
 
   return (
     <div className="space-y-6">
@@ -302,7 +343,7 @@ export function UnidadeDetailPage() {
             </div>
           </div>
 
-          {/* Destaque Direita: Selo VIP em Evidência */}
+          {/* Destaque Direita: Selo VIP em Evidência (Sem o robô, liberando espaço) */}
           {unit.clientIsVip && (
             <div className="flex items-center space-x-3.5 bg-gradient-to-br from-amber-500/15 via-yellow-500/10 to-amber-500/5 dark:from-amber-400/20 dark:to-yellow-500/10 px-4 py-3 rounded-2xl border-2 border-amber-400/60 shadow-md shrink-0">
               <img 
@@ -326,7 +367,7 @@ export function UnidadeDetailPage() {
           )}
         </div>
 
-        {/* 2.1. INFORMAÇÕES DE URGÊNCIA CCO NO CABEÇALHO (Endereço, Horários, Dependências) COM BOTÕES DE CÓPIA */}
+        {/* 3.1. INFORMAÇÕES DE URGÊNCIA CCO NO CABEÇALHO (Endereço, Horários, Dependências) COM BOTÕES DE CÓPIA */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-micro-line/60 dark:border-white/10">
           {/* Card 1: Endereço Completo */}
           <div className="bg-micro-bg/80 dark:bg-white/5 p-4 rounded-2xl border border-micro-line dark:border-white/10 flex items-start justify-between gap-3 shadow-xs group relative">
@@ -448,7 +489,7 @@ export function UnidadeDetailPage() {
         </div>
       </div>
 
-      {/* 3. Imagem Grandona da Unidade (Hero Banner como estava antes) */}
+      {/* 4. Imagem Grandona da Unidade (Hero Banner) */}
       {effectiveImage ? (
         <div className="bg-white dark:bg-micro-navy rounded-3xl overflow-hidden border border-micro-line dark:border-white/10 shadow-xl relative group">
           <div className="relative h-64 sm:h-80 md:h-96 w-full bg-slate-900">
@@ -513,7 +554,7 @@ export function UnidadeDetailPage() {
           <span>•</span>
           <span>{unit.procedures?.length || 0} procedimentos POP</span>
           <span>•</span>
-          <span>{contacts.length} contatos</span>
+          <span>{totalContatosLocais} contatos locais</span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -533,7 +574,7 @@ export function UnidadeDetailPage() {
       </div>
 
       {/* =========================================================================
-          SEÇÃO 1: CIRCUITOS & CONECTIVIDADE (BARRAS AZUIS ESTILO INTRANET CCO)
+          SEÇÃO 1: CIRCUITOS & CONECTIVIDADE (COM ESCALONAMENTO DA OPERADORA NO MESMO BALAIO)
           ========================================================================= */}
       <div className="rounded-3xl border border-micro-line dark:border-white/10 overflow-hidden shadow-sm bg-white dark:bg-micro-navy">
         {/* Barra de Título Principal da Seção */}
@@ -576,6 +617,7 @@ export function UnidadeDetailPage() {
                 const isOpen = openCircuits[c.id];
                 const isPrimary = c.isPrimary;
                 const isCopied = copiedCardId === `circuit-${c.id}`;
+                const operatorContacts = getOperatorContactsForCircuit(c.operator);
 
                 return (
                   <div 
@@ -612,6 +654,11 @@ export function UnidadeDetailPage() {
                             }`}>
                               {isPrimary ? '★ Principal' : 'Contingência'}
                             </span>
+                            {operatorContacts.length > 0 && (
+                              <span className="text-[10px] bg-purple-500/15 text-purple-600 dark:text-purple-400 font-extrabold px-2 py-0.5 rounded">
+                                {operatorContacts.length} Contato(s) Operadora
+                              </span>
+                            )}
                           </div>
 
                           <div className="flex items-center gap-3 text-xs text-micro-muted mt-1 truncate">
@@ -647,9 +694,10 @@ export function UnidadeDetailPage() {
                       </div>
                     </div>
 
-                    {/* Gaveta Aberta com Detalhes do Circuito */}
+                    {/* Gaveta Aberta com Detalhes do Circuito + ESCALONAMENTO DA OPERADORA NO MESMO BALAIO */}
                     {isOpen && (
                       <div className="p-5 border-t border-micro-line dark:border-white/10 bg-micro-bg/40 dark:bg-black/20 space-y-4 animate-fadeIn">
+                        {/* 1.1. Grid de Parâmetros Técnicos do Circuito */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
                           <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 flex items-start justify-between">
                             <div>
@@ -789,6 +837,81 @@ export function UnidadeDetailPage() {
                             >
                               {copiedCardId === `notes-${c.id}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                             </button>
+                          </div>
+                        )}
+
+                        {/* 1.2. NO MESMO BALAIO: ESCALONAMENTO & CONTATOS DESTA OPERADORA */}
+                        {operatorContacts.length > 0 && (
+                          <div className="pt-3 border-t border-micro-line dark:border-white/10 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <PhoneCall className="w-4 h-4 text-micro-cyan" />
+                                <span className="text-xs font-black uppercase tracking-wider text-micro-navy dark:text-white">
+                                  Escalonamento & Contatos Diretos — {c.operator.toUpperCase()}
+                                </span>
+                                <span className="text-[10px] bg-blue-500/15 text-blue-600 dark:text-blue-400 font-extrabold px-2 py-0.5 rounded">
+                                  {operatorContacts.length} Contato(s) da Operadora
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                              {operatorContacts.map((ct: any) => {
+                                const isCtCopied = copiedCardId === `ct-circ-${c.id}-${ct.id}`;
+                                return (
+                                  <div 
+                                    key={ct.id} 
+                                    className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-blue-500/30 dark:border-white/15 shadow-xs flex flex-col justify-between"
+                                  >
+                                    <div>
+                                      <div className="flex items-start justify-between gap-2">
+                                        <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const info = `[${c.operator.toUpperCase()}] ${ct.name} (${ct.roleDescription}) - Tel: ${ct.phone || ct.mobile || 'N/A'}`;
+                                            copyCardText(`ct-circ-${c.id}-${ct.id}`, info);
+                                          }}
+                                          className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
+                                          title="Copiar contato operadora"
+                                        >
+                                          {isCtCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                                        </button>
+                                      </div>
+                                      <div className="text-[11px] text-micro-cyan font-bold mt-0.5">{ct.roleDescription}</div>
+                                      {(ct.phone || ct.mobile) && (
+                                        <div className="mt-2 text-xs font-mono font-bold text-micro-navy dark:text-white">
+                                          {ct.phone || ct.mobile}
+                                        </div>
+                                      )}
+                                      {ct.schedule && (
+                                        <div className="text-[10px] text-micro-muted mt-1">
+                                          Janela: {ct.schedule}
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    <div className="mt-3 pt-2 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
+                                      {ct.phone ? (
+                                        <a href={`tel:${ct.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
+                                          <PhoneCall className="w-3 h-3" /> Ligar
+                                        </a>
+                                      ) : <span />}
+                                      {(ct.whatsapp || ct.mobile) && (
+                                        <a 
+                                          href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
+                                          target="_blank" 
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                                        >
+                                          <MessageSquare className="w-3 h-3" /> WhatsApp
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -931,7 +1054,8 @@ export function UnidadeDetailPage() {
       </div>
 
       {/* =========================================================================
-          SEÇÃO 3: ESCALONAMENTOS & CONTATOS DE EMERGÊNCIA
+          SEÇÃO 3: ESCALONAMENTOS & CONTATOS LOCAIS DA UNIDADE
+          (Operadoras agora estão diretamente dentro de cada circuito na Seção 1)
           ========================================================================= */}
       <div className="rounded-3xl border border-micro-line dark:border-white/10 overflow-hidden shadow-sm bg-white dark:bg-micro-navy">
         {/* Barra de Título da Seção */}
@@ -945,10 +1069,10 @@ export function UnidadeDetailPage() {
             </div>
             <div>
               <div className="text-[10px] uppercase font-black tracking-widest text-blue-200">
-                Matriz de Comunicação & Acionamento
+                Matriz de Comunicação Local & Governança
               </div>
               <h2 className="text-base sm:text-lg font-black tracking-tight">
-                ESCALONAMENTOS & CONTATOS OPERACIONAIS ({contacts.length})
+                ESCALONAMENTOS & CONTATOS LOCAIS DA UNIDADE ({totalContatosLocais})
               </h2>
             </div>
           </div>
@@ -962,10 +1086,18 @@ export function UnidadeDetailPage() {
           </div>
         </div>
 
-        {/* Conteúdo com Sub-Gavetas (Horário Comercial, Plantão, SDM, Microset) */}
+        {/* Conteúdo com Sub-Gavetas (Horário Comercial Local, Plantão Local, Microset) */}
         {openSections.escalonamentos && (
           <div className="p-4 sm:p-6 space-y-4 bg-micro-bg/40 dark:bg-white/[0.02]">
-            {/* 3.1. Sub-seção: Horário Comercial */}
+            {/* Aviso Operacional orientando que operadoras estão no circuito */}
+            <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-micro-navy dark:text-white flex items-center gap-2.5">
+              <Info className="w-4 h-4 text-micro-cyan shrink-0" />
+              <span>
+                <strong>Organização por Circuito:</strong> Os contatos e escalonamentos de operadoras (ex: <strong>Algar Telecom, SDM e Centrais 0800</strong>) estão agrupados diretamente dentro de cada circuito na seção <strong>Circuitos & Conexões de Rede</strong> acima.
+              </span>
+            </div>
+
+            {/* 3.1. Sub-seção: Horário Comercial Local */}
             <div className="rounded-2xl border border-micro-line dark:border-white/10 bg-white dark:bg-micro-navy overflow-hidden">
               <div 
                 onClick={() => toggleEscalation('comercial')}
@@ -979,7 +1111,7 @@ export function UnidadeDetailPage() {
                   </div>
                   <div>
                     <h3 className="text-xs sm:text-sm font-bold text-micro-navy dark:text-white flex items-center gap-2">
-                      <span>ESCALONAMENTO — HORÁRIO COMERCIAL (08:00 às 18:00)</span>
+                      <span>CONTATOS LOCAIS — HORÁRIO COMERCIAL (08:00 às 18:00)</span>
                       <span className="text-[10px] bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-extrabold px-2 py-0.5 rounded">
                         {contatosComerciais.length} Contatos
                       </span>
@@ -991,168 +1123,10 @@ export function UnidadeDetailPage() {
 
               {openEscalations.comercial && (
                 <div className="p-4 border-t border-micro-line dark:border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 bg-micro-bg/30 dark:bg-black/20">
-                  {contatosComerciais.map((ct: any) => {
-                    const isCopied = copiedCardId === `ct-${ct.id}`;
-                    return (
-                      <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 shadow-xs flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const info = `${ct.name} (${ct.roleDescription}) - Tel: ${ct.phone || ct.mobile || ct.whatsapp || 'N/A'}`;
-                                copyCardText(`ct-${ct.id}`, info);
-                              }}
-                              className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
-                              title="Copiar contato"
-                            >
-                              {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                            </button>
-                          </div>
-                          <div className="text-[11px] text-micro-muted mt-0.5">{ct.roleDescription}</div>
-                          {ct.phone && (
-                            <div className="mt-2 text-xs font-mono font-bold text-micro-navy dark:text-white">
-                              Fixo: {ct.phone}
-                            </div>
-                          )}
-                          {(ct.mobile || ct.whatsapp) && (
-                            <div className="text-xs font-mono font-bold text-micro-orange">
-                              Cel: {ct.mobile || ct.whatsapp}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
-                          {ct.phone ? (
-                            <a href={`tel:${ct.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
-                              <PhoneCall className="w-3 h-3" /> Ligar
-                            </a>
-                          ) : <span />}
-                          {(ct.whatsapp || ct.mobile) && (
-                            <a 
-                              href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-                            >
-                              <MessageSquare className="w-3 h-3" /> WhatsApp
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* 3.2. Sub-seção: Fora do Horário Comercial / Plantão */}
-            <div className="rounded-2xl border border-micro-line dark:border-white/10 bg-white dark:bg-micro-navy overflow-hidden">
-              <div 
-                onClick={() => toggleEscalation('plantao')}
-                className="p-3.5 sm:p-4 flex items-center justify-between cursor-pointer hover:bg-micro-bg/70 dark:hover:bg-white/5 transition-colors select-none"
-              >
-                <div className="flex items-center space-x-3">
-                  <div className={`w-6 h-6 rounded-md flex items-center justify-center font-mono font-bold text-xs ${
-                    openEscalations.plantao ? 'bg-micro-cyan text-white' : 'bg-micro-bg dark:bg-white/10 text-micro-ink dark:text-white'
-                  }`}>
-                    {openEscalations.plantao ? '−' : '+'}
-                  </div>
-                  <div>
-                    <h3 className="text-xs sm:text-sm font-bold text-micro-navy dark:text-white flex items-center gap-2">
-                      <span>ESCALONAMENTO — FORA DO HORÁRIO COMERCIAL / PLANTÃO 24x7</span>
-                      <span className="text-[10px] bg-amber-500/15 text-amber-600 dark:text-amber-400 font-extrabold px-2 py-0.5 rounded">
-                        {contatosPlantao.length} Contatos de Plantão
-                      </span>
-                    </h3>
-                  </div>
-                </div>
-                {openEscalations.plantao ? <ChevronDown className="w-4 h-4 text-micro-muted" /> : <ChevronRight className="w-4 h-4 text-micro-muted" />}
-              </div>
-
-              {openEscalations.plantao && (
-                <div className="p-4 border-t border-micro-line dark:border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 bg-micro-bg/30 dark:bg-black/20">
-                  {contatosPlantao.map((ct: any) => {
-                    const isCopied = copiedCardId === `ct-${ct.id}`;
-                    return (
-                      <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-amber-500/20 shadow-xs flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const info = `[PLANTÃO 24x7] ${ct.name} (${ct.roleDescription}) - Tel: ${ct.whatsapp || ct.mobile || ct.phone || 'N/A'}`;
-                                copyCardText(`ct-${ct.id}`, info);
-                              }}
-                              className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
-                              title="Copiar contato de plantão"
-                            >
-                              {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                            </button>
-                          </div>
-                          <div className="text-[11px] text-micro-muted mt-0.5">{ct.roleDescription}</div>
-                          {(ct.mobile || ct.whatsapp || ct.phone) && (
-                            <div className="mt-2 text-sm font-mono font-black text-micro-orange">
-                              {ct.whatsapp || ct.mobile || ct.phone}
-                            </div>
-                          )}
-                          <span className="text-[10px] text-micro-muted mt-1 block">Plantão / Fora do Horário Comercial</span>
-                        </div>
-
-                        <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
-                          {ct.phone && (
-                            <a href={`tel:${ct.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
-                              <PhoneCall className="w-3 h-3" /> Ligar
-                            </a>
-                          )}
-                          {(ct.whatsapp || ct.mobile) && (
-                            <a 
-                              href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-                            >
-                              <MessageSquare className="w-3 h-3" /> Enviar WhatsApp
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* 3.3. Sub-seção: Operadoras & SDM */}
-            {contatosOperadoras.length > 0 && (
-              <div className="rounded-2xl border border-micro-line dark:border-white/10 bg-white dark:bg-micro-navy overflow-hidden">
-                <div 
-                  onClick={() => toggleEscalation('operadoras')}
-                  className="p-3.5 sm:p-4 flex items-center justify-between cursor-pointer hover:bg-micro-bg/70 dark:hover:bg-white/5 transition-colors select-none"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-6 h-6 rounded-md flex items-center justify-center font-mono font-bold text-xs ${
-                      openEscalations.operadoras ? 'bg-micro-cyan text-white' : 'bg-micro-bg dark:bg-white/10 text-micro-ink dark:text-white'
-                    }`}>
-                      {openEscalations.operadoras ? '−' : '+'}
-                    </div>
-                    <div>
-                      <h3 className="text-xs sm:text-sm font-bold text-micro-navy dark:text-white flex items-center gap-2">
-                        <span>ESCALONAMENTO OPERADORAS & SDM (ALGAR TELECOM / ATENDIMENTO PREMIUM)</span>
-                        <span className="text-[10px] bg-blue-500/15 text-blue-600 dark:text-blue-400 font-extrabold px-2 py-0.5 rounded">
-                          {contatosOperadoras.length} Contatos
-                        </span>
-                      </h3>
-                    </div>
-                  </div>
-                  {openEscalations.operadoras ? <ChevronDown className="w-4 h-4 text-micro-muted" /> : <ChevronRight className="w-4 h-4 text-micro-muted" />}
-                </div>
-
-                {openEscalations.operadoras && (
-                  <div className="p-4 border-t border-micro-line dark:border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 bg-micro-bg/30 dark:bg-black/20">
-                    {contatosOperadoras.map((ct: any) => {
+                  {contatosComerciais.length === 0 ? (
+                    <div className="p-4 text-xs text-micro-muted col-span-full">Nenhum contato local específico para horário comercial registrado.</div>
+                  ) : (
+                    contatosComerciais.map((ct: any) => {
                       const isCopied = copiedCardId === `ct-${ct.id}`;
                       return (
                         <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 shadow-xs flex flex-col justify-between">
@@ -1162,25 +1136,34 @@ export function UnidadeDetailPage() {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  const info = `[SDM/OPERADORA] ${ct.name} (${ct.roleDescription}) - Tel: ${ct.phone || ct.mobile || 'N/A'}`;
+                                  const info = `${ct.name} (${ct.roleDescription}) - Tel: ${ct.phone || ct.mobile || ct.whatsapp || 'N/A'}`;
                                   copyCardText(`ct-${ct.id}`, info);
                                 }}
                                 className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
-                                title="Copiar contato operadora"
+                                title="Copiar contato"
                               >
                                 {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                               </button>
                             </div>
-                            <div className="text-[11px] text-micro-cyan font-bold mt-0.5">{ct.roleDescription}</div>
-                            <div className="mt-2 text-xs font-mono font-bold text-micro-navy dark:text-white">
-                              {ct.phone || ct.mobile}
-                            </div>
+                            <div className="text-[11px] text-micro-muted mt-0.5">{ct.roleDescription}</div>
+                            {ct.phone && (
+                              <div className="mt-2 text-xs font-mono font-bold text-micro-navy dark:text-white">
+                                Fixo: {ct.phone}
+                              </div>
+                            )}
+                            {(ct.mobile || ct.whatsapp) && (
+                              <div className="text-xs font-mono font-bold text-micro-orange">
+                                Cel: {ct.mobile || ct.whatsapp}
+                              </div>
+                            )}
                           </div>
 
                           <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
-                            <a href={`tel:${(ct.mobile || ct.phone || '').replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
-                              <PhoneCall className="w-3 h-3" /> Ligar
-                            </a>
+                            {ct.phone ? (
+                              <a href={`tel:${ct.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
+                                <PhoneCall className="w-3 h-3" /> Ligar
+                              </a>
+                            ) : <span />}
                             {(ct.whatsapp || ct.mobile) && (
                               <a 
                                 href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
@@ -1194,13 +1177,95 @@ export function UnidadeDetailPage() {
                           </div>
                         </div>
                       );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
+                    })
+                  )}
+                </div>
+              )}
+            </div>
 
-            {/* 3.4. Sub-seção: Governança Interna Microset CCO */}
+            {/* 3.2. Sub-seção: Fora do Horário Comercial / Plantão Local */}
+            <div className="rounded-2xl border border-micro-line dark:border-white/10 bg-white dark:bg-micro-navy overflow-hidden">
+              <div 
+                onClick={() => toggleEscalation('plantao')}
+                className="p-3.5 sm:p-4 flex items-center justify-between cursor-pointer hover:bg-micro-bg/70 dark:hover:bg-white/5 transition-colors select-none"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className={`w-6 h-6 rounded-md flex items-center justify-center font-mono font-bold text-xs ${
+                    openEscalations.plantao ? 'bg-micro-cyan text-white' : 'bg-micro-bg dark:bg-white/10 text-micro-ink dark:text-white'
+                  }`}>
+                    {openEscalations.plantao ? '−' : '+'}
+                  </div>
+                  <div>
+                    <h3 className="text-xs sm:text-sm font-bold text-micro-navy dark:text-white flex items-center gap-2">
+                      <span>CONTATOS LOCAIS — FORA DO HORÁRIO COMERCIAL / PLANTÃO LOCAL</span>
+                      <span className="text-[10px] bg-amber-500/15 text-amber-600 dark:text-amber-400 font-extrabold px-2 py-0.5 rounded">
+                        {contatosPlantao.length} Contatos de Plantão
+                      </span>
+                    </h3>
+                  </div>
+                </div>
+                {openEscalations.plantao ? <ChevronDown className="w-4 h-4 text-micro-muted" /> : <ChevronRight className="w-4 h-4 text-micro-muted" />}
+              </div>
+
+              {openEscalations.plantao && (
+                <div className="p-4 border-t border-micro-line dark:border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 bg-micro-bg/30 dark:bg-black/20">
+                  {contatosPlantao.length === 0 ? (
+                    <div className="p-4 text-xs text-micro-muted col-span-full">Nenhum plantão local específico registrado para esta unidade.</div>
+                  ) : (
+                    contatosPlantao.map((ct: any) => {
+                      const isCopied = copiedCardId === `ct-${ct.id}`;
+                      return (
+                        <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-amber-500/20 shadow-xs flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const info = `[PLANTÃO LOCAL] ${ct.name} (${ct.roleDescription}) - Tel: ${ct.whatsapp || ct.mobile || ct.phone || 'N/A'}`;
+                                  copyCardText(`ct-${ct.id}`, info);
+                                }}
+                                className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
+                                title="Copiar contato de plantão"
+                              >
+                                {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                              </button>
+                            </div>
+                            <div className="text-[11px] text-micro-muted mt-0.5">{ct.roleDescription}</div>
+                            {(ct.mobile || ct.whatsapp || ct.phone) && (
+                              <div className="mt-2 text-sm font-mono font-black text-micro-orange">
+                                {ct.whatsapp || ct.mobile || ct.phone}
+                              </div>
+                            )}
+                            <span className="text-[10px] text-micro-muted mt-1 block">Plantão Local da Unidade</span>
+                          </div>
+
+                          <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
+                            {ct.phone && (
+                              <a href={`tel:${ct.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
+                                <PhoneCall className="w-3 h-3" /> Ligar
+                              </a>
+                            )}
+                            {(ct.whatsapp || ct.mobile) && (
+                              <a 
+                                href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                              >
+                                <MessageSquare className="w-3 h-3" /> Enviar WhatsApp
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* 3.3. Sub-seção: Governança Interna Microset CCO */}
             {contatosMicroset.length > 0 && (
               <div className="rounded-2xl border border-micro-line dark:border-white/10 bg-white dark:bg-micro-navy overflow-hidden">
                 <div 
@@ -1288,7 +1353,7 @@ export function UnidadeDetailPage() {
               <span className="bg-micro-cyan/15 text-micro-cyan text-[10px] font-black px-2 py-0.5 rounded-full">CCO N1</span>
             </div>
             <p className="text-xs text-micro-muted mt-1 leading-relaxed">
-              Consulte sempre o <strong>endereço, horário de atendimento e dependências técnicas no cabeçalho</strong> antes de acionar técnicos em campo. Em caso de abertura de chamado, utilize o botão <strong>"Copiar"</strong> presente em qualquer card da página para obter todos os designadores, contatos e dados formatados.
+              Consulte sempre o <strong>endereço, horário de atendimento e dependências técnicas no cabeçalho</strong> antes de acionar técnicos em campo. Ao investigar falha em circuito (ex: <strong>Algar</strong>), expanda o circuito para acessar diretamente o <strong>ID, Contrato, IP e o Escalonamento da Operadora no mesmo local</strong>.
             </p>
           </div>
         </div>
