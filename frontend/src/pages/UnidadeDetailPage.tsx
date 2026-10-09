@@ -19,11 +19,14 @@ const UNIT_IMAGES: Record<string, { image: string; label: string }> = {
   'balbo-ufra-usina-sao-francisco': { image: '/assets/balbo-ufra.jpg', label: 'Foto oficial — Native / Grupo Balbo (UFRA)' },
   'balbo-native-guarulhos': { image: '/assets/balbo-guarulhos-illustrative.png', label: 'Registro fotográfico operacional — CD Guarulhos' },
   'balbo-native-fiusa': { image: '/assets/balbo-fiusa-illustrative.png', label: 'Registro fotográfico operacional — Escritório Fiúsa' },
+  'balbo-usina-sao-francisco-escritorio': { image: '/assets/balbo-fiusa-illustrative.png', label: 'Registro fotográfico operacional — Escritório Fiúsa' },
   'balbo-barrinha-deposito': { image: '/assets/balbo-barrinha-illustrative.png', label: 'Registro fotográfico operacional — Depósito Barrinha' },
+  'balbo-usina-sao-francisco-barracao': { image: '/assets/balbo-barrinha-illustrative.png', label: 'Registro fotográfico operacional — Barracão Barrinha' },
   'balbo-santa-ernestina': { image: '/assets/balbo-santa-ernestina-illustrative.png', label: 'Registro fotográfico operacional — Santa Ernestina' },
   'balbo-torre-sertaozinho': { image: '/assets/balbo-torre-sertaozinho-illustrative.png', label: 'Registro fotográfico operacional — Torre Sertãozinho' },
   'balbo-barueri-gupe': { image: '/assets/balbo-guarulhos-illustrative.png', label: 'Registro fotográfico operacional — Barueri GUPE' },
   'balbo-cantagalo': { image: '/assets/balbo-fiusa-illustrative.png', label: 'Registro fotográfico operacional — Cantagalo' },
+  'balbo-sao-paulo-sede': { image: '/assets/balbo-fiusa-illustrative.png', label: 'Registro fotográfico operacional — São Paulo Sede' },
   'balbo-torre-altinopolis': { image: '/assets/balbo-torre-sertaozinho-illustrative.png', label: 'Registro fotográfico operacional — Torre Altinópolis' }
 };
 
@@ -247,6 +250,34 @@ export function UnidadeDetailPage() {
       ];
     }
 
+    if (matched.length === 0 && op.includes('microset')) {
+      return [
+        {
+          id: 'microset-suporte-cco',
+          name: 'NOC / Central CCO Microset',
+          roleDescription: 'Central 24x7 CCO Microset Telecomunicações',
+          phone: '(16) 3946-4000',
+          mobile: '(16) 99770-4584',
+          whatsapp: '16997704584',
+          schedule: 'Plantão 24x7 NOC Microset'
+        }
+      ];
+    }
+
+    if (matched.length === 0 && (op.includes('nicnet') || op.includes('client'))) {
+      return [
+        {
+          id: 'nicnet-suporte-noc',
+          name: 'Suporte Corporativo Nicnet / Client Telecom',
+          roleDescription: 'NOC Provedor de Trânsito & Acesso',
+          phone: '(16) 3946-8000',
+          mobile: null,
+          whatsapp: null,
+          schedule: 'Plantão 24x7 NOC Operadora'
+        }
+      ];
+    }
+
     return matched;
   };
 
@@ -287,7 +318,7 @@ export function UnidadeDetailPage() {
     const cat = (p.category || '').toLowerCase();
     const content = (p.content || '').toLowerCase();
     if (id.includes('algar') || cat === 'escalonamento' || content.includes('algar telecom')) return false;
-    if (id === 'proc_gupe_vivo' || (content.includes('chamado - vivo') && content.includes('10315'))) return false;
+    if (id.includes('vivo') || (content.includes('chamado') && content.includes('10315'))) return false;
     return true;
   });
 
@@ -1104,7 +1135,32 @@ export function UnidadeDetailPage() {
 | **Gerente Regional** | **Francisco Aguila** | (16) 99965-0501 | francisco@algartelecom.com.br |
 | **Central Algar NOC** | **Plantão 24x7** | 10312 / 0800 942 1212 | — |`;
 
-                          const displayContent = matchingProc?.content || (isAlgar ? defaultAlgarContent : null);
+                          const defaultVivoContent = `### Procedimento Oficial de Abertura de Chamado - VIVO
+
+> [!IMPORTANT]
+> 1º Sempre copiar o cliente quanto aos protocolos de abertura de chamados e vice-versa, para acompanhamentos e reforços de conclusão do problema, até a definitiva solução.  
+> 2º Informar para a GN Pós-Vendas, Sra. Maria Luisa, o número de telefone de contato técnico para eventual chamado de proatividade por parte da Vivo.
+
+#### Abertura de Chamado pela Central Telefônica Vivo:
+*(Abertura de chamado pode demorar de 1 até 24 horas)*
+1. Ligar para **10315**
+2. Selecionar **Opção 2**
+3. Selecionar **Opção 2**
+4. Digitar o CNPJ contratante: **71.324.792/0001-06** (Usina São Francisco S/A) ou **71.324.784/0001-51** (Usina Santo Antônio)
+5. Seguir orientações da URA.
+
+De posse do número do chamado (protocolo), encaminhar e-mail solicitando apoio para:
+- \`andre.sandron@telefonica.com\`
+- \`maria.luisa@telefonica.com\`
+
+---
+
+#### Abertura de Chamado por E-mail:
+- **E-mail Principal:** \`atendimentoempresas@vivo.com.br\`
+- **Cópia Obrigatória:**
+  \`relacionamentoempresas.br@vivo.com.br; andre.sandron@telefonica.com; maria.luisa@telefonica.com\``;
+
+                          const displayContent = matchingProc?.content || (isAlgar ? defaultAlgarContent : (isVivo ? defaultVivoContent : null));
                           if (!displayContent) return null;
 
                           return (

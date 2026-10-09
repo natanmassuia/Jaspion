@@ -12,11 +12,14 @@ const UNIT_IMAGES: Record<string, { image: string; label: string }> = {
   'balbo-ufra-usina-sao-francisco': { image: '/assets/balbo-ufra.jpg', label: 'Foto oficial' },
   'balbo-native-guarulhos': { image: '/assets/balbo-guarulhos-illustrative.png', label: 'Ilustrativa' },
   'balbo-native-fiusa': { image: '/assets/balbo-fiusa-illustrative.png', label: 'Ilustrativa' },
+  'balbo-usina-sao-francisco-escritorio': { image: '/assets/balbo-fiusa-illustrative.png', label: 'Ilustrativa' },
   'balbo-barrinha-deposito': { image: '/assets/balbo-barrinha-illustrative.png', label: 'Ilustrativa' },
+  'balbo-usina-sao-francisco-barracao': { image: '/assets/balbo-barrinha-illustrative.png', label: 'Ilustrativa' },
   'balbo-santa-ernestina': { image: '/assets/balbo-santa-ernestina-illustrative.png', label: 'Ilustrativa' },
   'balbo-torre-sertaozinho': { image: '/assets/balbo-torre-sertaozinho-illustrative.png', label: 'Ilustrativa' },
   'balbo-barueri-gupe': { image: '/assets/balbo-guarulhos-illustrative.png', label: 'Ilustrativa' },
   'balbo-cantagalo': { image: '/assets/balbo-fiusa-illustrative.png', label: 'Ilustrativa' },
+  'balbo-sao-paulo-sede': { image: '/assets/balbo-fiusa-illustrative.png', label: 'Ilustrativa' },
   'balbo-torre-altinopolis': { image: '/assets/balbo-torre-sertaozinho-illustrative.png', label: 'Ilustrativa' }
 };
 
