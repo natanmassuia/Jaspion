@@ -1,7 +1,7 @@
 import { apiFetch } from '../services/api';
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Building, MapPin, ChevronRight, ArrowLeft, BookOpen, Camera, Image as ImageIcon, Plus, CheckCircle2, Sparkles } from 'lucide-react';
+import { Building, MapPin, ChevronRight, ArrowLeft, BookOpen, Camera, Image as ImageIcon, Plus, CheckCircle2, Sparkles, X, ZoomIn } from 'lucide-react';
 import vipBadge from '../assets/vip-badge.png';
 import { ImageUploadModal } from '../components/ImageUploadModal';
 import { UnitFormModal } from '../components/UnitFormModal';
@@ -47,6 +47,26 @@ export function ClienteDetailPage() {
   // Modal de Cadastro de Unidade
   const [isCreateUnitModalOpen, setIsCreateUnitModalOpen] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+
+  // Estado do Modal de Preview / Lightbox de Imagem
+  const [previewImage, setPreviewImage] = useState<{ src: string; label?: string } | null>(null);
+
+  // Fechar Preview de Imagem ao pressionar tecla ESC
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setPreviewImage(null);
+      }
+    };
+    if (previewImage) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [previewImage]);
 
   const loadClient = () => {
     setLoading(true);
@@ -135,10 +155,13 @@ export function ClienteDetailPage() {
       </div>
 
       {/* Header do Cliente com Logo e Dados */}
-      <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-start space-x-4">
+      <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="flex items-start space-x-4 min-w-0">
           <div className="relative group shrink-0">
-            <div className="w-16 h-16 rounded-2xl bg-micro-blue/10 dark:bg-white/10 flex items-center justify-center text-micro-cyan overflow-hidden border border-micro-line dark:border-white/10">
+            <div 
+              onClick={() => client.imageUrl && setPreviewImage({ src: client.imageUrl, label: `Logomarca Oficial — ${client.name}` })}
+              className={`w-16 h-16 rounded-2xl bg-micro-blue/10 dark:bg-white/10 flex items-center justify-center text-micro-cyan overflow-hidden border border-micro-line dark:border-white/10 ${client.imageUrl ? 'cursor-zoom-in' : ''}`}
+            >
               {client.imageUrl ? (
                 <img src={client.imageUrl} alt={client.name} className="w-full h-full object-cover" />
               ) : (
@@ -154,22 +177,17 @@ export function ClienteDetailPage() {
                 subtitle: client.name,
                 currentImageUrl: client.imageUrl
               })}
-              className="absolute -bottom-1 -right-1 bg-micro-navy text-white p-1.5 rounded-full border border-white/20 shadow-md hover:bg-micro-cyan transition-colors"
+              className="absolute -bottom-1 -right-1 bg-micro-navy text-white p-1.5 rounded-full border border-white/20 shadow-md hover:bg-micro-cyan transition-colors cursor-pointer"
               title="Alterar foto / logomarca"
             >
               <Camera className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-micro-navy dark:text-white">
-                {client.name}
-              </h1>
-              {client.isVip && (
-                <img src={vipBadge} alt="VIP" className="h-6 w-auto" title="Cliente VIP" />
-              )}
-            </div>
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-micro-navy dark:text-white truncate">
+              {client.name}
+            </h1>
             <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-micro-muted">
               <span>{client.economicGroup || 'Sem grupo associado'}</span>
               <span>•</span>
@@ -179,6 +197,33 @@ export function ClienteDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Centro / Destaque: Selo VIP em Evidência na mesma caixa amarela das unidades */}
+        {client.isVip && (
+          <div 
+            onClick={() => setPreviewImage({ src: vipBadge, label: `Selo Oficial de Contrato VIP — ${client.name}` })}
+            className="flex items-center space-x-3.5 bg-gradient-to-br from-amber-500/15 via-yellow-500/10 to-amber-500/5 dark:from-amber-400/20 dark:to-yellow-500/10 px-5 py-3 rounded-2xl border-2 border-amber-400/60 shadow-md shrink-0 cursor-zoom-in hover:brightness-105 transition-all group"
+            title="Clique para visualizar o selo VIP ampliado"
+          >
+            <img 
+              src={vipBadge} 
+              alt="VIP" 
+              className="w-12 h-12 object-contain drop-shadow-md group-hover:scale-105 transition-transform" 
+            />
+            <div>
+              <div className="flex items-center space-x-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                  CONTRATO VIP CCO
+                </span>
+              </div>
+              <div className="text-[11px] font-bold text-micro-navy dark:text-white leading-tight mt-0.5">
+                Atendimento Prioritário
+              </div>
+              <div className="text-[10px] text-micro-muted font-medium">SLA N1 Especial CCO</div>
+            </div>
+          </div>
+        )}
 
         {isBalbo && (
           <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl flex items-center space-x-3 shrink-0">
@@ -252,6 +297,17 @@ export function ClienteDetailPage() {
                       alt={u.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPreviewImage({ src: unitImage, label: `${u.name} — ${unitLabel}` });
+                      }}
+                      className="absolute top-3 left-3 bg-black/60 hover:bg-black/85 text-white p-1.5 rounded-xl backdrop-blur-sm transition-all shadow-md hover:scale-105 z-10 cursor-pointer"
+                      title="Visualizar imagem ampliada"
+                    >
+                      <ZoomIn className="w-3.5 h-3.5" />
+                    </button>
                     <div className="absolute top-3 right-3">
                       <span className={`text-[10px] font-black px-2.5 py-1 rounded-full shadow-md ${
                         u.isActive ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-300'
@@ -377,6 +433,38 @@ export function ClienteDetailPage() {
         defaultClientId={client.id}
         defaultClientName={client.name}
       />
+
+      {/* Lightbox / Modal de Preview de Imagens Ampliadas */}
+      {previewImage && (
+        <div 
+          onClick={() => setPreviewImage(null)}
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-fadeIn cursor-zoom-out"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()} 
+            className="relative max-w-4xl max-h-[90vh] bg-micro-navy border border-white/20 rounded-3xl p-3 sm:p-5 shadow-2xl flex flex-col items-center cursor-default"
+          >
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="absolute -top-3 -right-3 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition-transform hover:scale-110 cursor-pointer"
+              title="Fechar (ESC)"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <img 
+              src={previewImage.src} 
+              alt={previewImage.label || 'Visualização Ampliada'} 
+              className="max-h-[75vh] w-auto max-w-full rounded-2xl object-contain shadow-md"
+            />
+            {previewImage.label && (
+              <div className="mt-3 text-center text-xs font-bold text-white/90 bg-white/10 px-4 py-1.5 rounded-xl border border-white/15">
+                {previewImage.label}
+              </div>
+            )}
+            <span className="text-[10px] text-micro-muted mt-2">Pressione ESC ou clique fora da imagem para fechar</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
