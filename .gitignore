@@ -1,22 +1,18 @@
-# Operating System Files
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
-*.stackdump
-Desktop.ini
-$RECYCLE.BIN/
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# IDE / Editor Files
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
-
-# Logs and temp files
+node_modules/
+dist/
+build/
+.cache/
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+.env
 *.log
-*.tmp
-*.bak
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+
+.vite/
+frontend/.vite/

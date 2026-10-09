@@ -1,0 +1,1 @@
+{"root":["./src/main.tsx","./src/vite-env.d.ts","./src/app/app.tsx","./src/hooks/usetheme.ts","./src/layouts/applayout.tsx","./src/pages/checklistcempage.tsx","./src/pages/clientedetailpage.tsx","./src/pages/clienteslistpage.tsx","./src/pages/dashboardpage.tsx","./src/pages/unidadedetailpage.tsx"],"version":"5.9.3"}

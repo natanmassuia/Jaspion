@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --micro-navy: #2E2D4D;
+  --micro-blue: #3A3B7D;
+  --micro-cyan: #5F6EC3;
+  --micro-orange: #EF7F22;
+  --micro-yellow: #FABE49;
+  --micro-ink: #2E2D4D;
+  --micro-muted: #6F7488;
+  --micro-bg: #F7F7FB;
+  --micro-line: #E2E3EE;
+  --white: #FFFFFF;
+}
+
+[data-theme="dark"] {
+  --micro-navy: #1D222C;
+  --micro-blue: #252B36;
+  --micro-cyan: #8F9BE0;
+  --micro-orange: #EF7F22;
+  --micro-yellow: #FABE49;
+  --micro-ink: rgba(255, 255, 255, 0.90);
+  --micro-muted: rgba(255, 255, 255, 0.65);
+  --micro-bg: #12151C;
+  --micro-line: #39414E;
+  --white: #1D222C;
+}
+
+body {
+  font-family: 'Ubuntu', sans-serif;
+  background-color: var(--micro-bg);
+  color: var(--micro-ink);
+  min-height: 100vh;
+}
+
+/* Microset Tricolor Topbar Line */
+.microset-tricolor-line {
+  height: 4px;
+  background: linear-gradient(90deg, #5F6EC3 0% 58%, #EF7F22 58% 79%, #FABE49 79% 100%);
+}
