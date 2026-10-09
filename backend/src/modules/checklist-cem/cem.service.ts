@@ -2,6 +2,68 @@ import { sqliteClient } from '../../database/connection.js';
 import { calculateCemScore } from '@jaspion/shared';
 
 export class CemService {
+  async ensureDraftStorage() {
+    await sqliteClient.execute(`CREATE TABLE IF NOT EXISTS cem_drafts (
+      evaluator_id TEXT PRIMARY KEY,
+      ticket_protocol TEXT NOT NULL,
+      evaluation_date TEXT NOT NULL,
+      current_block_index INTEGER NOT NULL DEFAULT 0,
+      answers_json TEXT NOT NULL DEFAULT '[]',
+      updated_at TEXT NOT NULL
+    )`);
+  }
+
+  async getDraft() {
+    const result = await sqliteClient.execute({
+      sql: 'SELECT * FROM cem_drafts WHERE evaluator_id = ?',
+      args: ['usr_admin']
+    });
+    const draft = result.rows[0];
+    if (!draft) return null;
+    const storedDraft = JSON.parse(String(draft.answers_json || '[]'));
+    return {
+      ticketProtocol: draft.ticket_protocol,
+      evaluationDate: draft.evaluation_date,
+      currentBlockIndex: Number(draft.current_block_index || 0),
+      answers: Array.isArray(storedDraft) ? storedDraft : storedDraft.answers || [],
+      editingEvaluationId: Array.isArray(storedDraft) ? null : storedDraft.editingEvaluationId || null,
+      updatedAt: draft.updated_at
+    };
+  }
+
+  async saveDraft(input: any) {
+    const now = new Date().toISOString();
+    await sqliteClient.execute({
+      sql: `INSERT INTO cem_drafts (evaluator_id, ticket_protocol, evaluation_date, current_block_index, answers_json, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(evaluator_id) DO UPDATE SET
+              ticket_protocol = excluded.ticket_protocol,
+              evaluation_date = excluded.evaluation_date,
+              current_block_index = excluded.current_block_index,
+              answers_json = excluded.answers_json,
+              updated_at = excluded.updated_at`,
+      args: [
+        'usr_admin',
+        input.ticketProtocol,
+        input.evaluationDate,
+        Number(input.currentBlockIndex || 0),
+        JSON.stringify({
+          answers: input.answers || [],
+          editingEvaluationId: input.editingEvaluationId || null
+        }),
+        now
+      ]
+    });
+    return { updatedAt: now };
+  }
+
+  async clearDraft() {
+    await sqliteClient.execute({
+      sql: 'DELETE FROM cem_drafts WHERE evaluator_id = ?',
+      args: ['usr_admin']
+    });
+  }
+
   private mapEvaluation(r: any) {
     return {
       id: r.id,

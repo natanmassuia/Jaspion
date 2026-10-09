@@ -1,6 +1,6 @@
 import { apiFetch } from '../services/api';
 import { useState, useEffect } from 'react';
-import { CheckSquare, CheckCircle, XCircle, AlertTriangle, MinusCircle, Send, History, Award, AlertCircle, Pencil, X } from 'lucide-react';
+import { CheckSquare, CheckCircle, XCircle, AlertTriangle, MinusCircle, Send, History, Award, AlertCircle, Pencil, X, ChevronRight } from 'lucide-react';
 import { calculateCemScore } from '@jaspion/shared';
 import cemLogoOfficial from '../assets/brand/cem-logo-official.png';
 import microsetLogoPositive from '../assets/microset-logo-positive.png';
@@ -58,12 +58,14 @@ export function ChecklistCemPage() {
   const [activeBlockIndex, setActiveBlockIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [answerObservations, setAnswerObservations] = useState<Record<string, string>>({});
+  const [openObservations, setOpenObservations] = useState<Record<string, boolean>>({});
   const [ticketProtocol, setTicketProtocol] = useState('');
   const [evaluationDate, setEvaluationDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [evaluationNotes, setEvaluationNotes] = useState('');
   const [evaluations, setEvaluations] = useState<any[]>([]);
   const [viewTab, setViewTab] = useState<'formulario' | 'historico'>('historico');
   const [saving, setSaving] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
   const [editingEvaluationId, setEditingEvaluationId] = useState<string | null>(null);
   const [loadingEvaluationId, setLoadingEvaluationId] = useState<string | null>(null);
 
@@ -79,10 +81,28 @@ export function ChecklistCemPage() {
       });
 
     loadEvaluations();
+
+    apiFetch('/api/checklist-cem/draft')
+      .then(response => response.json())
+      .then(result => {
+        if (!result.success || !result.data) return;
+        const draftAnswers = result.data.answers || [];
+        setTicketProtocol(result.data.ticketProtocol || '');
+        setEvaluationDate(result.data.evaluationDate || new Date().toISOString().slice(0, 10));
+        setActiveBlockIndex(Number(result.data.currentBlockIndex || 0));
+        setEditingEvaluationId(result.data.editingEvaluationId || null);
+        setAnswers(Object.fromEntries(draftAnswers.map((answer: any) => [answer.questionId, answer.answer])));
+        setAnswerObservations(Object.fromEntries(draftAnswers.map((answer: any) => [answer.questionId, answer.observation || ''])));
+        setOpenObservations(Object.fromEntries(draftAnswers.filter((answer: any) => answer.observation).map((answer: any) => [answer.questionId, true])));
+      });
   }, []);
 
   const handleAnswer = (questionId: string, value: string) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
+  };
+
+  const handleObservation = (questionId: string, value: string) => {
+    setAnswerObservations(previous => ({ ...previous, [questionId]: value }));
   };
 
   const currentBlock = blocks[activeBlockIndex];
@@ -116,6 +136,7 @@ export function ChecklistCemPage() {
     setTicketProtocol('');
     setAnswers({});
     setAnswerObservations({});
+    setOpenObservations({});
     setEvaluationDate(new Date().toISOString().slice(0, 10));
     setEvaluationNotes('');
     setActiveBlockIndex(0);
@@ -132,6 +153,7 @@ export function ChecklistCemPage() {
       setTicketProtocol(data.data.ticketProtocol || '');
       setAnswers(Object.fromEntries((data.data.answers || []).map((answer: any) => [answer.questionId, answer.answer])));
       setAnswerObservations(Object.fromEntries((data.data.answers || []).map((answer: any) => [answer.questionId, answer.observation || ''])));
+      setOpenObservations(Object.fromEntries((data.data.answers || []).filter((answer: any) => answer.observation).map((answer: any) => [answer.questionId, true])));
       setEvaluationDate(data.data.evaluationDate || new Date().toISOString().slice(0, 10));
       setEvaluationNotes(data.data.notes || '');
       setActiveBlockIndex(0);
@@ -167,11 +189,39 @@ export function ChecklistCemPage() {
       if (data.success) {
         alert(`${editingEvaluationId ? 'Ticket atualizado' : 'Checklist gravado'} com sucesso! Pontuação final: ${data.data.score}%`);
         await loadEvaluations();
+        await apiFetch('/api/checklist-cem/draft', { method: 'DELETE' });
         cancelEditing();
-        setViewTab('historico');
+        setViewTab('formulario');
       }
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleNextBlock = async () => {
+    if (!ticketProtocol.trim()) {
+      alert('Informe o número do chamado antes de avançar.');
+      return;
+    }
+
+    const nextBlockIndex = Math.min(activeBlockIndex + 1, Math.max(0, blocks.length - 1));
+    setSavingDraft(true);
+    try {
+      const response = await apiFetch('/api/checklist-cem/draft', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ticketProtocol,
+          evaluationDate,
+          currentBlockIndex: nextBlockIndex,
+          editingEvaluationId,
+          answers: allAnswerList
+        })
+      });
+      const result = await response.json();
+      if (result.success) setActiveBlockIndex(nextBlockIndex);
+    } finally {
+      setSavingDraft(false);
     }
   };
 
@@ -337,21 +387,24 @@ export function ChecklistCemPage() {
             </article>
           </section>
 
-          {/* Navegador de Lâminas (7 Blocos) */}
+          {/* Navegador das áreas da avaliação */}
           <div className="flex space-x-2 overflow-x-auto pb-2">
-            {blocks.map((b, i) => (
-              <button
-                key={b.id}
-                onClick={() => setActiveBlockIndex(i)}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                  activeBlockIndex === i
-                    ? 'bg-micro-cyan text-white shadow-md'
-                    : 'bg-white dark:bg-micro-navy text-micro-muted border border-micro-line dark:border-white/10 hover:border-micro-cyan'
-                }`}
-              >
-                Lâmina {i + 1}: {b.name} ({b.questions?.length})
-              </button>
-            ))}
+            {blocks.map((b, i) => {
+              const answeredInBlock = (b.questions || []).filter((question: any) => answers[question.id]).length;
+              return (
+                <button
+                  key={b.id}
+                  onClick={() => setActiveBlockIndex(i)}
+                  className={`px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                    activeBlockIndex === i
+                      ? 'bg-micro-cyan text-white shadow-md'
+                      : 'bg-white dark:bg-micro-navy text-micro-muted border border-micro-line dark:border-white/10 hover:border-micro-cyan'
+                  }`}
+                >
+                  {b.name} ({answeredInBlock}/{b.questions?.length || 0})
+                </button>
+              );
+            })}
           </div>
 
           {/* Perguntas da Lâmina Atual */}
@@ -362,10 +415,10 @@ export function ChecklistCemPage() {
                   <h2 className="text-lg font-bold text-micro-navy dark:text-white">
                     {currentBlock.name}
                   </h2>
-                  <p className="text-xs text-micro-muted">{currentBlock.questions?.length} questões nesta lâmina setorial</p>
+                  <p className="text-xs text-micro-muted">{currentBlock.questions?.length} itens nesta área de avaliação</p>
                 </div>
                 <span className="text-xs font-bold text-micro-cyan bg-micro-cyan/10 px-3 py-1 rounded-full">
-                  Lâmina {activeBlockIndex + 1} de {blocks.length}
+                  Área {activeBlockIndex + 1} de {blocks.length}
                 </span>
               </div>
 
@@ -373,67 +426,55 @@ export function ChecklistCemPage() {
                 {currentBlock.questions?.map((q: any, qi: number) => {
                   const sel = answers[q.id];
                   return (
-                    <div key={q.id} className="p-4 rounded-2xl bg-micro-bg dark:bg-white/5 border border-micro-line/70 dark:border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-micro-cyan/40 transition-colors">
-                      <div className="text-xs font-medium text-micro-navy dark:text-white max-w-2xl leading-relaxed">
-                        <span className="font-bold text-micro-cyan mr-2">Q{qi + 1}.</span>
-                        {q.text}
+                    <div key={q.id} className={`cem-question-card ${sel ? `answer-${sel}` : ''}`}>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="text-xs font-medium text-micro-navy dark:text-white max-w-2xl leading-relaxed">
+                          <span className="font-bold text-micro-cyan mr-2">Item {qi + 1}.</span>
+                          {q.text}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 shrink-0">
+                          <button type="button" onClick={() => handleAnswer(q.id, 'conforme')} className={`cem-answer-button answer-conforme ${sel === 'conforme' ? 'is-selected' : ''}`}>Conforme</button>
+                          <button type="button" onClick={() => handleAnswer(q.id, 'nao-conforme')} className={`cem-answer-button answer-nao-conforme ${sel === 'nao-conforme' ? 'is-selected' : ''}`}>Não conforme</button>
+                          <button type="button" onClick={() => handleAnswer(q.id, 'parcialmente-conforme')} className={`cem-answer-button answer-parcialmente-conforme ${sel === 'parcialmente-conforme' ? 'is-selected' : ''}`}>Parcialmente conforme</button>
+                          <button type="button" onClick={() => handleAnswer(q.id, 'na')} className={`cem-answer-button answer-na ${sel === 'na' ? 'is-selected' : ''}`}>Não se aplica</button>
+                        </div>
                       </div>
 
-                      <div className="flex items-center space-x-1.5 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => handleAnswer(q.id, 'conforme')}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                            sel === 'conforme' ? 'bg-green-600 text-white shadow-sm scale-105' : 'bg-white dark:bg-white/10 text-green-700 hover:bg-green-50'
-                          }`}
-                        >
-                          Conforme
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleAnswer(q.id, 'nao-conforme')}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                            sel === 'nao-conforme' ? 'bg-red-600 text-white shadow-sm scale-105' : 'bg-white dark:bg-white/10 text-red-700 hover:bg-red-50'
-                          }`}
-                        >
-                          Não Conf.
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleAnswer(q.id, 'parcialmente-conforme')}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                            sel === 'parcialmente-conforme' ? 'bg-yellow-500 text-white shadow-sm scale-105' : 'bg-white dark:bg-white/10 text-yellow-700 hover:bg-yellow-50'
-                          }`}
-                        >
-                          Parcial
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleAnswer(q.id, 'na')}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                            sel === 'na' ? 'bg-gray-500 text-white shadow-sm scale-105' : 'bg-white dark:bg-white/10 text-gray-600 hover:bg-gray-100'
-                          }`}
-                        >
-                          N/A
-                        </button>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setOpenObservations(previous => ({ ...previous, [q.id]: !previous[q.id] }))}
+                        className="mt-3 text-[11px] font-bold text-micro-cyan hover:underline"
+                        aria-expanded={Boolean(openObservations[q.id])}
+                      >
+                        {openObservations[q.id] ? '− Ocultar observação' : '+ Observação'}
+                      </button>
+                      {openObservations[q.id] && (
+                        <textarea
+                          value={answerObservations[q.id] || ''}
+                          onChange={event => handleObservation(q.id, event.target.value)}
+                          placeholder="Observação opcional sobre este item"
+                          rows={3}
+                          className="mt-3 w-full resize-y rounded-xl border border-micro-line bg-white px-4 py-3 text-xs text-micro-ink outline-none focus:border-micro-cyan focus:ring-2 focus:ring-micro-cyan/20 dark:bg-white/5 dark:text-white dark:border-white/10"
+                        />
+                      )}
                     </div>
                   );
                 })}
               </div>
 
-              {/* Botão Finalizar */}
+              {/* Navegação e persistência da avaliação */}
               <div className="pt-6 border-t border-micro-line dark:border-white/10 flex items-center justify-between">
                 <div className="text-xs text-micro-muted">
-                  Respondidas: <strong className="text-micro-navy dark:text-white">{allAnswerList.length}</strong> de {totalQuestions}
+                  Respondidas nesta área: <strong className="text-micro-navy dark:text-white">{(currentBlock.questions || []).filter((question: any) => answers[question.id]).length}</strong> de {currentBlock.questions?.length || 0}
                 </div>
                 <button
-                  onClick={handleSubmit}
-                  disabled={saving}
+                  onClick={activeBlockIndex === blocks.length - 1 ? handleSubmit : handleNextBlock}
+                  disabled={saving || savingDraft}
                   className="bg-micro-orange hover:bg-micro-orange/90 text-white font-bold text-sm px-6 py-3 rounded-xl shadow-lg flex items-center space-x-2 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>{saving ? 'Salvando...' : editingEvaluationId ? 'Atualizar Ticket Avaliado' : 'Gravar Avaliação CEM'}</span>
+                  {activeBlockIndex === blocks.length - 1 ? <Send className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                  <span>{saving || savingDraft ? 'Salvando...' : activeBlockIndex === blocks.length - 1 ? 'Finalizar avaliação do Ticket' : 'Próxima'}</span>
                 </button>
               </div>
             </div>
