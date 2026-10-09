@@ -201,11 +201,48 @@ export function UnidadeDetailPage() {
         {
           id: 'algar-suporte-0800',
           name: 'Central de Suporte Algar Telecom',
-          roleDescription: '0800 942 1212 / Suporte Técnico Corporativo',
-          phone: '0800 942 1212',
+          roleDescription: '10312 / 0800 942 1212 - Suporte Corporativo Algar',
+          phone: '10312',
           mobile: null,
           whatsapp: null,
           schedule: 'Plantão 24x7 NOC Operadora'
+        }
+      ];
+    }
+
+    if (matched.length === 0 && op.includes('wcs')) {
+      return [
+        {
+          id: 'wcs-suporte-noc',
+          name: 'Suporte Técnico WCS Telecom',
+          roleDescription: 'Central de Operações de Rede WCS Telecom (MPLS)',
+          phone: '(11) 4003-8200',
+          mobile: null,
+          whatsapp: null,
+          schedule: 'Plantão 24x7 NOC Operadora'
+        }
+      ];
+    }
+
+    if (matched.length === 0 && op.includes('vivo')) {
+      return [
+        {
+          id: 'vivo-central-10315',
+          name: 'Central Telefônica Vivo Empresas',
+          roleDescription: '10315 (Opção 2 -> 2) - CNPJ 71.324.792/0001-06',
+          phone: '10315',
+          mobile: null,
+          whatsapp: null,
+          schedule: 'Central 24x7 Telefônica'
+        },
+        {
+          id: 'vivo-gn-maria-luisa',
+          name: 'Maria Luisa (GN Pós-Vendas Vivo)',
+          roleDescription: 'maria.luisa@telefonica.com / andre.sandron@telefonica.com',
+          phone: null,
+          mobile: null,
+          whatsapp: null,
+          schedule: 'Seg a Sex (Comercial / E-mail)'
         }
       ];
     }
@@ -246,7 +283,7 @@ export function UnidadeDetailPage() {
 
   // Determina se a unidade necessita de integração de técnicos para atendimento local
   const getIntegrationStatus = (u: any) => {
-    if (!u) return { required: false, observation: '' };
+    if (!u) return { required: false };
     
     const deps = (u.dependencies || '').trim();
     const depsLower = deps.toLowerCase();
@@ -255,39 +292,38 @@ export function UnidadeDetailPage() {
 
     // Se explicitamente indicado no campo
     if (depsLower.includes('não necessita') || depsLower.includes('nao necessita') || depsLower.includes('dispensa integração')) {
-      return { required: false, observation: deps };
+      return { required: false };
     }
     
     if (depsLower.includes('necessita de integração') || depsLower.includes('necessita integracao') || depsLower.includes('integração')) {
-      return { required: true, observation: deps };
+      return { required: true };
     }
 
-    // Unidades industriais / usinas / CD que obrigatoriamente exigem integração de técnicos Microset/Parceiro
+    // Unidades industriais / usinas / CD / Barueri GUPE que obrigatoriamente exigem integração de técnicos Microset/Parceiro
     const isIndustrialOrPlant = 
       idLower.includes('usa') ||
       idLower.includes('uberaba') ||
       idLower.includes('ufra') ||
       idLower.includes('barracao') ||
       idLower.includes('guarulhos') ||
+      idLower.includes('gupe') ||
+      nameLower.includes('gupe') ||
       nameLower.includes('usina') ||
       nameLower.includes('concentrador') ||
       nameLower.includes('cd guarulhos') ||
       nameLower.includes('barracão');
 
-    // Unidades comerciais, escritórios remotos, desativadas ou torres não necessitam
-    const isOfficeOrInactive = 
-      idLower.includes('gupe') ||
+    // Unidades puramente administrativas ou repetidoras sem integração
+    const isOfficeOrTower = 
       idLower.includes('cantagalo') ||
       idLower.includes('sede') ||
       idLower.includes('fiusa') ||
-      idLower.includes('escritorio') ||
       idLower.includes('torre') ||
       idLower.includes('imobiliaria') ||
-      idLower.includes('quiosque') ||
-      depsLower.includes('desativada');
+      idLower.includes('quiosque');
 
-    const required = isIndustrialOrPlant && !isOfficeOrInactive;
-    return { required, observation: deps };
+    const required = isIndustrialOrPlant && !isOfficeOrTower;
+    return { required };
   };
 
   return (
@@ -508,7 +544,7 @@ export function UnidadeDetailPage() {
             const intStatus = getIntegrationStatus(unit);
             const copyText = intStatus.required
               ? '• Esta unidade necessita de integração de técnico Microset/Parceiro para atendimento local. Para acessar o sistema de controle de integração de técnicos https://hub.microset.net.br/ • Dúvidas quanto ao tema, questionar no grupo de WhatsApp: INTERNOM7-CCO/Integração M7-Fornecedores'
-              : `• Esta unidade não necessita de integração de técnico Microset/Parceiro para atendimento local.${intStatus.observation ? ` (Obs: ${intStatus.observation})` : ''}`;
+              : '• Esta unidade não necessita de integração de técnico Microset/Parceiro para atendimento local.';
 
             return (
               <div className={`p-4 rounded-2xl border flex items-start justify-between gap-3 shadow-xs group relative transition-all ${
@@ -564,17 +600,17 @@ export function UnidadeDetailPage() {
                             INTERNOM7-CCO/Integração M7-Fornecedores
                           </strong>
                         </p>
+                        <div className="pt-0.5 flex items-center gap-2">
+                          <span className="text-[10px] font-mono font-semibold text-micro-muted bg-white/60 dark:bg-black/20 px-2 py-0.5 rounded border border-micro-line/50 dark:border-white/10">
+                            Ticket#882005329
+                          </span>
+                        </div>
                       </div>
                     ) : (
                       <div className="text-xs text-micro-navy dark:text-white leading-relaxed font-medium">
                         <p>
                           • Esta unidade não necessita de integração de técnico Microset/Parceiro para atendimento local.
                         </p>
-                        {intStatus.observation && (
-                          <p className="text-[11px] text-micro-muted mt-1">
-                            Obs: <span className="italic font-semibold text-micro-navy dark:text-white/80">{intStatus.observation}</span>
-                          </p>
-                        )}
                       </div>
                     )}
                   </div>
