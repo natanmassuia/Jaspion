@@ -36,6 +36,7 @@ export const clients = sqliteTable('clients', {
   gnName: text('gn_name'),
   sankhyaCode: text('sankhya_code'),
   description: text('description'),
+  imageUrl: text('image_url'),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull()
 });
@@ -54,6 +55,7 @@ export const units = sqliteTable('units', {
   environment: text('environment').default('Produção'),
   dependencies: text('dependencies'),
   isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
+  imageUrl: text('image_url'),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull()
 });

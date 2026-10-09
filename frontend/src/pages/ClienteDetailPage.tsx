@@ -1,10 +1,10 @@
 import { apiFetch } from '../services/api';
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Building, MapPin, ChevronRight, ArrowLeft, ShieldCheck, Sparkles, BookOpen } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Building, MapPin, ChevronRight, ArrowLeft, BookOpen, Camera, Image as ImageIcon, Plus, CheckCircle2, Sparkles } from 'lucide-react';
 import vipBadge from '../assets/vip-badge.png';
-import m7Presenting from '../assets/mascote/m7-presenting.png';
-import m7Lightbulb from '../assets/mascote/m7-lightbulb.png';
+import { ImageUploadModal } from '../components/ImageUploadModal';
+import { UnitFormModal } from '../components/UnitFormModal';
 
 const UNIT_IMAGES: Record<string, { image: string; label: string }> = {
   'balbo-usa-concentrador': { image: '/assets/balbo-usa.jpg', label: 'Foto oficial' },
@@ -22,11 +22,34 @@ const UNIT_IMAGES: Record<string, { image: string; label: string }> = {
 
 export function ClienteDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [client, setClient] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'unidades' | 'procedimentos'>('unidades');
 
-  useEffect(() => {
+  // Modal de Imagem
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    targetType: 'client' | 'unit';
+    targetId: string;
+    title: string;
+    subtitle: string;
+    currentImageUrl?: string | null;
+  }>({
+    isOpen: false,
+    targetType: 'client',
+    targetId: '',
+    title: '',
+    subtitle: '',
+    currentImageUrl: null
+  });
+
+  // Modal de Cadastro de Unidade
+  const [isCreateUnitModalOpen, setIsCreateUnitModalOpen] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const loadClient = () => {
+    setLoading(true);
     apiFetch(`/api/clientes/${id}`)
       .then(r => r.json())
       .then(d => {
@@ -34,13 +57,17 @@ export function ClienteDetailPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadClient();
   }, [id]);
 
   if (loading) {
     return (
       <div className="p-16 text-center text-sm text-micro-muted flex flex-col items-center justify-center gap-3">
         <div className="w-8 h-8 border-3 border-micro-cyan border-t-transparent rounded-full animate-spin"></div>
-        <span>Carregando perfil do cliente...</span>
+        <span>Carregando dados operacionais do cliente...</span>
       </div>
     );
   }
@@ -56,70 +83,151 @@ export function ClienteDetailPage() {
     );
   }
 
-  const isBalbo = client.id === 'balbo' || client.name.toLowerCase().includes('balbo');
+  const isBalbo = client.id === 'grupo-balbo' || client.id === 'balbo' || client.name.toLowerCase().includes('balbo');
+
+  const handleImageUpdated = (newImageUrl: string) => {
+    if (modalConfig.targetType === 'client') {
+      setClient((prev: any) => ({ ...prev, imageUrl: newImageUrl }));
+    } else {
+      setClient((prev: any) => ({
+        ...prev,
+        units: prev.units?.map((u: any) =>
+          u.id === modalConfig.targetId ? { ...u, imageUrl: newImageUrl } : u
+        )
+      }));
+    }
+  };
+
+  const handleUnitCreated = (newUnit: any) => {
+    loadClient();
+    setFeedback(`Unidade "${newUnit.name}" cadastrada com sucesso!`);
+    setTimeout(() => setFeedback(null), 5000);
+  };
 
   return (
     <div className="space-y-6">
-      <Link 
-        to="/clientes" 
-        className="inline-flex items-center text-xs font-bold text-micro-cyan hover:underline bg-white dark:bg-micro-navy px-3 py-1.5 rounded-xl border border-micro-line dark:border-white/10 shadow-sm"
-      >
-        <ArrowLeft className="w-4 h-4 mr-1.5" /> Voltar para Clientes
-      </Link>
-
-      {/* Header do Cliente com Mascote M7 */}
-      <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-start space-x-4">
-          <div className="w-16 h-16 rounded-2xl bg-micro-blue/10 dark:bg-white/10 flex items-center justify-center text-micro-cyan shrink-0">
-            <Building className="w-8 h-8" />
+      {/* Toast Feedback */}
+      {feedback && (
+        <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-2xl text-xs font-bold flex items-center justify-between shadow-sm animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span>{feedback}</span>
           </div>
-          <div>
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-black text-micro-navy dark:text-white">{client.name}</h1>
-              {client.isVip && <img src={vipBadge} alt="VIP" className="h-6 w-auto" />}
-              {isBalbo && (
-                <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-lg bg-emerald-600 text-white shadow-sm flex items-center gap-1">
-                  🌾 Carteira N1 - AGRO
-                </span>
-              )}
-            </div>
-            <p className="text-xs sm:text-sm text-micro-muted mt-1 max-w-2xl leading-relaxed">{client.description}</p>
-          </div>
+          <button onClick={() => setFeedback(null)} className="text-micro-muted hover:text-white">✕</button>
         </div>
+      )}
 
-        <div className="flex flex-wrap md:flex-nowrap items-center gap-3 text-xs">
-          <div className="bg-micro-bg dark:bg-white/5 p-3 rounded-2xl border border-micro-line dark:border-white/10">
-            <span className="text-micro-muted block text-[11px]">Gerente de Negócios:</span>
-            <span className="font-bold text-micro-navy dark:text-white">{client.gnName || 'Não informado'}</span>
-          </div>
-          <div className="bg-micro-bg dark:bg-white/5 p-3 rounded-2xl border border-micro-line dark:border-white/10">
-            <span className="text-micro-muted block text-[11px]">Responsável CCO:</span>
-            <span className="font-bold text-micro-navy dark:text-white">{client.managerName || 'CCO N1'}</span>
-          </div>
-        </div>
+      <div className="flex items-center justify-between">
+        <Link 
+          to="/clientes" 
+          className="inline-flex items-center text-xs font-bold text-micro-cyan hover:underline bg-white dark:bg-micro-navy px-3 py-1.5 rounded-xl border border-micro-line dark:border-white/10 shadow-sm"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5" /> Voltar para Clientes
+        </Link>
+
+        <button
+          onClick={() => setIsCreateUnitModalOpen(true)}
+          className="flex items-center gap-2 bg-gradient-to-r from-micro-blue to-micro-cyan hover:from-micro-cyan hover:to-micro-blue text-white px-4 py-2 rounded-xl text-xs font-extrabold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Cadastrar Nova Unidade</span>
+        </button>
       </div>
 
-      {/* Abas */}
-      <div className="flex space-x-2 border-b border-micro-line dark:border-white/10 pb-2">
+      {/* Header do Cliente com Logo e Dados */}
+      <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-start space-x-4">
+          <div className="relative group shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-micro-blue/10 dark:bg-white/10 flex items-center justify-center text-micro-cyan overflow-hidden border border-micro-line dark:border-white/10">
+              {client.imageUrl ? (
+                <img src={client.imageUrl} alt={client.name} className="w-full h-full object-cover" />
+              ) : (
+                <Building className="w-8 h-8" />
+              )}
+            </div>
+            <button
+              onClick={() => setModalConfig({
+                isOpen: true,
+                targetType: 'client',
+                targetId: client.id,
+                title: 'Logomarca do Cliente',
+                subtitle: client.name,
+                currentImageUrl: client.imageUrl
+              })}
+              className="absolute -bottom-1 -right-1 bg-micro-navy text-white p-1.5 rounded-full border border-white/20 shadow-md hover:bg-micro-cyan transition-colors"
+              title="Alterar foto / logomarca"
+            >
+              <Camera className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-micro-navy dark:text-white">
+                {client.name}
+              </h1>
+              {client.isVip && (
+                <img src={vipBadge} alt="VIP" className="h-6 w-auto" title="Cliente VIP" />
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-micro-muted">
+              <span>{client.economicGroup || 'Sem grupo associado'}</span>
+              <span>•</span>
+              <span>Sankhya: <strong className="text-micro-navy dark:text-white">{client.sankhyaCode || '—'}</strong></span>
+              <span>•</span>
+              <span>Gerente GN: <strong className="text-micro-navy dark:text-white">{client.gnName || 'Não informado'}</strong></span>
+            </div>
+          </div>
+        </div>
+
+        {isBalbo && (
+          <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl flex items-center space-x-3 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-bold text-lg">
+              🌿
+            </div>
+            <div>
+              <div className="text-xs font-black uppercase text-emerald-600 dark:text-emerald-400">
+                Cliente Estratégico Agro
+              </div>
+              <div className="text-[11px] text-micro-muted">
+                11 Unidades (8 operacionais) • Suporte CCO Prioritário
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center justify-between border-b border-micro-line dark:border-white/10 pb-4">
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => setActiveTab('unidades')}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'unidades' 
+                ? 'bg-micro-navy text-white dark:bg-white dark:text-micro-navy shadow-md' 
+                : 'text-micro-muted hover:bg-black/5 dark:hover:bg-white/5'
+            }`}
+          >
+            🏢 Unidades Operacionais ({client.units?.length || 0})
+          </button>
+          <button
+            onClick={() => setActiveTab('procedimentos')}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'procedimentos' 
+                ? 'bg-micro-navy text-white dark:bg-white dark:text-micro-navy shadow-md' 
+                : 'text-micro-muted hover:bg-black/5 dark:hover:bg-white/5'
+            }`}
+          >
+            📋 Procedimentos & Escalonamentos
+          </button>
+        </div>
+
         <button
-          onClick={() => setActiveTab('unidades')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'unidades' 
-              ? 'bg-micro-navy text-white dark:bg-white dark:text-micro-navy shadow-md' 
-              : 'text-micro-muted hover:bg-black/5 dark:hover:bg-white/5'
-          }`}
+          onClick={() => setIsCreateUnitModalOpen(true)}
+          className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-micro-cyan hover:text-micro-blue transition-colors cursor-pointer"
         >
-          🏭 Unidades Operacionais ({client.units?.length || 0})
-        </button>
-        <button
-          onClick={() => setActiveTab('procedimentos')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'procedimentos' 
-              ? 'bg-micro-navy text-white dark:bg-white dark:text-micro-navy shadow-md' 
-              : 'text-micro-muted hover:bg-black/5 dark:hover:bg-white/5'
-          }`}
-        >
-          📖 Procedimentos & Escalonamentos
+          <Plus className="w-4 h-4" />
+          <span>Nova Unidade</span>
         </button>
       </div>
 
@@ -127,17 +235,20 @@ export function ClienteDetailPage() {
       {activeTab === 'unidades' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {client.units?.map((u: any) => {
-            const media = UNIT_IMAGES[u.id];
+            const unitImage = u.imageUrl || UNIT_IMAGES[u.id]?.image || null;
+            const unitLabel = u.imageUrl ? 'Personalizada' : (UNIT_IMAGES[u.id]?.label || 'Oficial');
+
             return (
-              <Link
+              <div
                 key={u.id}
-                to={`/unidades/${u.id}`}
-                className="bg-white dark:bg-micro-navy rounded-3xl overflow-hidden border border-micro-line dark:border-white/10 shadow-sm hover:border-micro-cyan hover:shadow-xl transition-all group flex flex-col justify-between hover:-translate-y-1"
+                onClick={() => navigate(`/unidades/${u.id}`)}
+                className="cursor-pointer bg-white dark:bg-micro-navy rounded-3xl overflow-hidden border border-micro-line dark:border-white/10 shadow-sm hover:border-micro-cyan/60 hover:shadow-xl hover:-translate-y-1 transition-all group flex flex-col justify-between"
               >
-                {media && (
+                {/* Imagem da Unidade (Foto oficial, personalizada ou placeholder com botão) */}
+                {unitImage ? (
                   <div className="relative h-44 w-full bg-slate-900 overflow-hidden">
                     <img
-                      src={media.image}
+                      src={unitImage}
                       alt={u.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -145,22 +256,77 @@ export function ClienteDetailPage() {
                       <span className={`text-[10px] font-black px-2.5 py-1 rounded-full shadow-md ${
                         u.isActive ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-300'
                       }`}>
-                        {u.isActive ? '● Ativa' : 'Desativada'}
+                        {u.isActive ? '✓ Ativa' : 'Desativada'}
                       </span>
                     </div>
                     <div className="absolute bottom-2 left-3 text-[10px] text-white/90 bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-sm">
-                      {media.label}
+                      {unitLabel}
                     </div>
+
+                    {/* Botão de Alterar Imagem */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setModalConfig({
+                          isOpen: true,
+                          targetType: 'unit',
+                          targetId: u.id,
+                          title: `Alterar Imagem da Unidade`,
+                          subtitle: u.name,
+                          currentImageUrl: unitImage
+                        });
+                      }}
+                      className="absolute bottom-2 right-2 bg-black/70 hover:bg-black/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-xl backdrop-blur-sm flex items-center gap-1.5 transition-all shadow-md hover:scale-105 z-10 cursor-pointer"
+                      title="Alterar imagem desta unidade"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>Alterar Foto</span>
+                    </button>
+                  </div>
+                ) : (
+                  /* Placeholder elegante quando unidade ainda não tem foto (ex: Sede SP) */
+                  <div className="relative h-44 w-full bg-slate-800/80 dark:bg-black/40 border-b border-micro-line/50 dark:border-white/5 flex flex-col items-center justify-center p-4 text-center">
+                    <div className="absolute top-3 right-3">
+                      <span className={`text-[10px] font-black px-2.5 py-1 rounded-full shadow-md ${
+                        u.isActive ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-300'
+                      }`}>
+                        {u.isActive ? '✓ Ativa' : 'Desativada'}
+                      </span>
+                    </div>
+                    <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-micro-cyan mb-2 group-hover:scale-110 transition-transform">
+                      <ImageIcon className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-white/90">Sem imagem cadastrada</span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setModalConfig({
+                          isOpen: true,
+                          targetType: 'unit',
+                          targetId: u.id,
+                          title: `Adicionar Imagem da Unidade`,
+                          subtitle: u.name,
+                          currentImageUrl: null
+                        });
+                      }}
+                      className="mt-2.5 bg-micro-cyan hover:bg-micro-cyan/90 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-md transition-all hover:scale-105 cursor-pointer"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>Adicionar Foto</span>
+                    </button>
                   </div>
                 )}
 
+                {/* Conteúdo do Card */}
                 <div className="p-5 flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="font-bold text-sm text-micro-navy dark:text-white group-hover:text-micro-cyan transition-colors">
                       {u.name}
                     </h3>
                     <div className="flex items-center text-xs text-micro-muted mt-1.5">
-                      <MapPin className="w-3.5 h-3.5 mr-1 text-micro-orange" />
+                      <MapPin className="w-3.5 h-3.5 mr-1 text-micro-orange shrink-0" />
                       {u.city}/{u.state}
                     </div>
                   </div>
@@ -170,7 +336,7 @@ export function ClienteDetailPage() {
                     <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>
@@ -179,8 +345,8 @@ export function ClienteDetailPage() {
           <div className="flex items-center space-x-3">
             <BookOpen className="w-6 h-6 text-micro-cyan" />
             <div>
-              <h3 className="text-lg font-bold text-micro-navy dark:text-white">Procedimento Operacional Padronizado</h3>
-              <p className="text-xs text-micro-muted">Diretrizes de atendimento exclusivo para {client.name}.</p>
+              <h3 className="text-lg font-bold text-micro-navy dark:text-white">Procedimentos Operacionais Padronizados</h3>
+              <p className="text-xs text-micro-muted">Diretrizes de telecomunicação, contingência e infraestrutura para {client.name}.</p>
             </div>
           </div>
           {client.procedures?.map((p: any) => (
@@ -190,6 +356,27 @@ export function ClienteDetailPage() {
           ))}
         </div>
       )}
+
+      {/* Modal de Upload de Imagem */}
+      <ImageUploadModal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        subtitle={modalConfig.subtitle}
+        targetType={modalConfig.targetType}
+        targetId={modalConfig.targetId}
+        currentImageUrl={modalConfig.currentImageUrl}
+        onSuccess={handleImageUpdated}
+      />
+
+      {/* Modal de Cadastro de Unidade */}
+      <UnitFormModal
+        isOpen={isCreateUnitModalOpen}
+        onClose={() => setIsCreateUnitModalOpen(false)}
+        onSuccess={handleUnitCreated}
+        defaultClientId={client.id}
+        defaultClientName={client.name}
+      />
     </div>
   );
 }

@@ -1,17 +1,21 @@
 import { apiFetch } from '../services/api';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Building, Shield, ChevronRight, Search, MapPin, Layers, Sparkles } from 'lucide-react';
+import { Building, Shield, ChevronRight, Search, MapPin, Layers, Sparkles, Plus, CheckCircle2 } from 'lucide-react';
 import vipBadge from '../assets/vip-badge.png';
 import m7Presenting from '../assets/mascote/m7-presenting.png';
 import m7Thinking from '../assets/mascote/m7-thinking.png';
+import { ClientFormModal } from '../components/ClientFormModal';
 
 export function ClientesListPage() {
   const [clients, setClients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadClients = () => {
+    setLoading(true);
     apiFetch('/api/clientes')
       .then(r => r.json())
       .then(d => {
@@ -19,7 +23,17 @@ export function ClientesListPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadClients();
   }, []);
+
+  const handleClientCreated = (newClient: any) => {
+    loadClients();
+    setFeedback(`Cliente "${newClient.name}" cadastrado com sucesso!`);
+    setTimeout(() => setFeedback(null), 5000);
+  };
 
   const filtered = clients.filter(c =>
     c.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -29,6 +43,17 @@ export function ClientesListPage() {
 
   return (
     <div className="space-y-6">
+      {/* Toast Feedback */}
+      {feedback && (
+        <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-2xl text-xs font-bold flex items-center justify-between shadow-sm animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span>{feedback}</span>
+          </div>
+          <button onClick={() => setFeedback(null)} className="text-micro-muted hover:text-white">✕</button>
+        </div>
+      )}
+
       {/* Header da Tela com M7 Apresentando */}
       <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
@@ -48,31 +73,43 @@ export function ClientesListPage() {
           </p>
         </div>
 
-        {/* Mascote M7 Apresentando */}
-        <div className="flex items-center space-x-3 bg-micro-bg dark:bg-white/5 p-3 rounded-2xl border border-micro-line dark:border-white/10 shrink-0">
-          <img 
-            src={m7Presenting} 
-            alt="M7 Apresentando" 
-            className="w-16 h-16 object-contain drop-shadow-md transform hover:scale-105 transition-transform" 
-          />
-          <div className="text-left pr-2">
-            <div className="text-xs font-bold text-micro-navy dark:text-white">Catálogo CCO</div>
-            <div className="text-[11px] text-micro-muted">M7 Gestão de Unidades</div>
-            <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">Triagem Prioritária</div>
+        {/* Mascote M7 & Botão Cadastrar */}
+        <div className="flex items-center gap-4 shrink-0">
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-micro-blue to-micro-cyan hover:from-micro-cyan hover:to-micro-blue text-white px-5 py-3 rounded-2xl text-xs font-extrabold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Cadastrar Cliente</span>
+          </button>
+
+          <div className="hidden sm:flex items-center space-x-3 bg-micro-bg dark:bg-white/5 p-3 rounded-2xl border border-micro-line dark:border-white/10 shrink-0">
+            <img 
+              src={m7Presenting} 
+              alt="M7 Apresentando" 
+              className="w-14 h-14 object-contain drop-shadow-md transform hover:scale-105 transition-transform" 
+            />
+            <div className="text-left pr-2">
+              <div className="text-xs font-bold text-micro-navy dark:text-white">Catálogo CCO</div>
+              <div className="text-[11px] text-micro-muted">M7 Gestão de Clientes</div>
+              <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">Cadastro Ativo</div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Busca */}
-      <div className="flex items-center bg-white dark:bg-micro-navy rounded-2xl border border-micro-line dark:border-white/10 px-4 py-3 shadow-sm focus-within:ring-2 focus-within:ring-micro-cyan">
-        <Search className="w-5 h-5 text-micro-muted mr-3" />
-        <input
-          type="text"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Buscar por cliente (ex: Balbo), gerente GN ou código Sankhya..."
-          className="w-full bg-transparent border-0 outline-none text-sm placeholder:text-micro-muted/60 text-micro-ink dark:text-white"
-        />
+      {/* Busca & Ação Rápida */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex-1 flex items-center bg-white dark:bg-micro-navy rounded-2xl border border-micro-line dark:border-white/10 px-4 py-3 shadow-sm focus-within:ring-2 focus-within:ring-micro-cyan">
+          <Search className="w-5 h-5 text-micro-muted mr-3" />
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Buscar por cliente (ex: Balbo), gerente GN ou código Sankhya..."
+            className="w-full bg-transparent border-0 outline-none text-sm placeholder:text-micro-muted/60 text-micro-ink dark:text-white"
+          />
+        </div>
       </div>
 
       {/* Lista de Clientes */}
@@ -86,19 +123,27 @@ export function ClientesListPage() {
           <img src={m7Thinking} alt="M7 Pensativo" className="w-24 h-24 object-contain" />
           <div>
             <h3 className="text-base font-bold text-micro-navy dark:text-white">Nenhum cliente encontrado</h3>
-            <p className="text-xs text-micro-muted mt-1">Verifique o termo de busca digitado ou limpe o filtro.</p>
+            <p className="text-xs text-micro-muted mt-1">Verifique o termo de busca digitado ou cadastre um novo cliente.</p>
           </div>
-          <button 
-            onClick={() => setSearch('')}
-            className="text-xs font-bold text-micro-cyan bg-micro-cyan/10 hover:bg-micro-cyan/20 px-4 py-2 rounded-xl transition-colors"
-          >
-            Limpar Busca
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setSearch('')}
+              className="text-xs font-bold text-micro-cyan bg-micro-cyan/10 hover:bg-micro-cyan/20 px-4 py-2 rounded-xl transition-colors cursor-pointer"
+            >
+              Limpar Busca
+            </button>
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="text-xs font-bold text-white bg-micro-cyan hover:bg-micro-blue px-4 py-2 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" /> Cadastrar Novo Cliente
+            </button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map(c => {
-            const isBalbo = c.id === 'balbo' || c.name.toLowerCase().includes('balbo');
+            const isBalbo = c.id === 'grupo-balbo' || c.id === 'balbo' || c.name.toLowerCase().includes('balbo');
             return (
               <Link
                 key={c.id}
@@ -108,8 +153,12 @@ export function ClientesListPage() {
                 <div>
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center space-x-3.5">
-                      <div className="w-12 h-12 rounded-2xl bg-micro-blue/10 dark:bg-white/10 flex items-center justify-center text-micro-cyan group-hover:scale-110 transition-transform">
-                        <Building className="w-6 h-6" />
+                      <div className="w-12 h-12 rounded-2xl bg-micro-blue/10 dark:bg-white/10 flex items-center justify-center text-micro-cyan group-hover:scale-110 transition-transform overflow-hidden border border-micro-line dark:border-white/10">
+                        {c.imageUrl ? (
+                          <img src={c.imageUrl} alt={c.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <Building className="w-6 h-6" />
+                        )}
                       </div>
                       <div>
                         <h2 className="text-lg font-bold text-micro-navy dark:text-white group-hover:text-micro-cyan transition-colors">
@@ -127,7 +176,7 @@ export function ClientesListPage() {
                   <div className="my-3 flex items-center gap-2">
                     {isBalbo && (
                       <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-lg bg-emerald-600 text-white flex items-center gap-1 shadow-sm">
-                        🌾 Carteira N1 - AGRO
+                        🌿 Carteira N1 - AGRO
                       </span>
                     )}
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-micro-bg dark:bg-white/10 text-micro-muted">
@@ -145,8 +194,10 @@ export function ClientesListPage() {
                       <span className="font-semibold text-micro-navy dark:text-white">{c.gnName || 'Não informado'}</span>
                     </div>
                     <div>
-                      <span className="text-micro-muted block text-[11px]">Unidades Ativas:</span>
-                      <span className="font-bold text-micro-cyan">11 Unidades (8 Operacionais)</span>
+                      <span className="text-micro-muted block text-[11px]">Unidades Vinculadas:</span>
+                      <span className="font-bold text-micro-cyan">
+                        {c.unitsCount ?? 0} {c.unitsCount === 1 ? 'Unidade' : 'Unidades'}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -163,6 +214,13 @@ export function ClientesListPage() {
           })}
         </div>
       )}
+
+      {/* Modal de Cadastro de Cliente */}
+      <ClientFormModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={handleClientCreated}
+      />
     </div>
   );
 }

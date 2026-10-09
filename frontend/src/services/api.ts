@@ -1,4 +1,4 @@
-const API_ORIGIN = import.meta.env.VITE_API_URL || 'http://localhost:6171';
+﻿const API_ORIGIN = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin.replace(':6172', ':6171') : 'http://localhost:6171');
 
 export function apiFetch(endpoint: string, options?: RequestInit): Promise<Response> {
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;

@@ -1,10 +1,11 @@
 import { apiFetch } from '../services/api';
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Radio, Phone, ShieldCheck, MapPin, Cpu, Camera, Clock, Building2, BookOpen, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Radio, Phone, MapPin, Cpu, Camera, Building2, BookOpen, Image as ImageIcon } from 'lucide-react';
 import vipBadge from '../assets/vip-badge.png';
 import m7Confident from '../assets/mascote/m7-confident.png';
 import m7Lightbulb from '../assets/mascote/m7-lightbulb.png';
+import { ImageUploadModal } from '../components/ImageUploadModal';
 
 const UNIT_IMAGES: Record<string, { image: string; label: string }> = {
   'balbo-usa-concentrador': { image: '/assets/balbo-usa.jpg', label: 'Foto oficial — Native / Grupo Balbo (USA)' },
@@ -24,6 +25,7 @@ export function UnidadeDetailPage() {
   const { id } = useParams();
   const [unit, setUnit] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     apiFetch(`/api/unidades/${id}`)
@@ -55,7 +57,14 @@ export function UnidadeDetailPage() {
     );
   }
 
-  const unitMedia = id ? UNIT_IMAGES[id] : null;
+  const effectiveImage = unit.imageUrl || (id ? UNIT_IMAGES[id]?.image : null);
+  const effectiveLabel = unit.imageUrl 
+    ? 'Foto Personalizada da Unidade' 
+    : (id && UNIT_IMAGES[id]?.label ? UNIT_IMAGES[id].label : 'Imagem Operacional');
+
+  const handleImageUpdated = (newImageUrl: string) => {
+    setUnit((prev: any) => ({ ...prev, imageUrl: newImageUrl }));
+  };
 
   return (
     <div className="space-y-6">
@@ -76,7 +85,7 @@ export function UnidadeDetailPage() {
             <span className="text-xs uppercase font-extrabold text-micro-cyan tracking-wider">{unit.clientName}</span>
             {unit.clientIsVip && <img src={vipBadge} alt="VIP" className="h-5 w-auto" />}
             <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-lg bg-emerald-600 text-white shadow-sm">
-              🌾 Carteira N1 - AGRO
+              🌿 Carteira N1 - AGRO
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-micro-navy dark:text-white mt-1">{unit.name}</h1>
@@ -99,17 +108,17 @@ export function UnidadeDetailPage() {
           <div className="text-left pr-2">
             <div className="text-xs font-bold text-micro-navy dark:text-white">Plantão N1</div>
             <div className="text-[11px] text-micro-muted">M7 CCO Telecom</div>
-            <div className="text-[10px] text-micro-success font-bold mt-0.5">● Monitoramento Ativo</div>
+            <div className="text-[10px] text-micro-success font-bold mt-0.5">✓ Monitoramento Ativo</div>
           </div>
         </div>
       </div>
 
-      {/* Lâmina Fotográfica / Imagem Oficial da Unidade */}
-      {unitMedia && (
-        <div className="bg-white dark:bg-micro-navy rounded-3xl overflow-hidden border border-micro-line dark:border-white/10 shadow-lg">
+      {/* Lâmina Fotográfica / Imagem Oficial ou Painel de Upload da Unidade */}
+      {effectiveImage ? (
+        <div className="bg-white dark:bg-micro-navy rounded-3xl overflow-hidden border border-micro-line dark:border-white/10 shadow-lg relative group">
           <div className="relative h-64 sm:h-80 md:h-96 w-full bg-slate-900">
             <img
-              src={unitMedia.image}
+              src={effectiveImage}
               alt={unit.name}
               className="w-full h-full object-cover object-center"
             />
@@ -118,15 +127,42 @@ export function UnidadeDetailPage() {
                 <div className="flex items-center space-x-2">
                   <Camera className="w-4 h-4 text-micro-cyan" />
                   <span className="text-xs sm:text-sm font-semibold tracking-wide drop-shadow">
-                    {unitMedia.label}
+                    {effectiveLabel}
                   </span>
                 </div>
-                <div className="text-xs text-white/80 hidden sm:block font-mono">
-                  {unit.city} — {unit.state}
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-white/80 hidden sm:block font-mono">
+                    {unit.city} — {unit.state}
+                  </span>
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-black/60 hover:bg-black/85 text-white text-xs font-bold px-3 py-1.5 rounded-xl backdrop-blur-sm flex items-center gap-1.5 transition-all shadow-md hover:scale-105"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Alterar Imagem</span>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+      ) : (
+        /* Caso a unidade ainda não tenha foto (ex: Sede SP) */
+        <div className="bg-white dark:bg-micro-navy rounded-3xl p-8 border border-dashed border-micro-line dark:border-white/15 text-center flex flex-col items-center justify-center gap-3 shadow-sm">
+          <div className="w-14 h-14 rounded-2xl bg-micro-cyan/10 text-micro-cyan flex items-center justify-center">
+            <ImageIcon className="w-7 h-7" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-micro-navy dark:text-white">Nenhuma imagem cadastrada para esta unidade</h3>
+            <p className="text-xs text-micro-muted mt-0.5">Envie uma foto de fachada, rack ou dependência para ilustrar o cadastro do CCO.</p>
+          </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="mt-2 bg-micro-cyan hover:bg-micro-cyan/90 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-2 shadow-md transition-all hover:scale-105"
+          >
+            <Camera className="w-4 h-4" />
+            <span>Adicionar Imagem da Unidade</span>
+          </button>
         </div>
       )}
 
@@ -255,6 +291,18 @@ export function UnidadeDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Upload/Edição de Foto da Unidade */}
+      <ImageUploadModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Alterar Imagem da Unidade"
+        subtitle={unit.name}
+        targetType="unit"
+        targetId={unit.id}
+        currentImageUrl={effectiveImage}
+        onSuccess={handleImageUpdated}
+      />
     </div>
   );
 }
