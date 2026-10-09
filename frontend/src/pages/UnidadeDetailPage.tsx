@@ -53,7 +53,16 @@ export function UnidadeDetailPage() {
     microset: false
   });
 
-  const [copiedCircuitId, setCopiedCircuitId] = useState<string | null>(null);
+  // Estado unificado de cópia rápida para QUALQUER card da página
+  const [copiedCardId, setCopiedCardId] = useState<string | null>(null);
+
+  const copyCardText = (cardId: string, textToCopy: string) => {
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedCardId(cardId);
+    setTimeout(() => {
+      setCopiedCardId((prev) => (prev === cardId ? null : prev));
+    }, 2500);
+  };
 
   useEffect(() => {
     apiFetch(`/api/unidades/${id}`)
@@ -143,9 +152,7 @@ export function UnidadeDetailPage() {
 
   const copyCircuitDetails = (c: any) => {
     const text = `[CIRCUITO CCO]\nUnidade: ${unit.name} (${unit.clientName})\nOperadora: ${c.operator} - ${c.technology || ''}\nVelocidade: ${c.speedMbps ? c.speedMbps + ' Mbps' : 'N/A'}\nID do Circuito: ${c.circuitId || 'N/A'}\nContrato: ${c.contractId || 'N/A'}\nIP/VPN: ${c.lpIp || c.lpVpn || 'N/A'}\nTipo: ${c.isPrimary ? 'Principal' : 'Contingência'}\nObs: ${c.notes || 'N/A'}`;
-    navigator.clipboard.writeText(text);
-    setCopiedCircuitId(c.id);
-    setTimeout(() => setCopiedCircuitId(null), 3000);
+    copyCardText(`circuit-${c.id}`, text);
   };
 
   // Separação inteligente dos contatos por grupos
@@ -211,11 +218,10 @@ export function UnidadeDetailPage() {
 
       {/* 2. Cabeçalho Principal da Unidade + Dados de Urgência Operacional */}
       <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center space-x-3 mb-1.5">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-1.5">
               <span className="text-xs uppercase font-extrabold text-micro-cyan tracking-wider">{unit.clientName}</span>
-              {unit.clientIsVip && <img src={vipBadge} alt="VIP" className="h-5 w-auto" />}
               <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-lg bg-emerald-600 text-white shadow-sm">
                 🌿 Carteira N1 - AGRO
               </span>
@@ -230,87 +236,179 @@ export function UnidadeDetailPage() {
               {unit.name}
             </h1>
 
-            <div className="flex flex-wrap items-center text-xs text-micro-muted mt-2 gap-4">
+            {/* Metadados: Sem Código Intranet, mantendo Sankhya e GN */}
+            <div className="flex flex-wrap items-center text-xs text-micro-muted mt-2 gap-3 sm:gap-4">
               <span>Ambiente: <strong className="text-micro-cyan font-bold">{unit.environment || 'Produção'}</strong></span>
-              <span>•</span>
-              <span>Código Intranet: <strong className="text-micro-navy dark:text-white font-mono">{unit.intraCode || '—'}</strong></span>
-              <span>•</span>
-              <span>Código Sankhya: <strong className="text-micro-navy dark:text-white font-mono">{unit.sankhyaCode || '—'}</strong></span>
+              {unit.sankhyaCode && (
+                <>
+                  <span>•</span>
+                  <span>Código Sankhya: <strong className="text-micro-navy dark:text-white font-mono">{unit.sankhyaCode}</strong></span>
+                </>
+              )}
               <span>•</span>
               <span>GN Microset: <strong className="text-micro-navy dark:text-white">{unit.gnName || 'Luis Henrique'}</strong></span>
             </div>
           </div>
 
-          {/* Badge Mascote M7 Operador */}
-          <div className="flex items-center space-x-3 bg-micro-bg dark:bg-white/5 p-3 rounded-2xl border border-micro-line dark:border-white/10 shrink-0">
-            <img 
-              src={m7Confident} 
-              alt="M7 Operacional" 
-              className="w-14 h-14 object-contain drop-shadow-md transform hover:scale-105 transition-transform" 
-            />
-            <div className="text-left pr-2">
-              <div className="text-xs font-bold text-micro-navy dark:text-white">Central CCO</div>
-              <div className="text-[11px] text-micro-muted">Monitoramento N1</div>
-              <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">Triagem Prioritária</div>
+          {/* Destaque Direita: Selo VIP em Evidência + Central CCO */}
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            {/* Selo VIP Grandão e em Evidência */}
+            {unit.clientIsVip && (
+              <div className="flex items-center space-x-3 bg-gradient-to-br from-amber-500/15 via-yellow-500/10 to-amber-500/5 dark:from-amber-400/20 dark:to-yellow-500/10 px-4 py-3 rounded-2xl border-2 border-amber-400/60 shadow-md">
+                <img 
+                  src={vipBadge} 
+                  alt="Selo VIP" 
+                  className="h-12 w-auto object-contain drop-shadow-md transform hover:scale-110 transition-transform" 
+                />
+                <div className="text-left pr-1">
+                  <div className="flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+                    <span className="text-xs font-black uppercase text-amber-600 dark:text-amber-400 tracking-wider">
+                      CONTRATO VIP
+                    </span>
+                  </div>
+                  <div className="text-[11px] font-bold text-micro-navy dark:text-white leading-tight mt-0.5">
+                    Atendimento Prioritário
+                  </div>
+                  <div className="text-[10px] text-micro-muted font-medium">SLA N1 Especial CCO</div>
+                </div>
+              </div>
+            )}
+
+            {/* Badge Mascote M7 Central CCO */}
+            <div className="flex items-center space-x-3 bg-micro-bg dark:bg-white/5 p-3 rounded-2xl border border-micro-line dark:border-white/10 shrink-0">
+              <img 
+                src={m7Confident} 
+                alt="M7 Operacional" 
+                className="w-13 h-13 object-contain drop-shadow-md transform hover:scale-105 transition-transform" 
+              />
+              <div className="text-left pr-2">
+                <div className="text-xs font-bold text-micro-navy dark:text-white">Central CCO</div>
+                <div className="text-[11px] text-micro-muted">Monitoramento N1</div>
+                <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">Triagem Prioritária</div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* 2.1. INFORMAÇÕES DE URGÊNCIA CCO NO CABEÇALHO (Endereço, Horários, Dependências) */}
+        {/* 2.1. INFORMAÇÕES DE URGÊNCIA CCO NO CABEÇALHO (Endereço, Horários, Dependências) COM BOTÕES DE CÓPIA */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-micro-line/60 dark:border-white/10">
           {/* Card 1: Endereço Completo */}
-          <div className="bg-micro-bg/80 dark:bg-white/5 p-4 rounded-2xl border border-micro-line dark:border-white/10 flex items-start gap-3.5 shadow-xs">
-            <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0 mt-0.5">
-              <MapPin className="w-5 h-5" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[10px] uppercase font-black tracking-wider text-micro-muted block">
-                Localização & Endereço Completo
-              </span>
-              <p className="text-xs font-bold text-micro-navy dark:text-white leading-relaxed mt-1 break-words">
-                {unit.address || `${unit.city || 'São Paulo'} - ${unit.state || 'SP'}`}
-              </p>
-              {unit.city && (
-                <span className="text-[11px] font-semibold text-micro-orange mt-1 block">
-                  {unit.city}/{unit.state}
+          <div className="bg-micro-bg/80 dark:bg-white/5 p-4 rounded-2xl border border-micro-line dark:border-white/10 flex items-start justify-between gap-3 shadow-xs group relative">
+            <div className="flex items-start gap-3.5 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0 mt-0.5">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[10px] uppercase font-black tracking-wider text-micro-muted block">
+                  Localização & Endereço Completo
                 </span>
-              )}
+                <p className="text-xs font-bold text-micro-navy dark:text-white leading-relaxed mt-1 break-words">
+                  {unit.address || `${unit.city || 'São Paulo'} - ${unit.state || 'SP'}`}
+                </p>
+                {unit.city && (
+                  <span className="text-[11px] font-semibold text-micro-orange mt-1 block">
+                    {unit.city}/{unit.state}
+                  </span>
+                )}
+              </div>
             </div>
+
+            <button
+              type="button"
+              onClick={() => copyCardText('urgencia-endereco', unit.address || `${unit.city || ''} - ${unit.state || ''}`)}
+              className="p-2 rounded-xl text-micro-muted hover:text-micro-cyan hover:bg-white dark:hover:bg-white/10 border border-transparent hover:border-micro-line dark:hover:border-white/10 transition-all shrink-0 cursor-pointer shadow-xs"
+              title="Copiar endereço completo"
+            >
+              {copiedCardId === 'urgencia-endereco' ? (
+                <div className="flex items-center gap-1 text-emerald-500">
+                  <Check className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-bold">Copiado</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <Copy className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-bold hidden xl:inline">Copiar</span>
+                </div>
+              )}
+            </button>
           </div>
 
           {/* Card 2: Horário de Atendimento */}
-          <div className="bg-micro-bg/80 dark:bg-white/5 p-4 rounded-2xl border border-micro-line dark:border-white/10 flex items-start gap-3.5 shadow-xs">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-micro-cyan flex items-center justify-center shrink-0 mt-0.5">
-              <Clock className="w-5 h-5" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[10px] uppercase font-black tracking-wider text-micro-muted block">
-                Horário de Funcionamento Local
-              </span>
-              <p className="text-xs font-bold text-micro-navy dark:text-white leading-relaxed mt-1">
-                {unit.businessHours || '08:00 às 18:00 — Segunda a Sexta'}
-              </p>
-              {unit.phone && (
-                <span className="text-[11px] font-mono text-micro-muted mt-1 block">
-                  Fixo Local: <strong>{unit.phone}</strong>
+          <div className="bg-micro-bg/80 dark:bg-white/5 p-4 rounded-2xl border border-micro-line dark:border-white/10 flex items-start justify-between gap-3 shadow-xs group relative">
+            <div className="flex items-start gap-3.5 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-micro-cyan flex items-center justify-center shrink-0 mt-0.5">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[10px] uppercase font-black tracking-wider text-micro-muted block">
+                  Horário de Funcionamento Local
                 </span>
-              )}
+                <p className="text-xs font-bold text-micro-navy dark:text-white leading-relaxed mt-1">
+                  {unit.businessHours || '08:00 às 18:00 — Segunda a Sexta'}
+                </p>
+                {unit.phone && (
+                  <span className="text-[11px] font-mono text-micro-muted mt-1 block">
+                    Fixo Local: <strong>{unit.phone}</strong>
+                  </span>
+                )}
+              </div>
             </div>
+
+            <button
+              type="button"
+              onClick={() => copyCardText('urgencia-horario', `Horário: ${unit.businessHours || '08:00 às 18:00'}${unit.phone ? ` | Telefone: ${unit.phone}` : ''}`)}
+              className="p-2 rounded-xl text-micro-muted hover:text-micro-cyan hover:bg-white dark:hover:bg-white/10 border border-transparent hover:border-micro-line dark:hover:border-white/10 transition-all shrink-0 cursor-pointer shadow-xs"
+              title="Copiar horários e telefone"
+            >
+              {copiedCardId === 'urgencia-horario' ? (
+                <div className="flex items-center gap-1 text-emerald-500">
+                  <Check className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-bold">Copiado</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <Copy className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-bold hidden xl:inline">Copiar</span>
+                </div>
+              )}
+            </button>
           </div>
 
           {/* Card 3: Dependências Técnicas Críticas */}
-          <div className="bg-amber-500/10 dark:bg-amber-400/10 p-4 rounded-2xl border border-amber-500/30 flex items-start gap-3.5 shadow-xs">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
-              <Cpu className="w-5 h-5" />
+          <div className="bg-amber-500/10 dark:bg-amber-400/10 p-4 rounded-2xl border border-amber-500/30 flex items-start justify-between gap-3 shadow-xs group relative">
+            <div className="flex items-start gap-3.5 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                <Cpu className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[10px] uppercase font-black tracking-wider text-amber-700 dark:text-amber-300 block">
+                  Dependências Técnicas Críticas
+                </span>
+                <p className="text-xs font-bold text-micro-navy dark:text-white leading-relaxed mt-1">
+                  {unit.dependencies ? String(unit.dependencies) : 'Nenhuma dependência técnica adicional registrada para esta unidade.'}
+                </p>
+              </div>
             </div>
-            <div className="min-w-0">
-              <span className="text-[10px] uppercase font-black tracking-wider text-amber-700 dark:text-amber-300 block">
-                Dependências Técnicas Críticas
-              </span>
-              <p className="text-xs font-bold text-micro-navy dark:text-white leading-relaxed mt-1">
-                {unit.dependencies ? String(unit.dependencies) : 'Nenhuma dependência técnica adicional registrada para esta unidade.'}
-              </p>
-            </div>
+
+            <button
+              type="button"
+              onClick={() => copyCardText('urgencia-dependencias', unit.dependencies ? String(unit.dependencies) : 'Nenhuma dependência técnica adicional registrada')}
+              className="p-2 rounded-xl text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 border border-transparent hover:border-amber-500/30 transition-all shrink-0 cursor-pointer shadow-xs"
+              title="Copiar dependências técnicas"
+            >
+              {copiedCardId === 'urgencia-dependencias' ? (
+                <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                  <Check className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-bold">Copiado</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <Copy className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-bold hidden xl:inline">Copiar</span>
+                </div>
+              )}
+            </button>
           </div>
         </div>
       </div>
@@ -370,7 +468,7 @@ export function UnidadeDetailPage() {
         </div>
       )}
 
-      {/* 4. Banner de Alerta Operacional Crítico (Padrão Intranet CCO Microset) */}
+      {/* 4. Banner de Alerta Operacional Crítico com Botão de Copiar */}
       <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white rounded-3xl p-5 sm:p-6 shadow-xl border-2 border-red-500/80 animate-fadeIn relative overflow-hidden">
         <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
@@ -397,8 +495,28 @@ export function UnidadeDetailPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 bg-black/25 px-3 py-2 rounded-2xl border border-white/20 backdrop-blur-sm">
-            <span className="text-[11px] font-bold text-white">Turno: 24x7 CCO N1</span>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => copyCardText('alerta-cco', 'DIRETRIZ CCO BALBO: Em caso de alarme ou queda de enlace, avisar imediatamente nos grupos WhatsApp GB-MICROSET - NOC - INF (Cliente) e INT - Balbo CCO (Interno) com protocolo da operadora.')}
+              className="bg-black/35 hover:bg-black/50 text-white text-xs font-bold px-3 py-2 rounded-xl border border-white/25 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+              title="Copiar diretriz de acionamento"
+            >
+              {copiedCardId === 'alerta-cco' ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-yellow-300" />
+                  <span className="text-yellow-300">Copiado!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Copiar Diretriz</span>
+                </>
+              )}
+            </button>
+            <div className="bg-black/25 px-3 py-2 rounded-xl border border-white/20 backdrop-blur-sm text-[11px] font-bold text-white">
+              24x7 CCO N1
+            </div>
           </div>
         </div>
       </div>
@@ -475,6 +593,7 @@ export function UnidadeDetailPage() {
               unit.circuits.map((c: any) => {
                 const isOpen = openCircuits[c.id];
                 const isPrimary = c.isPrimary;
+                const isCopied = copiedCardId === `circuit-${c.id}`;
 
                 return (
                   <div 
@@ -528,18 +647,18 @@ export function UnidadeDetailPage() {
                             e.stopPropagation();
                             copyCircuitDetails(c);
                           }}
-                          className="px-2.5 py-1.5 rounded-lg text-xs font-bold text-micro-cyan hover:bg-micro-cyan/10 transition-colors flex items-center gap-1 cursor-pointer"
-                          title="Copiar dados para chamado"
+                          className="px-3 py-1.5 rounded-xl text-xs font-bold text-micro-cyan hover:bg-micro-cyan/10 bg-micro-bg dark:bg-white/5 border border-micro-line dark:border-white/10 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                          title="Copiar dados do circuito para chamado"
                         >
-                          {copiedCircuitId === c.id ? (
+                          {isCopied ? (
                             <>
                               <Check className="w-3.5 h-3.5 text-emerald-500" />
-                              <span className="text-emerald-500 text-[11px]">Copiado!</span>
+                              <span className="text-emerald-500 text-[11px] font-black">Copiado!</span>
                             </>
                           ) : (
                             <>
                               <Copy className="w-3.5 h-3.5" />
-                              <span className="hidden sm:inline text-[11px]">Copiar</span>
+                              <span className="text-[11px]">Copiar Dados</span>
                             </>
                           )}
                         </button>
@@ -550,48 +669,144 @@ export function UnidadeDetailPage() {
                     {isOpen && (
                       <div className="p-5 border-t border-micro-line dark:border-white/10 bg-micro-bg/40 dark:bg-black/20 space-y-4 animate-fadeIn">
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10">
-                            <span className="text-micro-muted block text-[10px] uppercase font-bold">Operadora</span>
-                            <span className="text-sm font-extrabold text-micro-navy dark:text-white mt-0.5 block">{c.operator}</span>
-                          </div>
-                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10">
-                            <span className="text-micro-muted block text-[10px] uppercase font-bold">Tecnologia</span>
-                            <span className="text-sm font-extrabold text-micro-navy dark:text-white mt-0.5 block">{c.technology || 'Não informada'}</span>
-                          </div>
-                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10">
-                            <span className="text-micro-muted block text-[10px] uppercase font-bold">Banda Contratada</span>
-                            <span className="text-sm font-extrabold text-micro-cyan mt-0.5 block">{c.speedMbps ? `${c.speedMbps} Mbps` : 'Não especificada'}</span>
-                          </div>
-                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10">
-                            <span className="text-micro-muted block text-[10px] uppercase font-bold">Prioridade</span>
-                            <span className="text-sm font-extrabold text-micro-navy dark:text-white mt-0.5 block">{isPrimary ? 'Link Principal' : 'Link de Contingência'}</span>
+                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 flex items-start justify-between">
+                            <div>
+                              <span className="text-micro-muted block text-[10px] uppercase font-bold">Operadora</span>
+                              <span className="text-sm font-extrabold text-micro-navy dark:text-white mt-0.5 block">{c.operator}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => copyCardText(`op-${c.id}`, c.operator)}
+                              className="text-micro-muted hover:text-micro-cyan p-1"
+                              title="Copiar Operadora"
+                            >
+                              {copiedCardId === `op-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                            </button>
                           </div>
 
-                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10">
-                            <span className="text-micro-muted block text-[10px] uppercase font-bold">Designador / ID Circuito</span>
-                            <span className="text-xs font-mono font-bold text-micro-navy dark:text-white mt-0.5 block select-all">{c.circuitId || '—'}</span>
+                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 flex items-start justify-between">
+                            <div>
+                              <span className="text-micro-muted block text-[10px] uppercase font-bold">Tecnologia</span>
+                              <span className="text-sm font-extrabold text-micro-navy dark:text-white mt-0.5 block">{c.technology || 'Não informada'}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => copyCardText(`tec-${c.id}`, c.technology || '')}
+                              className="text-micro-muted hover:text-micro-cyan p-1"
+                              title="Copiar Tecnologia"
+                            >
+                              {copiedCardId === `tec-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                            </button>
                           </div>
-                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10">
-                            <span className="text-micro-muted block text-[10px] uppercase font-bold">N° Contrato Operadora</span>
-                            <span className="text-xs font-mono font-bold text-micro-navy dark:text-white mt-0.5 block select-all">{c.contractId || '—'}</span>
+
+                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 flex items-start justify-between">
+                            <div>
+                              <span className="text-micro-muted block text-[10px] uppercase font-bold">Banda Contratada</span>
+                              <span className="text-sm font-extrabold text-micro-cyan mt-0.5 block">{c.speedMbps ? `${c.speedMbps} Mbps` : 'Não especificada'}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => copyCardText(`spd-${c.id}`, c.speedMbps ? `${c.speedMbps} Mbps` : '')}
+                              className="text-micro-muted hover:text-micro-cyan p-1"
+                              title="Copiar Banda"
+                            >
+                              {copiedCardId === `spd-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                            </button>
                           </div>
-                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10">
-                            <span className="text-micro-muted block text-[10px] uppercase font-bold">Endereço IP (LAN/WAN)</span>
-                            <span className="text-xs font-mono font-bold text-micro-navy dark:text-white mt-0.5 block select-all">{c.lpIp || '—'}</span>
+
+                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 flex items-start justify-between">
+                            <div>
+                              <span className="text-micro-muted block text-[10px] uppercase font-bold">Prioridade</span>
+                              <span className="text-sm font-extrabold text-micro-navy dark:text-white mt-0.5 block">{isPrimary ? 'Link Principal' : 'Link de Contingência'}</span>
+                            </div>
                           </div>
-                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10">
-                            <span className="text-micro-muted block text-[10px] uppercase font-bold">VPN / Conexão Túnel</span>
-                            <span className="text-xs font-mono font-bold text-micro-navy dark:text-white mt-0.5 block select-all">{c.lpVpn || '—'}</span>
+
+                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 flex items-start justify-between">
+                            <div>
+                              <span className="text-micro-muted block text-[10px] uppercase font-bold">Designador / ID Circuito</span>
+                              <span className="text-xs font-mono font-bold text-micro-navy dark:text-white mt-0.5 block select-all">{c.circuitId || '—'}</span>
+                            </div>
+                            {c.circuitId && (
+                              <button
+                                type="button"
+                                onClick={() => copyCardText(`cid-${c.id}`, c.circuitId)}
+                                className="text-micro-muted hover:text-micro-cyan p-1"
+                                title="Copiar ID Circuito"
+                              >
+                                {copiedCardId === `cid-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 flex items-start justify-between">
+                            <div>
+                              <span className="text-micro-muted block text-[10px] uppercase font-bold">N° Contrato Operadora</span>
+                              <span className="text-xs font-mono font-bold text-micro-navy dark:text-white mt-0.5 block select-all">{c.contractId || '—'}</span>
+                            </div>
+                            {c.contractId && (
+                              <button
+                                type="button"
+                                onClick={() => copyCardText(`cnt-${c.id}`, c.contractId)}
+                                className="text-micro-muted hover:text-micro-cyan p-1"
+                                title="Copiar Contrato"
+                              >
+                                {copiedCardId === `cnt-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 flex items-start justify-between">
+                            <div>
+                              <span className="text-micro-muted block text-[10px] uppercase font-bold">Endereço IP (LAN/WAN)</span>
+                              <span className="text-xs font-mono font-bold text-micro-navy dark:text-white mt-0.5 block select-all">{c.lpIp || '—'}</span>
+                            </div>
+                            {c.lpIp && (
+                              <button
+                                type="button"
+                                onClick={() => copyCardText(`ip-${c.id}`, c.lpIp)}
+                                className="text-micro-muted hover:text-micro-cyan p-1"
+                                title="Copiar IP"
+                              >
+                                {copiedCardId === `ip-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="p-3 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 flex items-start justify-between">
+                            <div>
+                              <span className="text-micro-muted block text-[10px] uppercase font-bold">VPN / Conexão Túnel</span>
+                              <span className="text-xs font-mono font-bold text-micro-navy dark:text-white mt-0.5 block select-all">{c.lpVpn || '—'}</span>
+                            </div>
+                            {c.lpVpn && (
+                              <button
+                                type="button"
+                                onClick={() => copyCardText(`vpn-${c.id}`, c.lpVpn)}
+                                className="text-micro-muted hover:text-micro-cyan p-1"
+                                title="Copiar VPN"
+                              >
+                                {copiedCardId === `vpn-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                              </button>
+                            )}
                           </div>
                         </div>
 
                         {c.notes && (
-                          <div className="p-3.5 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-micro-navy dark:text-white flex items-start gap-2.5">
-                            <Info className="w-4 h-4 text-micro-cyan shrink-0 mt-0.5" />
-                            <div>
-                              <strong className="block text-micro-cyan text-[11px] uppercase tracking-wider font-extrabold">Diretriz Operacional do Circuito:</strong>
-                              <p className="mt-0.5 leading-relaxed">{c.notes}</p>
+                          <div className="p-3.5 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-micro-navy dark:text-white flex items-start justify-between gap-2.5">
+                            <div className="flex items-start gap-2.5">
+                              <Info className="w-4 h-4 text-micro-cyan shrink-0 mt-0.5" />
+                              <div>
+                                <strong className="block text-micro-cyan text-[11px] uppercase tracking-wider font-extrabold">Diretriz Operacional do Circuito:</strong>
+                                <p className="mt-0.5 leading-relaxed">{c.notes}</p>
+                              </div>
                             </div>
+                            <button
+                              type="button"
+                              onClick={() => copyCardText(`notes-${c.id}`, c.notes)}
+                              className="text-micro-cyan hover:bg-micro-cyan/10 p-1.5 rounded-lg shrink-0 cursor-pointer"
+                              title="Copiar diretriz"
+                            >
+                              {copiedCardId === `notes-${c.id}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                            </button>
                           </div>
                         )}
                       </div>
@@ -647,6 +862,7 @@ export function UnidadeDetailPage() {
               unit.procedures.map((p: any, idx: number) => {
                 const procKey = p.id || `proc-${idx}`;
                 const isOpen = openProcedures[procKey];
+                const isCopied = copiedCardId === `pop-${procKey}`;
 
                 const categoryLabels: Record<string, string> = {
                   telecom: 'TELECOM & ALERTA DE QUEDA',
@@ -688,8 +904,33 @@ export function UnidadeDetailPage() {
                         </div>
                       </div>
 
-                      <div className="w-7 h-7 rounded-full bg-micro-bg dark:bg-white/5 flex items-center justify-center text-micro-muted shrink-0">
-                        {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                      <div className="flex items-center gap-2 shrink-0">
+                        {/* Botão de Cópia do POP */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            copyCardText(`pop-${procKey}`, `[PROCEDIMENTO CCO - ${catLabel}]\n${p.content}`);
+                          }}
+                          className="px-3 py-1.5 rounded-xl text-xs font-bold text-micro-cyan hover:bg-micro-cyan/10 bg-micro-bg dark:bg-white/5 border border-micro-line dark:border-white/10 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                          title="Copiar procedimento na íntegra"
+                        >
+                          {isCopied ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-500" />
+                              <span className="text-emerald-500 text-[11px] font-black">Copiado!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span className="text-[11px]">Copiar POP</span>
+                            </>
+                          )}
+                        </button>
+
+                        <div className="w-7 h-7 rounded-full bg-micro-bg dark:bg-white/5 flex items-center justify-center text-micro-muted shrink-0">
+                          {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                        </div>
                       </div>
                     </div>
 
@@ -768,42 +1009,58 @@ export function UnidadeDetailPage() {
 
               {openEscalations.comercial && (
                 <div className="p-4 border-t border-micro-line dark:border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 bg-micro-bg/30 dark:bg-black/20">
-                  {contatosComerciais.map((ct: any) => (
-                    <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 shadow-xs flex flex-col justify-between">
-                      <div>
-                        <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
-                        <div className="text-[11px] text-micro-muted mt-0.5">{ct.roleDescription}</div>
-                        {ct.phone && (
-                          <div className="mt-2 text-xs font-mono font-bold text-micro-navy dark:text-white">
-                            Fixo: {ct.phone}
+                  {contatosComerciais.map((ct: any) => {
+                    const isCopied = copiedCardId === `ct-${ct.id}`;
+                    return (
+                      <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 shadow-xs flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const info = `${ct.name} (${ct.roleDescription}) - Tel: ${ct.phone || ct.mobile || ct.whatsapp || 'N/A'}`;
+                                copyCardText(`ct-${ct.id}`, info);
+                              }}
+                              className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
+                              title="Copiar contato"
+                            >
+                              {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                            </button>
                           </div>
-                        )}
-                        {(ct.mobile || ct.whatsapp) && (
-                          <div className="text-xs font-mono font-bold text-micro-orange">
-                            Cel: {ct.mobile || ct.whatsapp}
-                          </div>
-                        )}
-                      </div>
+                          <div className="text-[11px] text-micro-muted mt-0.5">{ct.roleDescription}</div>
+                          {ct.phone && (
+                            <div className="mt-2 text-xs font-mono font-bold text-micro-navy dark:text-white">
+                              Fixo: {ct.phone}
+                            </div>
+                          )}
+                          {(ct.mobile || ct.whatsapp) && (
+                            <div className="text-xs font-mono font-bold text-micro-orange">
+                              Cel: {ct.mobile || ct.whatsapp}
+                            </div>
+                          )}
+                        </div>
 
-                      <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
-                        {ct.phone ? (
-                          <a href={`tel:${ct.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
-                            <PhoneCall className="w-3 h-3" /> Ligar
-                          </a>
-                        ) : <span />}
-                        {(ct.whatsapp || ct.mobile) && (
-                          <a 
-                            href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-                          >
-                            <MessageSquare className="w-3 h-3" /> WhatsApp
-                          </a>
-                        )}
+                        <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
+                          {ct.phone ? (
+                            <a href={`tel:${ct.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
+                              <PhoneCall className="w-3 h-3" /> Ligar
+                            </a>
+                          ) : <span />}
+                          {(ct.whatsapp || ct.mobile) && (
+                            <a 
+                              href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                            >
+                              <MessageSquare className="w-3 h-3" /> WhatsApp
+                            </a>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -834,38 +1091,54 @@ export function UnidadeDetailPage() {
 
               {openEscalations.plantao && (
                 <div className="p-4 border-t border-micro-line dark:border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 bg-micro-bg/30 dark:bg-black/20">
-                  {contatosPlantao.map((ct: any) => (
-                    <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-amber-500/20 shadow-xs flex flex-col justify-between">
-                      <div>
-                        <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
-                        <div className="text-[11px] text-micro-muted mt-0.5">{ct.roleDescription}</div>
-                        {(ct.mobile || ct.whatsapp || ct.phone) && (
-                          <div className="mt-2 text-sm font-mono font-black text-micro-orange">
-                            {ct.whatsapp || ct.mobile || ct.phone}
+                  {contatosPlantao.map((ct: any) => {
+                    const isCopied = copiedCardId === `ct-${ct.id}`;
+                    return (
+                      <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-amber-500/20 shadow-xs flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const info = `[PLANTÃO 24x7] ${ct.name} (${ct.roleDescription}) - Tel: ${ct.whatsapp || ct.mobile || ct.phone || 'N/A'}`;
+                                copyCardText(`ct-${ct.id}`, info);
+                              }}
+                              className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
+                              title="Copiar contato de plantão"
+                            >
+                              {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                            </button>
                           </div>
-                        )}
-                        <span className="text-[10px] text-micro-muted mt-1 block">Plantão / Fora do Horário Comercial</span>
-                      </div>
+                          <div className="text-[11px] text-micro-muted mt-0.5">{ct.roleDescription}</div>
+                          {(ct.mobile || ct.whatsapp || ct.phone) && (
+                            <div className="mt-2 text-sm font-mono font-black text-micro-orange">
+                              {ct.whatsapp || ct.mobile || ct.phone}
+                            </div>
+                          )}
+                          <span className="text-[10px] text-micro-muted mt-1 block">Plantão / Fora do Horário Comercial</span>
+                        </div>
 
-                      <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
-                        {ct.phone && (
-                          <a href={`tel:${ct.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
-                            <PhoneCall className="w-3 h-3" /> Ligar
-                          </a>
-                        )}
-                        {(ct.whatsapp || ct.mobile) && (
-                          <a 
-                            href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-                          >
-                            <MessageSquare className="w-3 h-3" /> Enviar WhatsApp
-                          </a>
-                        )}
+                        <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
+                          {ct.phone && (
+                            <a href={`tel:${ct.phone.replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
+                              <PhoneCall className="w-3 h-3" /> Ligar
+                            </a>
+                          )}
+                          {(ct.whatsapp || ct.mobile) && (
+                            <a 
+                              href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                            >
+                              <MessageSquare className="w-3 h-3" /> Enviar WhatsApp
+                            </a>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -897,33 +1170,49 @@ export function UnidadeDetailPage() {
 
                 {openEscalations.operadoras && (
                   <div className="p-4 border-t border-micro-line dark:border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 bg-micro-bg/30 dark:bg-black/20">
-                    {contatosOperadoras.map((ct: any) => (
-                      <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 shadow-xs flex flex-col justify-between">
-                        <div>
-                          <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
-                          <div className="text-[11px] text-micro-cyan font-bold mt-0.5">{ct.roleDescription}</div>
-                          <div className="mt-2 text-xs font-mono font-bold text-micro-navy dark:text-white">
-                            {ct.phone || ct.mobile}
+                    {contatosOperadoras.map((ct: any) => {
+                      const isCopied = copiedCardId === `ct-${ct.id}`;
+                      return (
+                        <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 shadow-xs flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const info = `[SDM/OPERADORA] ${ct.name} (${ct.roleDescription}) - Tel: ${ct.phone || ct.mobile || 'N/A'}`;
+                                  copyCardText(`ct-${ct.id}`, info);
+                                }}
+                                className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
+                                title="Copiar contato operadora"
+                              >
+                                {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                              </button>
+                            </div>
+                            <div className="text-[11px] text-micro-cyan font-bold mt-0.5">{ct.roleDescription}</div>
+                            <div className="mt-2 text-xs font-mono font-bold text-micro-navy dark:text-white">
+                              {ct.phone || ct.mobile}
+                            </div>
+                          </div>
+
+                          <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
+                            <a href={`tel:${(ct.mobile || ct.phone || '').replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
+                              <PhoneCall className="w-3 h-3" /> Ligar
+                            </a>
+                            {(ct.whatsapp || ct.mobile) && (
+                              <a 
+                                href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                              >
+                                <MessageSquare className="w-3 h-3" /> WhatsApp
+                              </a>
+                            )}
                           </div>
                         </div>
-
-                        <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
-                          <a href={`tel:${(ct.mobile || ct.phone || '').replace(/[^0-9]/g, '')}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-micro-cyan hover:underline">
-                            <PhoneCall className="w-3 h-3" /> Ligar
-                          </a>
-                          {(ct.whatsapp || ct.mobile) && (
-                            <a 
-                              href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-                            >
-                              <MessageSquare className="w-3 h-3" /> WhatsApp
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -956,33 +1245,49 @@ export function UnidadeDetailPage() {
 
                 {openEscalations.microset && (
                   <div className="p-4 border-t border-micro-line dark:border-white/10 grid grid-cols-1 md:grid-cols-2 gap-3.5 bg-micro-bg/30 dark:bg-black/20">
-                    {contatosMicroset.map((ct: any) => (
-                      <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 shadow-xs flex flex-col justify-between">
-                        <div>
-                          <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
-                          <div className="text-[11px] text-purple-600 dark:text-purple-400 font-bold mt-0.5">{ct.roleDescription}</div>
-                          {(ct.phone || ct.mobile) && (
-                            <div className="mt-2 text-xs font-mono font-bold text-micro-navy dark:text-white">
-                              {ct.mobile || ct.phone}
+                    {contatosMicroset.map((ct: any) => {
+                      const isCopied = copiedCardId === `ct-${ct.id}`;
+                      return (
+                        <div key={ct.id} className="p-3.5 bg-white dark:bg-micro-navy rounded-xl border border-micro-line dark:border-white/10 shadow-xs flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="font-bold text-xs text-micro-navy dark:text-white">{ct.name}</div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const info = `[MICROSET CCO] ${ct.name} (${ct.roleDescription}) - Tel: ${ct.mobile || ct.phone || 'N/A'}`;
+                                  copyCardText(`ct-${ct.id}`, info);
+                                }}
+                                className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
+                                title="Copiar contato Microset"
+                              >
+                                {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                              </button>
                             </div>
-                          )}
-                        </div>
+                            <div className="text-[11px] text-purple-600 dark:text-purple-400 font-bold mt-0.5">{ct.roleDescription}</div>
+                            {(ct.phone || ct.mobile) && (
+                              <div className="mt-2 text-xs font-mono font-bold text-micro-navy dark:text-white">
+                                {ct.mobile || ct.phone}
+                              </div>
+                            )}
+                          </div>
 
-                        <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
-                          <span className="text-[10px] text-micro-muted">Microset Telecom</span>
-                          {(ct.whatsapp || ct.mobile) && (
-                            <a 
-                              href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-                            >
-                              <MessageSquare className="w-3 h-3" /> WhatsApp
-                            </a>
-                          )}
+                          <div className="mt-3 pt-2.5 border-t border-micro-line/60 dark:border-white/10 flex items-center justify-between">
+                            <span className="text-[10px] text-micro-muted">Microset Telecom</span>
+                            {(ct.whatsapp || ct.mobile) && (
+                              <a 
+                                href={`https://wa.me/55${(ct.whatsapp || ct.mobile).replace(/[^0-9]/g, '')}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                              >
+                                <MessageSquare className="w-3 h-3" /> WhatsApp
+                              </a>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -1001,7 +1306,7 @@ export function UnidadeDetailPage() {
               <span className="bg-micro-cyan/15 text-micro-cyan text-[10px] font-black px-2 py-0.5 rounded-full">CCO N1</span>
             </div>
             <p className="text-xs text-micro-muted mt-1 leading-relaxed">
-              Consulte sempre o <strong>endereço, horário de atendimento e dependências técnicas no cabeçalho</strong> antes de acionar técnicos em campo. Em caso de abertura de chamado, utilize o botão <strong>"Copiar"</strong> no circuito desejado para obter todos os designadores e contratos formatados.
+              Consulte sempre o <strong>endereço, horário de atendimento e dependências técnicas no cabeçalho</strong> antes de acionar técnicos em campo. Em caso de abertura de chamado, utilize o botão <strong>"Copiar"</strong> presente em qualquer card da página para obter todos os designadores, contatos e dados formatados.
             </p>
           </div>
         </div>
