@@ -1,3 +1,4 @@
+import { apiFetch } from '../services/api';
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Building, MapPin, ChevronRight, ArrowLeft } from 'lucide-react';
@@ -24,7 +25,7 @@ export function ClienteDetailPage() {
   const [activeTab, setActiveTab] = useState<'unidades' | 'procedimentos'>('unidades');
 
   useEffect(() => {
-    fetch(`/api/clientes/${id}`)
+    apiFetch(`/api/clientes/${id}`)
       .then(r => r.json())
       .then(d => {
         if (d.success) setClient(d.data);

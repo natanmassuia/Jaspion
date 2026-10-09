@@ -1,3 +1,4 @@
+import { apiFetch } from '../services/api';
 import { useState, useEffect } from 'react';
 import { Search, Radio } from 'lucide-react';
 
@@ -6,7 +7,7 @@ export function DashboardPage() {
   const [loadingHealth, setLoadingHealth] = useState(true);
 
   useEffect(() => {
-    fetch('/api/health')
+    apiFetch('/api/health')
       .then(res => res.json())
       .then(data => {
         setHealth(data);

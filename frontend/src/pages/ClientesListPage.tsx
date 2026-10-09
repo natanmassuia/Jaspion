@@ -1,3 +1,4 @@
+import { apiFetch } from '../services/api';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Building, Shield, ChevronRight, Search, MapPin, Layers } from 'lucide-react';
@@ -9,7 +10,7 @@ export function ClientesListPage() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    fetch('/api/clientes')
+    apiFetch('/api/clientes')
       .then(r => r.json())
       .then(d => {
         if (d.success) setClients(d.data);

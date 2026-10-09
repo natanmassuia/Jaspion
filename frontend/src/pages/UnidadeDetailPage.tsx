@@ -1,3 +1,4 @@
+import { apiFetch } from '../services/api';
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Radio, Phone, ShieldCheck, MapPin, Cpu, Camera, Clock, Building2 } from 'lucide-react';
@@ -23,7 +24,7 @@ export function UnidadeDetailPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/unidades/${id}`)
+    apiFetch(`/api/unidades/${id}`)
       .then(r => r.json())
       .then(d => {
         if (d.success) setUnit(d.data);

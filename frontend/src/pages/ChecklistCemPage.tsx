@@ -1,3 +1,4 @@
+import { apiFetch } from '../services/api';
 import { useState, useEffect } from 'react';
 import { CheckSquare, CheckCircle, XCircle, AlertTriangle, MinusCircle, Send, History } from 'lucide-react';
 import { calculateCemScore } from '@jaspion/shared';
@@ -12,13 +13,13 @@ export function ChecklistCemPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch('/api/checklist-cem/blocks')
+    apiFetch('/api/checklist-cem/blocks')
       .then(r => r.json())
       .then(d => {
         if (d.success) setBlocks(d.data);
       });
 
-    fetch('/api/checklist-cem/evaluations')
+    apiFetch('/api/checklist-cem/evaluations')
       .then(r => r.json())
       .then(d => {
         if (d.success) setEvaluations(d.data);
@@ -40,7 +41,7 @@ export function ChecklistCemPage() {
     }
     setSaving(true);
     try {
-      const res = await fetch('/api/checklist-cem/evaluations', {
+      const res = await apiFetch('/api/checklist-cem/evaluations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -51,11 +52,12 @@ export function ChecklistCemPage() {
           answers: allAnswerList
         })
       });
+      
       const data = await res.json();
       if (data.success) {
         alert(`Checklist salvo com sucesso! Pontuação final: ${data.data.score}%`);
         // Recarregar histórico
-        fetch('/api/checklist-cem/evaluations')
+        apiFetch('/api/checklist-cem/evaluations')
           .then(r => r.json())
           .then(d => { if (d.success) setEvaluations(d.data); });
         setViewTab('historico');
