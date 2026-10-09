@@ -216,7 +216,60 @@ export function UnidadeDetailPage() {
         </div>
       </div>
 
-      {/* 2. Cabeçalho Principal da Unidade + Dados de Urgência Operacional */}
+      {/* 2. Banner de Alerta Operacional Crítico de Escalonamento (Em Primeiro Lugar na Página) */}
+      <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white rounded-3xl p-5 sm:p-6 shadow-xl border-2 border-red-500/80 animate-fadeIn relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
+          <div className="flex items-start space-x-4">
+            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/30 shadow-inner">
+              <ShieldAlert className="w-7 h-7 text-yellow-300 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="bg-yellow-400 text-black text-[10px] font-black uppercase px-2 py-0.5 rounded tracking-wider shadow-sm">
+                  ⚠️ ATENÇÃO OBRIGATÓRIA — DIRETRIZ CCO
+                </span>
+                <span className="text-[11px] font-bold text-white/90">Protocolo & Escalonamento</span>
+              </div>
+              <h3 className="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
+                PROCEDIMENTO CRÍTICO PARA ABERTURA DE CHAMADOS & TRATATIVAS
+              </h3>
+              <p className="text-xs text-white/90 mt-1 max-w-3xl leading-relaxed">
+                Em caso de alarme ou queda de enlace, registrar e avisar <strong>imediatamente</strong> em dois grupos de WhatsApp espelhados: 
+                <span className="underline decoration-yellow-300 ml-1 font-bold">GB-MICROSET - NOC - INF</span> (Cliente) e 
+                <span className="underline decoration-yellow-300 ml-1 font-bold">INT - Balbo CCO</span> (Interno). 
+                Sempre anexar o protocolo da operadora!
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => copyCardText('alerta-cco', 'DIRETRIZ CCO BALBO: Em caso de alarme ou queda de enlace, avisar imediatamente nos grupos WhatsApp GB-MICROSET - NOC - INF (Cliente) e INT - Balbo CCO (Interno) com protocolo da operadora.')}
+              className="bg-black/35 hover:bg-black/50 text-white text-xs font-bold px-3 py-2 rounded-xl border border-white/25 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+              title="Copiar diretriz de acionamento"
+            >
+              {copiedCardId === 'alerta-cco' ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-yellow-300" />
+                  <span className="text-yellow-300 font-bold">Copiado!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Copiar Diretriz</span>
+                </>
+              )}
+            </button>
+            <div className="bg-black/25 px-3 py-2 rounded-xl border border-white/20 backdrop-blur-sm text-[11px] font-bold text-white">
+              24x7 CCO N1
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Cabeçalho Principal da Unidade + Dados de Urgência Operacional */}
       <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="min-w-0">
@@ -467,59 +520,6 @@ export function UnidadeDetailPage() {
           </button>
         </div>
       )}
-
-      {/* 4. Banner de Alerta Operacional Crítico com Botão de Copiar */}
-      <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white rounded-3xl p-5 sm:p-6 shadow-xl border-2 border-red-500/80 animate-fadeIn relative overflow-hidden">
-        <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
-          <div className="flex items-start space-x-4">
-            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/30 shadow-inner">
-              <ShieldAlert className="w-7 h-7 text-yellow-300 animate-pulse" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="bg-yellow-400 text-black text-[10px] font-black uppercase px-2 py-0.5 rounded tracking-wider shadow-sm">
-                  ⚠️ ATENÇÃO OBRIGATÓRIA — DIRETRIZ CCO
-                </span>
-                <span className="text-[11px] font-bold text-white/90">Protocolo & Escalonamento</span>
-              </div>
-              <h3 className="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
-                PROCEDIMENTO CRÍTICO PARA ABERTURA DE CHAMADOS & TRATATIVAS
-              </h3>
-              <p className="text-xs text-white/90 mt-1 max-w-3xl leading-relaxed">
-                Em caso de alarme ou queda de enlace, registrar e avisar <strong>imediatamente</strong> em dois grupos de WhatsApp espelhados: 
-                <span className="underline decoration-yellow-300 ml-1 font-bold">GB-MICROSET - NOC - INF</span> (Cliente) e 
-                <span className="underline decoration-yellow-300 ml-1 font-bold">INT - Balbo CCO</span> (Interno). 
-                Sempre anexar o protocolo da operadora!
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => copyCardText('alerta-cco', 'DIRETRIZ CCO BALBO: Em caso de alarme ou queda de enlace, avisar imediatamente nos grupos WhatsApp GB-MICROSET - NOC - INF (Cliente) e INT - Balbo CCO (Interno) com protocolo da operadora.')}
-              className="bg-black/35 hover:bg-black/50 text-white text-xs font-bold px-3 py-2 rounded-xl border border-white/25 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
-              title="Copiar diretriz de acionamento"
-            >
-              {copiedCardId === 'alerta-cco' ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-yellow-300" />
-                  <span className="text-yellow-300">Copiado!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" />
-                  <span>Copiar Diretriz</span>
-                </>
-              )}
-            </button>
-            <div className="bg-black/25 px-3 py-2 rounded-xl border border-white/20 backdrop-blur-sm text-[11px] font-bold text-white">
-              24x7 CCO N1
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* 5. Barra de Controle Rápido das Seções */}
       <div className="flex items-center justify-between bg-white dark:bg-micro-navy rounded-2xl px-5 py-3 border border-micro-line dark:border-white/10 shadow-sm">
