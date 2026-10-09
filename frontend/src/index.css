@@ -268,3 +268,42 @@ textarea {
   .cem-metric-line i,
   .cem-metric-card { transition: none; }
 }
+
+/* Marcas sem cápsulas ou fundos artificiais, com contraste por tema. */
+.microset-content-logo {
+  width: 150px;
+  height: 68px;
+  object-fit: contain;
+}
+
+.cem-logo-window {
+  width: 178px;
+  height: 76px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cem-logo-adaptive {
+  position: absolute;
+  width: 194px;
+  height: auto;
+  left: -7px;
+  top: -47px;
+  max-width: none;
+}
+
+.brand-logo-adaptive {
+  filter: none;
+  transition: filter 180ms ease, opacity 180ms ease;
+}
+
+[data-theme="dark"] .brand-logo-adaptive {
+  filter: grayscale(1) brightness(0) invert(1) !important;
+  opacity: 0.94;
+}
+
+@media (max-width: 720px) {
+  .microset-content-logo { width: 118px; height: 56px; }
+  .cem-logo-window { width: 142px; height: 64px; }
+  .cem-logo-adaptive { width: 158px; top: -39px; }
+}

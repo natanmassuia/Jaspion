@@ -2,6 +2,23 @@ import { sqliteClient } from '../../database/connection.js';
 import { calculateCemScore } from '@jaspion/shared';
 
 export class CemService {
+  private mapEvaluation(r: any) {
+    return {
+      id: r.id,
+      ticketProtocol: r.ticket_protocol,
+      evaluatorName: r.evaluator_name,
+      evaluationDate: r.evaluation_date,
+      shift: r.shift,
+      scorePercentage: r.score_percentage,
+      goodCount: r.good_count,
+      badCount: r.bad_count,
+      fourthCount: r.fourth_count,
+      naCount: r.na_count,
+      notes: r.notes,
+      createdAt: r.created_at
+    };
+  }
+
   async listBlocksWithQuestions() {
     const blocksRes = await sqliteClient.execute('SELECT * FROM cem_blocks ORDER BY order_index ASC');
     const questionsRes = await sqliteClient.execute('SELECT * FROM cem_questions WHERE is_active = 1 ORDER BY order_index ASC');
@@ -29,20 +46,30 @@ export class CemService {
 
   async listEvaluations() {
     const res = await sqliteClient.execute('SELECT * FROM cem_evaluations ORDER BY created_at DESC LIMIT 50');
-    return res.rows.map(r => ({
-      id: r.id,
-      ticketProtocol: r.ticket_protocol,
-      evaluatorName: r.evaluator_name,
-      evaluationDate: r.evaluation_date,
-      shift: r.shift,
-      scorePercentage: r.score_percentage,
-      goodCount: r.good_count,
-      badCount: r.bad_count,
-      fourthCount: r.fourth_count,
-      naCount: r.na_count,
-      notes: r.notes,
-      createdAt: r.created_at
-    }));
+    return res.rows.map(r => this.mapEvaluation(r));
+  }
+
+  async getEvaluation(id: string) {
+    const evaluationRes = await sqliteClient.execute({
+      sql: 'SELECT * FROM cem_evaluations WHERE id = ?',
+      args: [id]
+    });
+    const row = evaluationRes.rows[0];
+    if (!row) return null;
+
+    const answersRes = await sqliteClient.execute({
+      sql: 'SELECT question_id, answer, observation FROM cem_answers WHERE evaluation_id = ?',
+      args: [id]
+    });
+
+    return {
+      ...this.mapEvaluation(row),
+      answers: answersRes.rows.map(answer => ({
+        questionId: answer.question_id,
+        answer: answer.answer,
+        observation: answer.observation || ''
+      }))
+    };
   }
 
   async saveEvaluation(input: any) {
@@ -86,5 +113,50 @@ export class CemService {
     }
 
     return { id: evalId, ...scoreResult };
+  }
+
+  async updateEvaluation(id: string, input: any) {
+    const existing = await sqliteClient.execute({
+      sql: 'SELECT id FROM cem_evaluations WHERE id = ?',
+      args: [id]
+    });
+    if (!existing.rows[0]) return null;
+
+    const { ticketProtocol, evaluationDate, shift, notes, answers } = input;
+    const scoreResult = calculateCemScore(answers);
+    const statements: any[] = [
+      {
+        sql: `UPDATE cem_evaluations
+              SET ticket_protocol = ?, evaluation_date = ?, shift = ?, score_percentage = ?, good_count = ?, bad_count = ?, fourth_count = ?, na_count = ?, notes = ?
+              WHERE id = ?`,
+        args: [
+          ticketProtocol,
+          evaluationDate,
+          shift || 'Comercial',
+          scoreResult.score,
+          scoreResult.good,
+          scoreResult.bad,
+          scoreResult.fourth,
+          scoreResult.na,
+          notes || '',
+          id
+        ]
+      },
+      { sql: 'DELETE FROM cem_answers WHERE evaluation_id = ?', args: [id] },
+      ...answers.map((answer: any) => ({
+        sql: `INSERT INTO cem_answers (id, evaluation_id, question_id, answer, observation)
+              VALUES (?, ?, ?, ?, ?)`,
+        args: [
+          `ans_${id}_${answer.questionId}`,
+          id,
+          answer.questionId,
+          answer.answer,
+          answer.observation || ''
+        ]
+      }))
+    ];
+
+    await sqliteClient.batch(statements, 'write');
+    return { id, ...scoreResult };
   }
 }

@@ -1,8 +1,9 @@
 import { apiFetch } from '../services/api';
 import { useState, useEffect } from 'react';
-import { CheckSquare, CheckCircle, XCircle, AlertTriangle, MinusCircle, Send, History, Award, AlertCircle } from 'lucide-react';
+import { CheckSquare, CheckCircle, XCircle, AlertTriangle, MinusCircle, Send, History, Award, AlertCircle, Pencil, X } from 'lucide-react';
 import { calculateCemScore } from '@jaspion/shared';
 import cemLogoOfficial from '../assets/brand/cem-logo-official.png';
+import microsetLogoPositive from '../assets/microset-logo-positive.png';
 import m7Writing from '../assets/mascote/m7-writing.png';
 import m7Celebrating from '../assets/mascote/m7-celebrating.png';
 import m7Thinking from '../assets/mascote/m7-thinking.png';
@@ -56,10 +57,19 @@ export function ChecklistCemPage() {
   const [blocks, setBlocks] = useState<any[]>([]);
   const [activeBlockIndex, setActiveBlockIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answerObservations, setAnswerObservations] = useState<Record<string, string>>({});
   const [ticketProtocol, setTicketProtocol] = useState('');
+  const [evaluationDate, setEvaluationDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [evaluationNotes, setEvaluationNotes] = useState('');
   const [evaluations, setEvaluations] = useState<any[]>([]);
-  const [viewTab, setViewTab] = useState<'formulario' | 'historico'>('formulario');
+  const [viewTab, setViewTab] = useState<'formulario' | 'historico'>('historico');
   const [saving, setSaving] = useState(false);
+  const [editingEvaluationId, setEditingEvaluationId] = useState<string | null>(null);
+  const [loadingEvaluationId, setLoadingEvaluationId] = useState<string | null>(null);
+
+  const loadEvaluations = () => apiFetch('/api/checklist-cem/evaluations')
+    .then(r => r.json())
+    .then(d => { if (d.success) setEvaluations(d.data); });
 
   useEffect(() => {
     apiFetch('/api/checklist-cem/blocks')
@@ -68,11 +78,7 @@ export function ChecklistCemPage() {
         if (d.success) setBlocks(d.data);
       });
 
-    apiFetch('/api/checklist-cem/evaluations')
-      .then(r => r.json())
-      .then(d => {
-        if (d.success) setEvaluations(d.data);
-      });
+    loadEvaluations();
   }, []);
 
   const handleAnswer = (questionId: string, value: string) => {
@@ -80,13 +86,61 @@ export function ChecklistCemPage() {
   };
 
   const currentBlock = blocks[activeBlockIndex];
-  const allAnswerList = Object.entries(answers).map(([questionId, answer]) => ({ questionId, answer }));
+  const allAnswerList = Object.entries(answers).map(([questionId, answer]) => ({
+    questionId,
+    answer,
+    observation: answerObservations[questionId] || ''
+  }));
   const scoreStats = calculateCemScore(allAnswerList);
   const totalQuestions = blocks.reduce((total, block) => total + (block.questions?.length || 0), 0);
   const pendingCount = Math.max(0, totalQuestions - allAnswerList.length);
   const metricPercent = (value: number) => totalQuestions ? Math.round((value / totalQuestions) * 100) : 0;
   const hasAnswers = allAnswerList.length > 0;
   const isHighQuality = scoreStats.score >= 80;
+  const evaluatedTickets = evaluations.length;
+  const averageScore = evaluatedTickets
+    ? Math.round(evaluations.reduce((sum, evaluation) => sum + Number(evaluation.scorePercentage || 0), 0) / evaluatedTickets)
+    : 0;
+  const highQualityTickets = evaluations.filter(evaluation => Number(evaluation.scorePercentage || 0) >= 80).length;
+  const historyTotals = evaluations.reduce((totals, evaluation) => ({
+    good: totals.good + Number(evaluation.goodCount || 0),
+    bad: totals.bad + Number(evaluation.badCount || 0),
+    fourth: totals.fourth + Number(evaluation.fourthCount || 0),
+    na: totals.na + Number(evaluation.naCount || 0)
+  }), { good: 0, bad: 0, fourth: 0, na: 0 });
+  const historyAnswers = historyTotals.good + historyTotals.bad + historyTotals.fourth + historyTotals.na;
+  const historyPercent = (value: number) => historyAnswers ? Math.round((value / historyAnswers) * 100) : 0;
+
+  const cancelEditing = () => {
+    setEditingEvaluationId(null);
+    setTicketProtocol('');
+    setAnswers({});
+    setAnswerObservations({});
+    setEvaluationDate(new Date().toISOString().slice(0, 10));
+    setEvaluationNotes('');
+    setActiveBlockIndex(0);
+  };
+
+  const handleEditEvaluation = async (evaluationId: string) => {
+    setLoadingEvaluationId(evaluationId);
+    try {
+      const response = await apiFetch(`/api/checklist-cem/evaluations/${evaluationId}`);
+      const data = await response.json();
+      if (!data.success) return;
+
+      setEditingEvaluationId(evaluationId);
+      setTicketProtocol(data.data.ticketProtocol || '');
+      setAnswers(Object.fromEntries((data.data.answers || []).map((answer: any) => [answer.questionId, answer.answer])));
+      setAnswerObservations(Object.fromEntries((data.data.answers || []).map((answer: any) => [answer.questionId, answer.observation || ''])));
+      setEvaluationDate(data.data.evaluationDate || new Date().toISOString().slice(0, 10));
+      setEvaluationNotes(data.data.notes || '');
+      setActiveBlockIndex(0);
+      setViewTab('formulario');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } finally {
+      setLoadingEvaluationId(null);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!ticketProtocol.trim()) {
@@ -95,25 +149,25 @@ export function ChecklistCemPage() {
     }
     setSaving(true);
     try {
-      const res = await apiFetch('/api/checklist-cem/evaluations', {
-        method: 'POST',
+      const res = await apiFetch(editingEvaluationId
+        ? `/api/checklist-cem/evaluations/${editingEvaluationId}`
+        : '/api/checklist-cem/evaluations', {
+        method: editingEvaluationId ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ticketProtocol,
-          evaluationDate: new Date().toISOString().slice(0, 10),
+          evaluationDate,
           shift: 'Comercial',
-          notes: 'Avaliação realizada no Jaspion V1',
+          notes: editingEvaluationId ? evaluationNotes : 'Avaliação realizada no Jaspion V1',
           answers: allAnswerList
         })
       });
       const data = await res.json();
       
       if (data.success) {
-        alert(`Checklist gravado com sucesso! Pontuação final: ${data.data.score}%`);
-        // Recarregar histórico
-        apiFetch('/api/checklist-cem/evaluations')
-          .then(r => r.json())
-          .then(d => { if (d.success) setEvaluations(d.data); });
+        alert(`${editingEvaluationId ? 'Ticket atualizado' : 'Checklist gravado'} com sucesso! Pontuação final: ${data.data.score}%`);
+        await loadEvaluations();
+        cancelEditing();
         setViewTab('historico');
       }
     } finally {
@@ -126,12 +180,20 @@ export function ChecklistCemPage() {
       {/* Top Banner Oficial CEM com Mascote Auditor M7 */}
       <div className="bg-gradient-to-r from-white via-slate-50 to-blue-50/60 dark:from-micro-navy dark:via-micro-navy dark:to-[#222344] rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center space-x-5">
-          <div className="bg-white dark:bg-white/10 p-3 rounded-2xl shadow-sm border border-micro-line dark:border-white/10 flex-shrink-0">
-            <img 
-              src={cemLogoOfficial} 
-              alt="Central de Excelência Microset" 
-              className="h-12 w-auto object-contain dark:brightness-125" 
+          <div className="flex flex-shrink-0 items-center gap-4" aria-label="Microset e Central de Excelência Microset">
+            <img
+              src={microsetLogoPositive}
+              alt="Microset Telecom"
+              className="microset-content-logo brand-logo-adaptive"
             />
+            <span className="h-14 w-px bg-micro-line dark:bg-white/20" aria-hidden="true" />
+            <div className="cem-logo-window" aria-hidden="true">
+              <img
+                src={cemLogoOfficial}
+                alt=""
+                className="cem-logo-adaptive brand-logo-adaptive"
+              />
+            </div>
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -152,11 +214,11 @@ export function ChecklistCemPage() {
         </div>
 
         {/* M7 Auditor Badge */}
-        <div className="flex items-center space-x-4 bg-white/80 dark:bg-white/5 p-3 rounded-2xl border border-micro-line dark:border-white/10 shadow-sm">
+        <div className="flex items-center space-x-4 p-2">
           <img 
             src={m7Writing} 
             alt="M7 Auditor" 
-            className="w-16 h-16 object-contain drop-shadow-md transform hover:scale-105 transition-transform" 
+            className="w-20 h-20 object-contain drop-shadow-md transform hover:scale-105 transition-transform"
           />
           <div className="text-left pr-2">
             <div className="text-xs font-bold text-micro-navy dark:text-white flex items-center gap-1">
@@ -172,6 +234,14 @@ export function ChecklistCemPage() {
       <div className="flex items-center justify-between">
         <div className="flex space-x-2 bg-micro-bg dark:bg-white/5 p-1 rounded-xl border border-micro-line dark:border-white/10">
           <button
+            onClick={() => setViewTab('historico')}
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              viewTab === 'historico' ? 'bg-micro-navy text-white shadow-md dark:bg-white dark:text-micro-navy' : 'text-micro-muted hover:text-micro-ink'
+            }`}
+          >
+            🕒 Tickets Avaliados ({evaluations.length})
+          </button>
+          <button
             onClick={() => setViewTab('formulario')}
             className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
               viewTab === 'formulario' ? 'bg-micro-navy text-white shadow-md dark:bg-white dark:text-micro-navy' : 'text-micro-muted hover:text-micro-ink'
@@ -179,19 +249,22 @@ export function ChecklistCemPage() {
           >
             📋 Avaliação em Lâminas
           </button>
-          <button
-            onClick={() => setViewTab('historico')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-              viewTab === 'historico' ? 'bg-micro-navy text-white shadow-md dark:bg-white dark:text-micro-navy' : 'text-micro-muted hover:text-micro-ink'
-            }`}
-          >
-            🕒 Histórico Salvo ({evaluations.length})
-          </button>
         </div>
       </div>
 
       {viewTab === 'formulario' ? (
         <div className="space-y-6">
+          {editingEvaluationId && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-micro-orange/35 bg-micro-orange/10 px-5 py-4 text-sm">
+              <div>
+                <strong className="block text-micro-navy dark:text-white">Editando ticket {ticketProtocol}</strong>
+                <span className="text-xs text-micro-muted">As respostas carregadas substituirão a avaliação salva quando você confirmar.</span>
+              </div>
+              <button type="button" onClick={cancelEditing} className="inline-flex items-center justify-center gap-2 rounded-xl border border-micro-line bg-white px-3 py-2 text-xs font-bold text-micro-navy hover:border-micro-orange dark:bg-white/10 dark:text-white">
+                <X className="h-4 w-4" /> Cancelar edição
+              </button>
+            </div>
+          )}
           {/* Card de Pontuação Dinâmica com Reação do Mascote */}
           <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 border border-micro-line dark:border-white/10 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="w-full lg:max-w-md">
@@ -360,51 +433,95 @@ export function ChecklistCemPage() {
                   className="bg-micro-orange hover:bg-micro-orange/90 text-white font-bold text-sm px-6 py-3 rounded-xl shadow-lg flex items-center space-x-2 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
-                  <span>{saving ? 'Gravando Avaliação...' : 'Gravar Avaliação CEM'}</span>
+                  <span>{saving ? 'Salvando...' : editingEvaluationId ? 'Atualizar Ticket Avaliado' : 'Gravar Avaliação CEM'}</span>
                 </button>
               </div>
             </div>
           )}
         </div>
       ) : (
-        /* Histórico de Avaliações Salvas */
-        <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-micro-navy dark:text-white">
-              Avaliações Históricas Registradas no CCO
-            </h2>
-            <span className="text-xs text-micro-muted">Total: {evaluations.length}</span>
-          </div>
+        <div className="space-y-6">
+          <section className="cem-summary" aria-label="Insights dos tickets avaliados">
+            <article className="cem-score-card">
+              <span>Conformidade média</span>
+              <strong><AnimatedNumber value={averageScore} suffix="%" /></strong>
+              <div className="cem-score-line"><AnimatedProgress percent={averageScore} /></div>
+            </article>
+            <article className="cem-metric-card cem-metric-fourth">
+              <span>Tickets avaliados</span>
+              <strong><AnimatedNumber value={evaluatedTickets} /></strong>
+              <div className="cem-metric-line"><AnimatedProgress percent={evaluatedTickets ? 100 : 0} /></div>
+            </article>
+            <article className="cem-metric-card cem-metric-good">
+              <span>Acima de 80%</span>
+              <strong><AnimatedNumber value={highQualityTickets} /></strong>
+              <div className="cem-metric-line"><AnimatedProgress percent={evaluatedTickets ? Math.round((highQualityTickets / evaluatedTickets) * 100) : 0} /></div>
+            </article>
+            <article className="cem-metric-card cem-metric-bad">
+              <span>Não conformidades</span>
+              <strong><AnimatedNumber value={historyTotals.bad} /></strong>
+              <div className="cem-metric-line"><AnimatedProgress percent={historyPercent(historyTotals.bad)} /></div>
+            </article>
+            <article className="cem-metric-card cem-metric-fourth">
+              <span>Parcialmente conformes</span>
+              <strong><AnimatedNumber value={historyTotals.fourth} /></strong>
+              <div className="cem-metric-line"><AnimatedProgress percent={historyPercent(historyTotals.fourth)} /></div>
+            </article>
+            <article className="cem-metric-card cem-metric-na">
+              <span>Não se aplica</span>
+              <strong><AnimatedNumber value={historyTotals.na} /></strong>
+              <div className="cem-metric-line"><AnimatedProgress percent={historyPercent(historyTotals.na)} /></div>
+            </article>
+          </section>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-micro-line dark:border-white/10 text-micro-muted uppercase">
-                  <th className="py-3">Chamado / Ticket</th>
-                  <th>Data</th>
-                  <th>Avaliador</th>
-                  <th>Conformidade</th>
-                  <th>C / NC / P / NA</th>
-                  <th>Observações</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-micro-line/50 dark:divide-white/5">
-                {evaluations.map(ev => (
-                  <tr key={ev.id} className="hover:bg-micro-bg/50 dark:hover:bg-white/5 transition-colors">
-                    <td className="py-3.5 font-bold text-micro-navy dark:text-white">{ev.ticketProtocol}</td>
-                    <td>{ev.evaluationDate}</td>
-                    <td>{ev.evaluatorName}</td>
-                    <td>
-                      <span className="font-extrabold text-micro-cyan text-sm">{ev.scorePercentage}%</span>
-                    </td>
-                    <td className="font-mono text-micro-muted">
-                      {ev.countGood} / {ev.countBad} / {ev.countFourth} / {ev.countNa}
-                    </td>
-                    <td className="text-micro-muted max-w-xs truncate">{ev.notes || '—'}</td>
+          <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-bold text-micro-navy dark:text-white">Tickets Avaliados</h2>
+                <p className="mt-1 text-xs text-micro-muted">Consulte os resultados ou carregue uma avaliação para corrigir e atualizar o ticket.</p>
+              </div>
+              <span className="text-xs text-micro-muted">Total: {evaluations.length}</span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-micro-line dark:border-white/10 text-micro-muted uppercase">
+                    <th className="py-3">Chamado / Ticket</th>
+                    <th>Data</th>
+                    <th>Avaliador</th>
+                    <th>Conformidade</th>
+                    <th>C / NC / P / NA</th>
+                    <th>Observações</th>
+                    <th className="text-right">Ações</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-micro-line/50 dark:divide-white/5">
+                  {evaluations.map(ev => (
+                    <tr key={ev.id} className="hover:bg-micro-bg/50 dark:hover:bg-white/5 transition-colors">
+                      <td className="py-3.5 font-bold text-micro-navy dark:text-white">{ev.ticketProtocol}</td>
+                      <td>{ev.evaluationDate}</td>
+                      <td>{ev.evaluatorName}</td>
+                      <td><span className="font-extrabold text-micro-cyan text-sm">{ev.scorePercentage}%</span></td>
+                      <td className="font-mono text-micro-muted">{ev.goodCount} / {ev.badCount} / {ev.fourthCount} / {ev.naCount}</td>
+                      <td className="text-micro-muted max-w-xs truncate">{ev.notes || '—'}</td>
+                      <td className="text-right">
+                        <button
+                          type="button"
+                          onClick={() => handleEditEvaluation(ev.id)}
+                          disabled={loadingEvaluationId === ev.id}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-micro-cyan/35 bg-micro-cyan/10 px-3 py-2 font-bold text-micro-cyan hover:bg-micro-cyan hover:text-white disabled:opacity-50"
+                          aria-label={`Editar ticket ${ev.ticketProtocol}`}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                          {loadingEvaluationId === ev.id ? 'Carregando' : 'Editar'}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
