@@ -5,11 +5,11 @@ import {
   ArrowLeft, Radio, Phone, MapPin, Cpu, Camera, Building2, BookOpen, 
   Image as ImageIcon, AlertTriangle, ChevronDown, ChevronRight, 
   Copy, Check, ShieldAlert, Sparkles, ExternalLink, ChevronsUpDown,
-  PhoneCall, MessageSquare, Info, Layers, Clock, Globe
+  PhoneCall, MessageSquare, Layers, Clock, Globe, Info, AlertCircle
 } from 'lucide-react';
 import vipBadge from '../assets/vip-badge.png';
 import m7Lightbulb from '../assets/mascote/m7-lightbulb.png';
-import m7Pointing from '../assets/mascote/m7-pointing.png';
+import m7Confident from '../assets/mascote/m7-confident.png';
 import { ImageUploadModal } from '../components/ImageUploadModal';
 import { ProcedureContent } from '../components/ProcedureContent';
 
@@ -38,12 +38,10 @@ export function UnidadeDetailPage() {
     circuitos: boolean;
     procedimentos: boolean;
     escalonamentos: boolean;
-    infraestrutura: boolean;
   }>({
     circuitos: true,
     procedimentos: true,
-    escalonamentos: true,
-    infraestrutura: false
+    escalonamentos: true
   });
 
   const [openCircuits, setOpenCircuits] = useState<Record<string, boolean>>({});
@@ -97,6 +95,9 @@ export function UnidadeDetailPage() {
   }
 
   const effectiveImage = unit.imageUrl || (id ? UNIT_IMAGES[id]?.image : null);
+  const effectiveLabel = unit.imageUrl 
+    ? 'Foto Personalizada da Unidade' 
+    : (id && UNIT_IMAGES[id]?.label ? UNIT_IMAGES[id].label : 'Imagem Operacional Oficial');
 
   const handleImageUpdated = (newImageUrl: string) => {
     setUnit((prev: any) => ({ ...prev, imageUrl: newImageUrl }));
@@ -119,7 +120,7 @@ export function UnidadeDetailPage() {
   };
 
   const expandAll = () => {
-    setOpenSections({ circuitos: true, procedimentos: true, escalonamentos: true, infraestrutura: true });
+    setOpenSections({ circuitos: true, procedimentos: true, escalonamentos: true });
     if (unit.circuits) {
       const allCircuits: Record<string, boolean> = {};
       unit.circuits.forEach((c: any) => { allCircuits[c.id] = true; });
@@ -134,7 +135,7 @@ export function UnidadeDetailPage() {
   };
 
   const collapseAll = () => {
-    setOpenSections({ circuitos: false, procedimentos: false, escalonamentos: false, infraestrutura: false });
+    setOpenSections({ circuitos: false, procedimentos: false, escalonamentos: false });
     setOpenCircuits({});
     setOpenProcedures({});
     setOpenEscalations({ comercial: false, plantao: false, operadoras: false, microset: false });
@@ -208,7 +209,168 @@ export function UnidadeDetailPage() {
         </div>
       </div>
 
-      {/* 2. Banner de Alerta Operacional Crítico (Padrão Intranet CCO Microset) */}
+      {/* 2. Cabeçalho Principal da Unidade + Dados de Urgência Operacional */}
+      <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center space-x-3 mb-1.5">
+              <span className="text-xs uppercase font-extrabold text-micro-cyan tracking-wider">{unit.clientName}</span>
+              {unit.clientIsVip && <img src={vipBadge} alt="VIP" className="h-5 w-auto" />}
+              <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-lg bg-emerald-600 text-white shadow-sm">
+                🌿 Carteira N1 - AGRO
+              </span>
+              <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${
+                unit.isActive ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-gray-700 text-gray-200'
+              }`}>
+                {unit.isActive ? '✓ Unidade Ativa' : 'Desativada'}
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl font-black text-micro-navy dark:text-white tracking-tight">
+              {unit.name}
+            </h1>
+
+            <div className="flex flex-wrap items-center text-xs text-micro-muted mt-2 gap-4">
+              <span>Ambiente: <strong className="text-micro-cyan font-bold">{unit.environment || 'Produção'}</strong></span>
+              <span>•</span>
+              <span>Código Intranet: <strong className="text-micro-navy dark:text-white font-mono">{unit.intraCode || '—'}</strong></span>
+              <span>•</span>
+              <span>Código Sankhya: <strong className="text-micro-navy dark:text-white font-mono">{unit.sankhyaCode || '—'}</strong></span>
+              <span>•</span>
+              <span>GN Microset: <strong className="text-micro-navy dark:text-white">{unit.gnName || 'Luis Henrique'}</strong></span>
+            </div>
+          </div>
+
+          {/* Badge Mascote M7 Operador */}
+          <div className="flex items-center space-x-3 bg-micro-bg dark:bg-white/5 p-3 rounded-2xl border border-micro-line dark:border-white/10 shrink-0">
+            <img 
+              src={m7Confident} 
+              alt="M7 Operacional" 
+              className="w-14 h-14 object-contain drop-shadow-md transform hover:scale-105 transition-transform" 
+            />
+            <div className="text-left pr-2">
+              <div className="text-xs font-bold text-micro-navy dark:text-white">Central CCO</div>
+              <div className="text-[11px] text-micro-muted">Monitoramento N1</div>
+              <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">Triagem Prioritária</div>
+            </div>
+          </div>
+        </div>
+
+        {/* 2.1. INFORMAÇÕES DE URGÊNCIA CCO NO CABEÇALHO (Endereço, Horários, Dependências) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-micro-line/60 dark:border-white/10">
+          {/* Card 1: Endereço Completo */}
+          <div className="bg-micro-bg/80 dark:bg-white/5 p-4 rounded-2xl border border-micro-line dark:border-white/10 flex items-start gap-3.5 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0 mt-0.5">
+              <MapPin className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] uppercase font-black tracking-wider text-micro-muted block">
+                Localização & Endereço Completo
+              </span>
+              <p className="text-xs font-bold text-micro-navy dark:text-white leading-relaxed mt-1 break-words">
+                {unit.address || `${unit.city || 'São Paulo'} - ${unit.state || 'SP'}`}
+              </p>
+              {unit.city && (
+                <span className="text-[11px] font-semibold text-micro-orange mt-1 block">
+                  {unit.city}/{unit.state}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Card 2: Horário de Atendimento */}
+          <div className="bg-micro-bg/80 dark:bg-white/5 p-4 rounded-2xl border border-micro-line dark:border-white/10 flex items-start gap-3.5 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-micro-cyan flex items-center justify-center shrink-0 mt-0.5">
+              <Clock className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] uppercase font-black tracking-wider text-micro-muted block">
+                Horário de Funcionamento Local
+              </span>
+              <p className="text-xs font-bold text-micro-navy dark:text-white leading-relaxed mt-1">
+                {unit.businessHours || '08:00 às 18:00 — Segunda a Sexta'}
+              </p>
+              {unit.phone && (
+                <span className="text-[11px] font-mono text-micro-muted mt-1 block">
+                  Fixo Local: <strong>{unit.phone}</strong>
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Card 3: Dependências Técnicas Críticas */}
+          <div className="bg-amber-500/10 dark:bg-amber-400/10 p-4 rounded-2xl border border-amber-500/30 flex items-start gap-3.5 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+              <Cpu className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] uppercase font-black tracking-wider text-amber-700 dark:text-amber-300 block">
+                Dependências Técnicas Críticas
+              </span>
+              <p className="text-xs font-bold text-micro-navy dark:text-white leading-relaxed mt-1">
+                {unit.dependencies ? String(unit.dependencies) : 'Nenhuma dependência técnica adicional registrada para esta unidade.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Imagem Grandona da Unidade (Hero Banner como estava antes) */}
+      {effectiveImage ? (
+        <div className="bg-white dark:bg-micro-navy rounded-3xl overflow-hidden border border-micro-line dark:border-white/10 shadow-xl relative group">
+          <div className="relative h-64 sm:h-80 md:h-96 w-full bg-slate-900">
+            <img
+              src={effectiveImage}
+              alt={unit.name}
+              className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent flex items-end p-6">
+              <div className="flex items-center justify-between w-full text-white">
+                <div className="flex items-center space-x-2">
+                  <Camera className="w-4 h-4 text-micro-cyan" />
+                  <span className="text-xs sm:text-sm font-semibold tracking-wide drop-shadow">
+                    {effectiveLabel}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-white/80 hidden sm:block font-mono">
+                    {unit.city} — {unit.state}
+                  </span>
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-black/60 hover:bg-black/85 text-white text-xs font-bold px-3 py-1.5 rounded-xl backdrop-blur-sm flex items-center gap-1.5 transition-all shadow-md hover:scale-105 cursor-pointer"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Alterar Imagem</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* Painel com visualização de foto quando unidade ainda não tem imagem */
+        <div className="bg-white dark:bg-micro-navy rounded-3xl p-10 border border-dashed border-micro-line dark:border-white/15 text-center flex flex-col items-center justify-center gap-3 shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-micro-cyan/10 text-micro-cyan flex items-center justify-center">
+            <ImageIcon className="w-8 h-8" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-micro-navy dark:text-white">Nenhuma imagem cadastrada para esta unidade</h3>
+            <p className="text-xs text-micro-muted mt-1 max-w-md">
+              Envie uma foto de fachada, rack ou dependência técnica para ilustrar o cadastro oficial do CCO.
+            </p>
+          </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="mt-2 bg-gradient-to-r from-micro-blue to-micro-cyan hover:from-micro-cyan hover:to-micro-blue text-white text-xs font-extrabold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer"
+          >
+            <Camera className="w-4 h-4" />
+            <span>Adicionar Imagem da Unidade</span>
+          </button>
+        </div>
+      )}
+
+      {/* 4. Banner de Alerta Operacional Crítico (Padrão Intranet CCO Microset) */}
       <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white rounded-3xl p-5 sm:p-6 shadow-xl border-2 border-red-500/80 animate-fadeIn relative overflow-hidden">
         <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
@@ -241,90 +403,32 @@ export function UnidadeDetailPage() {
         </div>
       </div>
 
-      {/* 3. Header Principal da Unidade com Foto e Identificadores */}
-      <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-          {effectiveImage ? (
-            <div className="relative group shrink-0">
-              <img
-                src={effectiveImage}
-                alt={unit.name}
-                className="w-24 h-24 rounded-2xl object-cover border border-micro-line dark:border-white/10 shadow-md group-hover:scale-105 transition-transform"
-              />
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="absolute inset-0 bg-black/40 hover:bg-black/60 rounded-2xl opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white text-[10px] font-bold transition-all cursor-pointer"
-              >
-                <Camera className="w-4 h-4 mb-0.5" />
-                <span>Trocar</span>
-              </button>
-            </div>
-          ) : (
-            <div className="w-24 h-24 rounded-2xl bg-micro-blue/10 dark:bg-white/10 flex flex-col items-center justify-center text-micro-cyan border border-micro-line dark:border-white/10 shrink-0">
-              <Building2 className="w-8 h-8" />
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="text-[10px] font-bold text-micro-cyan hover:underline mt-1 cursor-pointer"
-              >
-                + Foto
-              </button>
-            </div>
-          )}
-
-          <div>
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-micro-navy dark:text-white">
-                {unit.name}
-              </h1>
-              {unit.clientIsVip && (
-                <img src={vipBadge} alt="VIP" className="h-6 w-auto" title="Cliente VIP" />
-              )}
-              <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase shadow-sm ${
-                unit.isActive ? 'bg-emerald-600 text-white' : 'bg-gray-700 text-gray-200'
-              }`}>
-                {unit.isActive ? '✓ Unidade Ativa' : 'Desativada'}
-              </span>
-              <span className="bg-micro-blue/15 text-micro-blue dark:text-micro-cyan font-bold text-[10px] px-2.5 py-1 rounded-full">
-                {unit.environment || 'Produção'}
-              </span>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4 mt-2.5 text-xs text-micro-muted">
-              {unit.city && (
-                <span className="flex items-center text-micro-navy dark:text-white font-medium">
-                  <MapPin className="w-3.5 h-3.5 mr-1 text-micro-orange" />
-                  {unit.city}/{unit.state}
-                </span>
-              )}
-              <span>•</span>
-              <span>Intranet: <strong className="text-micro-navy dark:text-white font-mono">{unit.intraCode || '—'}</strong></span>
-              <span>•</span>
-              <span>Sankhya: <strong className="text-micro-navy dark:text-white font-mono">{unit.sankhyaCode || '—'}</strong></span>
-              <span>•</span>
-              <span>GN Microset: <strong className="text-micro-navy dark:text-white">{unit.gnName || 'Luis Henrique'}</strong></span>
-            </div>
-          </div>
+      {/* 5. Barra de Controle Rápido das Seções */}
+      <div className="flex items-center justify-between bg-white dark:bg-micro-navy rounded-2xl px-5 py-3 border border-micro-line dark:border-white/10 shadow-sm">
+        <div className="flex items-center gap-2 text-xs text-micro-muted">
+          <Layers className="w-4 h-4 text-micro-cyan" />
+          <span className="font-bold text-micro-navy dark:text-white">Seções Operacionais da Unidade</span>
+          <span>•</span>
+          <span>{unit.circuits?.length || 0} circuitos</span>
+          <span>•</span>
+          <span>{unit.procedures?.length || 0} procedimentos POP</span>
+          <span>•</span>
+          <span>{contacts.length} contatos</span>
         </div>
 
-        {/* Barra Rápida de Ações das Seções */}
-        <div className="flex sm:flex-col items-end gap-2 shrink-0">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={expandAll}
-              className="text-xs font-bold text-micro-cyan hover:text-micro-blue bg-micro-cyan/10 hover:bg-micro-cyan/20 px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
-            >
-              Expandir Tudo
-            </button>
-            <button
-              onClick={collapseAll}
-              className="text-xs font-bold text-micro-muted hover:text-micro-navy dark:hover:text-white bg-micro-bg dark:bg-white/5 px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
-            >
-              Recolher Tudo
-            </button>
-          </div>
-          <span className="text-[11px] text-micro-muted hidden sm:block">
-            {unit.circuits?.length || 0} circuitos • {unit.contacts?.length || 0} contatos CCO
-          </span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={expandAll}
+            className="text-xs font-bold text-micro-cyan hover:text-micro-blue bg-micro-cyan/10 hover:bg-micro-cyan/20 px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
+          >
+            Expandir Tudo
+          </button>
+          <button
+            onClick={collapseAll}
+            className="text-xs font-bold text-micro-muted hover:text-micro-navy dark:hover:text-white bg-micro-bg dark:bg-white/5 px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
+          >
+            Recolher Tudo
+          </button>
         </div>
       </div>
 
@@ -368,7 +472,7 @@ export function UnidadeDetailPage() {
                 Nenhum circuito cadastrado para esta unidade.
               </div>
             ) : (
-              unit.circuits.map((c: any, idx: number) => {
+              unit.circuits.map((c: any) => {
                 const isOpen = openCircuits[c.id];
                 const isPrimary = c.isPrimary;
 
@@ -635,7 +739,7 @@ export function UnidadeDetailPage() {
           </div>
         </div>
 
-        {/* Conteúdo com Sub-Gavetas (Horário Comercial, Plantão, SDM) */}
+        {/* Conteúdo com Sub-Gavetas (Horário Comercial, Plantão, SDM, Microset) */}
         {openSections.escalonamentos && (
           <div className="p-4 sm:p-6 space-y-4 bg-micro-bg/40 dark:bg-white/[0.02]">
             {/* 3.1. Sub-seção: Horário Comercial */}
@@ -887,62 +991,7 @@ export function UnidadeDetailPage() {
         )}
       </div>
 
-      {/* =========================================================================
-          SEÇÃO 4: DADOS CADASTRAIS & INFRAESTRUTURA LOCAL
-          ========================================================================= */}
-      <div className="rounded-3xl border border-micro-line dark:border-white/10 overflow-hidden shadow-sm bg-white dark:bg-micro-navy">
-        {/* Barra de Título da Seção */}
-        <div 
-          onClick={() => toggleSection('infraestrutura')}
-          className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white p-4 sm:p-5 flex items-center justify-between cursor-pointer hover:brightness-105 transition-all select-none"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-black text-white shadow-inner">
-              <Cpu className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-[10px] uppercase font-black tracking-widest text-blue-200">
-                Logística & Equipamentos
-              </div>
-              <h2 className="text-base sm:text-lg font-black tracking-tight">
-                ENDEREÇO FÍSICO, HORÁRIOS & INFRAESTRUTURA LOCAL
-              </h2>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center">
-              {openSections.infraestrutura ? <ChevronDown className="w-5 h-5 text-white" /> : <ChevronRight className="w-5 h-5 text-white" />}
-            </div>
-          </div>
-        </div>
-
-        {openSections.infraestrutura && (
-          <div className="p-6 bg-micro-bg/40 dark:bg-white/[0.02] grid grid-cols-1 md:grid-cols-2 gap-4 text-xs animate-fadeIn">
-            <div className="p-4 bg-white dark:bg-micro-navy rounded-2xl border border-micro-line dark:border-white/10 space-y-1.5">
-              <span className="text-[10px] font-bold uppercase text-micro-muted">Endereço Completo da Unidade</span>
-              <p className="font-medium text-micro-navy dark:text-white leading-relaxed">
-                {unit.address || `${unit.city || 'São Paulo'} - ${unit.state || 'SP'}`}
-              </p>
-            </div>
-
-            <div className="p-4 bg-white dark:bg-micro-navy rounded-2xl border border-micro-line dark:border-white/10 space-y-1.5">
-              <span className="text-[10px] font-bold uppercase text-micro-muted">Horário de Funcionamento Local</span>
-              <p className="font-medium text-micro-navy dark:text-white leading-relaxed">
-                {unit.businessHours || '08:00 às 18:00 - Segunda a Sexta'}
-              </p>
-            </div>
-
-            <div className="p-4 bg-white dark:bg-micro-navy rounded-2xl border border-micro-line dark:border-white/10 space-y-1.5 md:col-span-2">
-              <span className="text-[10px] font-bold uppercase text-micro-muted">Dependências & Observações Técnicas</span>
-              <p className="font-medium text-micro-navy dark:text-white leading-relaxed">
-                {unit.dependencies ? String(unit.dependencies) : 'Nenhuma dependência ou particularidade técnica adicional registrada para esta unidade.'}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 5. Dica Operacional M7 no Rodapé */}
+      {/* 6. Dica Operacional M7 no Rodapé */}
       <div className="bg-gradient-to-br from-blue-50 to-indigo-50/50 dark:from-white/5 dark:to-white/10 rounded-3xl p-5 border border-micro-cyan/20 shadow-sm">
         <div className="flex items-start space-x-3.5">
           <img src={m7Lightbulb} alt="Dica M7" className="w-12 h-12 object-contain shrink-0 drop-shadow-sm" />
@@ -952,7 +1001,7 @@ export function UnidadeDetailPage() {
               <span className="bg-micro-cyan/15 text-micro-cyan text-[10px] font-black px-2 py-0.5 rounded-full">CCO N1</span>
             </div>
             <p className="text-xs text-micro-muted mt-1 leading-relaxed">
-              Mantenha as seções colapsadas para navegar rapidamente entre os circuitos. Ao abrir um chamado na operadora, utilize o botão <strong>"Copiar"</strong> no circuito para enviar o designador, IP e contrato formatados sem risco de erro de digitação.
+              Consulte sempre o <strong>endereço, horário de atendimento e dependências técnicas no cabeçalho</strong> antes de acionar técnicos em campo. Em caso de abertura de chamado, utilize o botão <strong>"Copiar"</strong> no circuito desejado para obter todos os designadores e contratos formatados.
             </p>
           </div>
         </div>
