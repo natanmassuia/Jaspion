@@ -125,7 +125,7 @@ export function ClienteDetailPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Toast Feedback */}
       {feedback && (
         <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-2xl text-xs font-bold flex items-center justify-between shadow-sm animate-fadeIn">
@@ -154,8 +154,8 @@ export function ClienteDetailPage() {
         </button>
       </div>
 
-      {/* Header do Cliente com Logo e Dados */}
-      <div className="bg-white dark:bg-micro-navy rounded-3xl p-6 sm:p-8 border border-micro-line dark:border-white/10 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      {/* Header do Cliente com Logo e Dados (Levemente elevado e mais compacto) */}
+      <div className="bg-white dark:bg-micro-navy rounded-3xl p-5 sm:p-6 border border-micro-line dark:border-white/10 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-5">
         <div className="flex items-start space-x-4 min-w-0">
           <div className="relative group shrink-0">
             <div 
