@@ -281,6 +281,16 @@ export function UnidadeDetailPage() {
 
   const totalContatosLocais = contatosComerciais.length + contatosPlantao.length + contatosMicroset.length;
 
+  // Procedimentos gerais (excluindo escalonamento de operadora que fica dentro do circuito)
+  const generalProcedures = (unit.procedures || []).filter((p: any) => {
+    const id = (p.id || '').toLowerCase();
+    const cat = (p.category || '').toLowerCase();
+    const content = (p.content || '').toLowerCase();
+    if (id.includes('algar') || cat === 'escalonamento' || content.includes('algar telecom')) return false;
+    if (id === 'proc_gupe_vivo' || (content.includes('chamado - vivo') && content.includes('10315'))) return false;
+    return true;
+  });
+
   // Determina se a unidade necessita de integração de técnicos para atendimento local
   const getIntegrationStatus = (u: any) => {
     if (!u) return { required: false };
@@ -1064,6 +1074,67 @@ export function UnidadeDetailPage() {
                             </div>
                           </div>
                         )}
+
+                        {/* 1.3. MATRIZ DE ESCALONAMENTO & PROCEDIMENTOS DIRETAMENTE DENTRO DO LINK DA OPERADORA */}
+                        {(() => {
+                          const isAlgar = c.operator?.toLowerCase().includes('algar');
+                          const isVivo = c.operator?.toLowerCase().includes('vivo');
+                          
+                          // Procura se tem procedimento específico no cadastro da unidade
+                          const matchingProc = (unit.procedures || []).find((p: any) => {
+                            const id = (p.id || '').toLowerCase();
+                            const content = (p.content || '').toLowerCase();
+                            if (isAlgar && (id.includes('algar') || p.category === 'escalonamento' || content.includes('sdm') || content.includes('algar'))) return true;
+                            if (isVivo && (id.includes('vivo') || content.includes('10315') || content.includes('chamado vivo'))) return true;
+                            return false;
+                          });
+
+                          const defaultAlgarContent = `### Escalonamento Algar Telecom - Atendimento Premium (Grupo Balbo)
+
+> [!NOTE]
+> Sempre acione o SDM (Service Delivery Manager) ao abrir chamados para escalar a Algar Telecom. Em casos críticos ou sem avanço, siga a hierarquia abaixo.
+
+| Nível / Função | Responsável | Telefone | E-mail |
+| :--- | :--- | :--- | :--- |
+| **SDM Oficial** | **Leydiane Reis** | (34) 99781-2888 | leydiane@algartelecom.com.br |
+| **SDM Substituto (Férias)** | **Lucas Medeiros** | (34) 99869-0316 | lucasom@algartelecom.com.br |
+| **SDM Dedicado Balbo** | **Diego Ribeiro** | (34) 99880-0382 | diego.ribeiro@algartelecom.com.br |
+| **Gestora Premium** | **Raissa Gomide** | (19) 99985-9680 | raissa@algartelecom.com.br |
+| **Consultor Comercial** | **Tulio Japaulo** | (16) 99143-0035 | tulioj@algartelecom.com.br |
+| **Gerente Regional** | **Francisco Aguila** | (16) 99965-0501 | francisco@algartelecom.com.br |
+| **Central Algar NOC** | **Plantão 24x7** | 10312 / 0800 942 1212 | — |`;
+
+                          const displayContent = matchingProc?.content || (isAlgar ? defaultAlgarContent : null);
+                          if (!displayContent) return null;
+
+                          return (
+                            <div className="pt-3 border-t border-micro-line dark:border-white/10 space-y-2.5">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <BookOpen className="w-4 h-4 text-micro-cyan" />
+                                  <span className="text-xs font-black uppercase tracking-wider text-micro-navy dark:text-white">
+                                    {isAlgar ? 'Escalonamento & Matriz SDM — Algar Telecom' : `Procedimento Operacional — ${c.operator}`}
+                                  </span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => copyCardText(`proc-circ-${c.id}`, displayContent)}
+                                  className="p-1.5 rounded-lg text-micro-muted hover:text-micro-cyan hover:bg-micro-cyan/10 transition-colors cursor-pointer"
+                                  title="Copiar escalonamento"
+                                >
+                                  {copiedCardId === `proc-circ-${c.id}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                                </button>
+                              </div>
+
+                              <div className="p-4 sm:p-5 bg-white dark:bg-micro-navy rounded-2xl border border-micro-line dark:border-white/10 shadow-xs">
+                                <ProcedureContent 
+                                  content={displayContent} 
+                                  onImageClick={(src, alt) => setPreviewImage({ src, label: alt || 'Procedimento Operacional' })}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
                     )}
                   </div>
@@ -1092,7 +1163,7 @@ export function UnidadeDetailPage() {
                 Padrões Operacionais Homologados
               </div>
               <h2 className="text-base sm:text-lg font-black tracking-tight">
-                PROCEDIMENTOS OPERACIONAIS & DIRETRIZES POP ({unit.procedures?.length || 0})
+                PROCEDIMENTOS OPERACIONAIS & DIRETRIZES POP ({generalProcedures.length})
               </h2>
             </div>
           </div>
@@ -1109,12 +1180,12 @@ export function UnidadeDetailPage() {
         {/* Conteúdo da Seção de Procedimentos */}
         {openSections.procedimentos && (
           <div className="p-4 sm:p-6 space-y-3.5 bg-micro-bg/40 dark:bg-white/[0.02]">
-            {(!unit.procedures || unit.procedures.length === 0) ? (
+            {(!generalProcedures || generalProcedures.length === 0) ? (
               <div className="p-8 text-center text-xs text-micro-muted bg-white dark:bg-micro-navy rounded-2xl border border-micro-line dark:border-white/10">
-                Nenhum procedimento específico cadastrado. Siga os procedimentos padrão do catálogo.
+                Nenhum procedimento geral cadastrado. Siga os procedimentos padrão do catálogo.
               </div>
             ) : (
-              unit.procedures.map((p: any, idx: number) => {
+              generalProcedures.map((p: any, idx: number) => {
                 const procKey = p.id || `proc-${idx}`;
                 const isOpen = openProcedures[procKey];
                 const isCopied = copiedCardId === `pop-${procKey}`;
