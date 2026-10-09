@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Sun, Moon, CheckSquare, Users, Building, Home, ShieldCheck } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
-import logoOfficial from '../assets/brand/microset-logo-official.png';
+import logoNegative from '../assets/microset-logo-negative.png';
 import m7Thumbs from '../assets/mascote/m7-thumbsup.png';
 import m7Relaxing from '../assets/mascote/m7-relaxing.png';
 
@@ -23,12 +23,12 @@ export function AppLayout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo & Marca Oficial */}
           <div className="flex items-center space-x-6">
-            <Link to="/" className="flex items-center space-x-3 group">
-              <div className="bg-white/95 dark:bg-white/10 px-3 py-1.5 rounded-xl shadow-sm border border-white/20 transition-transform group-hover:scale-105 flex items-center">
+            <Link to="/" className="flex items-center space-x-3 group" aria-label="Jaspion CCO — página inicial">
+              <div className="w-[136px] h-14 overflow-hidden flex items-center transition-transform group-hover:scale-[1.02]">
                 <img 
-                  src={logoOfficial} 
+                  src={logoNegative}
                   alt="Microset Telecom" 
-                  className="h-9 w-auto object-contain dark:brightness-125" 
+                  className="w-full h-auto object-contain"
                 />
               </div>
               <div className="border-l border-white/20 pl-3.5 hidden sm:block">

@@ -7,6 +7,51 @@ import m7Writing from '../assets/mascote/m7-writing.png';
 import m7Celebrating from '../assets/mascote/m7-celebrating.png';
 import m7Thinking from '../assets/mascote/m7-thinking.png';
 
+function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
+  const [displayValue, setDisplayValue] = useState(value);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplayValue(value);
+      return;
+    }
+
+    let animationFrame = 0;
+    const startedAt = performance.now();
+    const animate = (now: number) => {
+      const progress = Math.min(1, (now - startedAt) / 650);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Math.round(value * eased));
+      if (progress < 1) animationFrame = requestAnimationFrame(animate);
+    };
+
+    setDisplayValue(0);
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [value]);
+
+  return <>{displayValue}{suffix}</>;
+}
+
+function AnimatedProgress({ percent }: { percent: number }) {
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setWidth(percent);
+      return;
+    }
+
+    setWidth(0);
+    const frame = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setWidth(Math.max(0, Math.min(100, percent))));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [percent]);
+
+  return <i style={{ width: `${width}%` }} />;
+}
+
 export function ChecklistCemPage() {
   const [blocks, setBlocks] = useState<any[]>([]);
   const [activeBlockIndex, setActiveBlockIndex] = useState(0);
@@ -37,6 +82,9 @@ export function ChecklistCemPage() {
   const currentBlock = blocks[activeBlockIndex];
   const allAnswerList = Object.entries(answers).map(([questionId, answer]) => ({ questionId, answer }));
   const scoreStats = calculateCemScore(allAnswerList);
+  const totalQuestions = blocks.reduce((total, block) => total + (block.questions?.length || 0), 0);
+  const pendingCount = Math.max(0, totalQuestions - allAnswerList.length);
+  const metricPercent = (value: number) => totalQuestions ? Math.round((value / totalQuestions) * 100) : 0;
   const hasAnswers = allAnswerList.length > 0;
   const isHighQuality = scoreStats.score >= 80;
 
@@ -180,30 +228,41 @@ export function ChecklistCemPage() {
               </div>
             </div>
 
-            {/* Métricas Numéricas de Conformidade */}
-            <div className="flex items-center space-x-4 sm:space-x-6 text-center">
-              <div>
-                <div className="text-2xl font-bold text-green-600">{scoreStats.good}</div>
-                <div className="text-[10px] font-bold text-micro-muted uppercase">Conformes</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-red-500">{scoreStats.bad}</div>
-                <div className="text-[10px] font-bold text-micro-muted uppercase">Não Conf.</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-yellow-500">{scoreStats.fourth}</div>
-                <div className="text-[10px] font-bold text-micro-muted uppercase">Parciais</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-400">{scoreStats.na}</div>
-                <div className="text-[10px] font-bold text-micro-muted uppercase">N/A</div>
-              </div>
-              <div className="border-l border-micro-line dark:border-white/10 pl-4 sm:pl-6">
-                <div className="text-3xl font-black text-micro-cyan">{scoreStats.score}%</div>
-                <div className="text-[10px] font-bold text-micro-muted uppercase">Conformidade</div>
-              </div>
-            </div>
           </div>
+
+          {/* Cards de resultado da POC de Qualidade */}
+          <section className="cem-summary" aria-label="Resumo da avaliação">
+            <article className="cem-score-card">
+              <span>Conformidade</span>
+              <strong><AnimatedNumber value={scoreStats.score} suffix="%" /></strong>
+              <div className="cem-score-line"><AnimatedProgress percent={scoreStats.score} /></div>
+            </article>
+            <article className="cem-metric-card cem-metric-good">
+              <span>Conformes</span>
+              <strong><AnimatedNumber value={scoreStats.good} /></strong>
+              <div className="cem-metric-line"><AnimatedProgress percent={metricPercent(scoreStats.good)} /></div>
+            </article>
+            <article className="cem-metric-card cem-metric-bad">
+              <span>Não conformes</span>
+              <strong><AnimatedNumber value={scoreStats.bad} /></strong>
+              <div className="cem-metric-line"><AnimatedProgress percent={metricPercent(scoreStats.bad)} /></div>
+            </article>
+            <article className="cem-metric-card cem-metric-na">
+              <span>Não se aplica</span>
+              <strong><AnimatedNumber value={scoreStats.na} /></strong>
+              <div className="cem-metric-line"><AnimatedProgress percent={metricPercent(scoreStats.na)} /></div>
+            </article>
+            <article className="cem-metric-card cem-metric-fourth">
+              <span>Parcialmente conforme</span>
+              <strong><AnimatedNumber value={scoreStats.fourth} /></strong>
+              <div className="cem-metric-line"><AnimatedProgress percent={metricPercent(scoreStats.fourth)} /></div>
+            </article>
+            <article className="cem-metric-card cem-metric-pending">
+              <span>Pendentes</span>
+              <strong><AnimatedNumber value={pendingCount} /></strong>
+              <div className="cem-metric-line"><AnimatedProgress percent={metricPercent(pendingCount)} /></div>
+            </article>
+          </section>
 
           {/* Navegador de Lâminas (7 Blocos) */}
           <div className="flex space-x-2 overflow-x-auto pb-2">
@@ -293,7 +352,7 @@ export function ChecklistCemPage() {
               {/* Botão Finalizar */}
               <div className="pt-6 border-t border-micro-line dark:border-white/10 flex items-center justify-between">
                 <div className="text-xs text-micro-muted">
-                  Respondidas: <strong className="text-micro-navy dark:text-white">{allAnswerList.length}</strong> de {blocks.reduce((acc, b) => acc + (b.questions?.length || 0), 0)}
+                  Respondidas: <strong className="text-micro-navy dark:text-white">{allAnswerList.length}</strong> de {totalQuestions}
                 </div>
                 <button
                   onClick={handleSubmit}

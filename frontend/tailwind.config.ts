@@ -9,17 +9,17 @@ export default {
     extend: {
       colors: {
         micro: {
-          navy: '#2E2D4D',
-          'navy-dark': '#212038',
-          blue: '#3A3B7D',
-          cyan: '#5F6EC3',
-          orange: '#EF7F22',
-          yellow: '#FABE49',
-          ink: '#2E2D4D',
-          muted: '#6F7488',
-          bg: '#F7F7FB',
-          line: '#E2E3EE',
-          success: '#1B8F60'
+          navy: 'rgb(var(--micro-navy-rgb) / <alpha-value>)',
+          'navy-dark': 'rgb(var(--micro-navy-dark-rgb) / <alpha-value>)',
+          blue: 'rgb(var(--micro-blue-rgb) / <alpha-value>)',
+          cyan: 'rgb(var(--micro-cyan-rgb) / <alpha-value>)',
+          orange: 'rgb(var(--micro-orange-rgb) / <alpha-value>)',
+          yellow: 'rgb(var(--micro-yellow-rgb) / <alpha-value>)',
+          ink: 'rgb(var(--micro-ink-rgb) / <alpha-value>)',
+          muted: 'rgb(var(--micro-muted-rgb) / <alpha-value>)',
+          bg: 'rgb(var(--micro-bg-rgb) / <alpha-value>)',
+          line: 'rgb(var(--micro-line-rgb) / <alpha-value>)',
+          success: 'rgb(var(--micro-success-rgb) / <alpha-value>)'
         }
       },
       fontFamily: {
