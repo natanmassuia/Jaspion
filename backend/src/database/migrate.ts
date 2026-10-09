@@ -136,6 +136,14 @@ async function runMigrations() {
       answer TEXT NOT NULL,
       observation TEXT
     );`,
+    `CREATE TABLE IF NOT EXISTS cem_drafts (
+      evaluator_id TEXT PRIMARY KEY,
+      ticket_protocol TEXT NOT NULL,
+      evaluation_date TEXT NOT NULL,
+      current_block_index INTEGER NOT NULL DEFAULT 0,
+      answers_json TEXT NOT NULL DEFAULT '[]',
+      updated_at TEXT NOT NULL
+    );`,
     `CREATE TABLE IF NOT EXISTS znuny_tickets_mirror (
       id TEXT PRIMARY KEY,
       tn TEXT NOT NULL,
