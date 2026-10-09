@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import vipBadge from '../assets/vip-badge.png';
 import m7Lightbulb from '../assets/mascote/m7-lightbulb.png';
-import m7Confident from '../assets/mascote/m7-confident.png';
 import { ImageUploadModal } from '../components/ImageUploadModal';
 import { ProcedureContent } from '../components/ProcedureContent';
 
@@ -303,45 +302,28 @@ export function UnidadeDetailPage() {
             </div>
           </div>
 
-          {/* Destaque Direita: Selo VIP em Evidência + Central CCO */}
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            {/* Selo VIP Grandão e em Evidência */}
-            {unit.clientIsVip && (
-              <div className="flex items-center space-x-3 bg-gradient-to-br from-amber-500/15 via-yellow-500/10 to-amber-500/5 dark:from-amber-400/20 dark:to-yellow-500/10 px-4 py-3 rounded-2xl border-2 border-amber-400/60 shadow-md">
-                <img 
-                  src={vipBadge} 
-                  alt="Selo VIP" 
-                  className="h-12 w-auto object-contain drop-shadow-md transform hover:scale-110 transition-transform" 
-                />
-                <div className="text-left pr-1">
-                  <div className="flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
-                    <span className="text-xs font-black uppercase text-amber-600 dark:text-amber-400 tracking-wider">
-                      CONTRATO VIP
-                    </span>
-                  </div>
-                  <div className="text-[11px] font-bold text-micro-navy dark:text-white leading-tight mt-0.5">
-                    Atendimento Prioritário
-                  </div>
-                  <div className="text-[10px] text-micro-muted font-medium">SLA N1 Especial CCO</div>
-                </div>
-              </div>
-            )}
-
-            {/* Badge Mascote M7 Central CCO */}
-            <div className="flex items-center space-x-3 bg-micro-bg dark:bg-white/5 p-3 rounded-2xl border border-micro-line dark:border-white/10 shrink-0">
+          {/* Destaque Direita: Selo VIP em Evidência */}
+          {unit.clientIsVip && (
+            <div className="flex items-center space-x-3.5 bg-gradient-to-br from-amber-500/15 via-yellow-500/10 to-amber-500/5 dark:from-amber-400/20 dark:to-yellow-500/10 px-4 py-3 rounded-2xl border-2 border-amber-400/60 shadow-md shrink-0">
               <img 
-                src={m7Confident} 
-                alt="M7 Operacional" 
-                className="w-13 h-13 object-contain drop-shadow-md transform hover:scale-105 transition-transform" 
+                src={vipBadge} 
+                alt="Selo VIP" 
+                className="h-12 w-auto object-contain drop-shadow-md transform hover:scale-110 transition-transform" 
               />
-              <div className="text-left pr-2">
-                <div className="text-xs font-bold text-micro-navy dark:text-white">Central CCO</div>
-                <div className="text-[11px] text-micro-muted">Monitoramento N1</div>
-                <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">Triagem Prioritária</div>
+              <div className="text-left pr-1">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+                  <span className="text-xs font-black uppercase text-amber-600 dark:text-amber-400 tracking-wider">
+                    CONTRATO VIP
+                  </span>
+                </div>
+                <div className="text-[11px] font-bold text-micro-navy dark:text-white leading-tight mt-0.5">
+                  Atendimento Prioritário
+                </div>
+                <div className="text-[10px] text-micro-muted font-medium">SLA N1 Especial CCO</div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* 2.1. INFORMAÇÕES DE URGÊNCIA CCO NO CABEÇALHO (Endereço, Horários, Dependências) COM BOTÕES DE CÓPIA */}
