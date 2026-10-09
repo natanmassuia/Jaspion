@@ -3,9 +3,10 @@ import { AlertTriangle, AlertCircle, Info, ShieldAlert } from 'lucide-react';
 
 interface ProcedureContentProps {
   content: string;
+  onImageClick?: (src: string, alt?: string) => void;
 }
 
-export function ProcedureContent({ content }: ProcedureContentProps) {
+export function ProcedureContent({ content, onImageClick }: ProcedureContentProps) {
   if (!content) return null;
 
   // Split lines
@@ -97,7 +98,6 @@ export function ProcedureContent({ content }: ProcedureContentProps) {
 
     // Check table
     if (line.startsWith('|') && line.endsWith('|')) {
-      // Check divider row
       if (line.includes('---')) {
         continue;
       }
@@ -111,6 +111,25 @@ export function ProcedureContent({ content }: ProcedureContentProps) {
 
     if (!line) {
       elements.push(<div key={`blank-${i}`} className="h-2" />);
+      continue;
+    }
+
+    // Imagem em Markdown ![alt](url)
+    const imgMatch = line.match(/^!\[(.*?)\]\((.*?)\)/);
+    if (imgMatch) {
+      const alt = imgMatch[1];
+      const src = imgMatch[2];
+      elements.push(
+        <div key={`img-${i}`} className="my-3">
+          <img
+            src={src}
+            alt={alt}
+            onClick={() => onImageClick?.(src, alt)}
+            className="rounded-2xl border border-micro-line dark:border-white/10 max-h-80 object-contain cursor-zoom-in hover:opacity-95 transition-all shadow-md"
+          />
+          {alt && <span className="text-[11px] text-micro-muted block mt-1.5 font-medium">{alt}</span>}
+        </div>
+      );
       continue;
     }
 

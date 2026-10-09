@@ -5,7 +5,7 @@ import {
   ArrowLeft, Radio, Phone, MapPin, Cpu, Camera, Building2, BookOpen, 
   Image as ImageIcon, AlertTriangle, ChevronDown, ChevronRight, 
   Copy, Check, ShieldAlert, Sparkles, ExternalLink, ChevronsUpDown,
-  PhoneCall, MessageSquare, Layers, Clock, Globe, Info, AlertCircle
+  PhoneCall, MessageSquare, Layers, Clock, Globe, Info, AlertCircle, X, ZoomIn
 } from 'lucide-react';
 import vipBadge from '../assets/vip-badge.png';
 import m7Lightbulb from '../assets/mascote/m7-lightbulb.png';
@@ -32,7 +32,27 @@ export function UnidadeDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 1. As seções operacionais sempre iniciam RECOLHIDAS ao abrir a página
+  // Estado do Modal de Preview / Lightbox de Imagem
+  const [previewImage, setPreviewImage] = useState<{ src: string; label?: string } | null>(null);
+
+  // Fechar Preview de Imagem ao pressionar tecla ESC
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setPreviewImage(null);
+      }
+    };
+    if (previewImage) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [previewImage]);
+
+  // As seções operacionais sempre iniciam RECOLHIDAS ao abrir a página
   const [openSections, setOpenSections] = useState<{
     circuitos: boolean;
     procedimentos: boolean;
@@ -68,7 +88,6 @@ export function UnidadeDetailPage() {
       .then(d => {
         if (d.success) {
           setUnit(d.data);
-          // Sempre fechado por padrão ao abrir a página
           setOpenCircuits({});
           setOpenProcedures({});
         }
@@ -287,19 +306,13 @@ export function UnidadeDetailPage() {
             <button
               type="button"
               onClick={() => copyCardText('alerta-cco', 'DIRETRIZ CCO BALBO: Em caso de alarme ou queda de enlace, avisar imediatamente nos grupos WhatsApp GB-MICROSET - NOC - INF (Cliente) e INT - Balbo CCO (Interno) com protocolo da operadora.')}
-              className="bg-black/35 hover:bg-black/50 text-white text-xs font-bold px-3 py-2 rounded-xl border border-white/25 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
-              title="Copiar diretriz de acionamento"
+              className="bg-black/35 hover:bg-black/50 text-white p-2.5 rounded-xl border border-white/25 flex items-center justify-center transition-all cursor-pointer shadow-sm"
+              title="Copiar diretriz de acionamento CCO"
             >
               {copiedCardId === 'alerta-cco' ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-yellow-300" />
-                  <span className="text-yellow-300 font-bold">Copiado!</span>
-                </>
+                <Check className="w-4 h-4 text-yellow-300 animate-scaleIn" />
               ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" />
-                  <span>Copiar Diretriz</span>
-                </>
+                <Copy className="w-4 h-4" />
               )}
             </button>
             <div className="bg-black/25 px-3 py-2 rounded-xl border border-white/20 backdrop-blur-sm text-[11px] font-bold text-white">
@@ -343,13 +356,17 @@ export function UnidadeDetailPage() {
             </div>
           </div>
 
-          {/* Destaque Direita: Selo VIP em Evidência (Sem o robô, liberando espaço) */}
+          {/* Destaque Direita: Selo VIP em Evidência (Clicável para preview em Modal) */}
           {unit.clientIsVip && (
-            <div className="flex items-center space-x-3.5 bg-gradient-to-br from-amber-500/15 via-yellow-500/10 to-amber-500/5 dark:from-amber-400/20 dark:to-yellow-500/10 px-4 py-3 rounded-2xl border-2 border-amber-400/60 shadow-md shrink-0">
+            <div 
+              onClick={() => setPreviewImage({ src: vipBadge, label: 'Selo Oficial de Contrato VIP — Central CCO Microset' })}
+              className="flex items-center space-x-3.5 bg-gradient-to-br from-amber-500/15 via-yellow-500/10 to-amber-500/5 dark:from-amber-400/20 dark:to-yellow-500/10 px-4 py-3 rounded-2xl border-2 border-amber-400/60 shadow-md shrink-0 cursor-zoom-in hover:brightness-105 transition-all group"
+              title="Clique para visualizar o selo ampliado"
+            >
               <img 
                 src={vipBadge} 
                 alt="Selo VIP" 
-                className="h-12 w-auto object-contain drop-shadow-md transform hover:scale-110 transition-transform" 
+                className="h-12 w-auto object-contain drop-shadow-md transform group-hover:scale-110 transition-transform" 
               />
               <div className="text-left pr-1">
                 <div className="flex items-center gap-1.5">
@@ -367,7 +384,7 @@ export function UnidadeDetailPage() {
           )}
         </div>
 
-        {/* 3.1. INFORMAÇÕES DE URGÊNCIA CCO NO CABEÇALHO (Endereço, Horários, Dependências) COM BOTÕES DE CÓPIA */}
+        {/* 3.1. INFORMAÇÕES DE URGÊNCIA CCO NO CABEÇALHO (Ícones de cópia intrínsecos e limpos) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-micro-line/60 dark:border-white/10">
           {/* Card 1: Endereço Completo */}
           <div className="bg-micro-bg/80 dark:bg-white/5 p-4 rounded-2xl border border-micro-line dark:border-white/10 flex items-start justify-between gap-3 shadow-xs group relative">
@@ -397,15 +414,9 @@ export function UnidadeDetailPage() {
               title="Copiar endereço completo"
             >
               {copiedCardId === 'urgencia-endereco' ? (
-                <div className="flex items-center gap-1 text-emerald-500">
-                  <Check className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-bold">Copiado</span>
-                </div>
+                <Check className="w-4 h-4 text-emerald-500 animate-scaleIn" />
               ) : (
-                <div className="flex items-center gap-1">
-                  <Copy className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-bold hidden xl:inline">Copiar</span>
-                </div>
+                <Copy className="w-4 h-4" />
               )}
             </button>
           </div>
@@ -438,15 +449,9 @@ export function UnidadeDetailPage() {
               title="Copiar horários e telefone"
             >
               {copiedCardId === 'urgencia-horario' ? (
-                <div className="flex items-center gap-1 text-emerald-500">
-                  <Check className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-bold">Copiado</span>
-                </div>
+                <Check className="w-4 h-4 text-emerald-500 animate-scaleIn" />
               ) : (
-                <div className="flex items-center gap-1">
-                  <Copy className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-bold hidden xl:inline">Copiar</span>
-                </div>
+                <Copy className="w-4 h-4" />
               )}
             </button>
           </div>
@@ -474,25 +479,23 @@ export function UnidadeDetailPage() {
               title="Copiar dependências técnicas"
             >
               {copiedCardId === 'urgencia-dependencias' ? (
-                <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
-                  <Check className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-bold">Copiado</span>
-                </div>
+                <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-scaleIn" />
               ) : (
-                <div className="flex items-center gap-1">
-                  <Copy className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-bold hidden xl:inline">Copiar</span>
-                </div>
+                <Copy className="w-4 h-4" />
               )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* 4. Imagem Grandona da Unidade (Hero Banner) */}
+      {/* 4. Imagem Grandona da Unidade (Hero Banner Clicável para Preview) */}
       {effectiveImage ? (
         <div className="bg-white dark:bg-micro-navy rounded-3xl overflow-hidden border border-micro-line dark:border-white/10 shadow-xl relative group">
-          <div className="relative h-64 sm:h-80 md:h-96 w-full bg-slate-900">
+          <div 
+            onClick={() => setPreviewImage({ src: effectiveImage, label: `${unit.name} — ${effectiveLabel}` })}
+            className="relative h-64 sm:h-80 md:h-96 w-full bg-slate-900 cursor-zoom-in"
+            title="Clique para abrir imagem em tamanho real"
+          >
             <img
               src={effectiveImage}
               alt={unit.name}
@@ -501,9 +504,9 @@ export function UnidadeDetailPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent flex items-end p-6">
               <div className="flex items-center justify-between w-full text-white">
                 <div className="flex items-center space-x-2">
-                  <Camera className="w-4 h-4 text-micro-cyan" />
+                  <ZoomIn className="w-4 h-4 text-micro-cyan" />
                   <span className="text-xs sm:text-sm font-semibold tracking-wide drop-shadow">
-                    {effectiveLabel}
+                    {effectiveLabel} (Clique para ampliar)
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
@@ -511,7 +514,10 @@ export function UnidadeDetailPage() {
                     {unit.city} — {unit.state}
                   </span>
                   <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsModalOpen(true);
+                    }}
                     className="bg-black/60 hover:bg-black/85 text-white text-xs font-bold px-3 py-1.5 rounded-xl backdrop-blur-sm flex items-center gap-1.5 transition-all shadow-md hover:scale-105 cursor-pointer"
                   >
                     <Camera className="w-4 h-4" />
@@ -523,7 +529,7 @@ export function UnidadeDetailPage() {
           </div>
         </div>
       ) : (
-        /* Painel com visualização de foto quando unidade ainda não tem imagem */
+        /* Painel quando unidade ainda não tem foto */
         <div className="bg-white dark:bg-micro-navy rounded-3xl p-10 border border-dashed border-micro-line dark:border-white/15 text-center flex flex-col items-center justify-center gap-3 shadow-sm">
           <div className="w-16 h-16 rounded-2xl bg-micro-cyan/10 text-micro-cyan flex items-center justify-center">
             <ImageIcon className="w-8 h-8" />
@@ -676,19 +682,13 @@ export function UnidadeDetailPage() {
                             e.stopPropagation();
                             copyCircuitDetails(c);
                           }}
-                          className="px-3 py-1.5 rounded-xl text-xs font-bold text-micro-cyan hover:bg-micro-cyan/10 bg-micro-bg dark:bg-white/5 border border-micro-line dark:border-white/10 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
-                          title="Copiar dados do circuito para chamado"
+                          className="p-2 rounded-xl text-micro-muted hover:text-micro-cyan hover:bg-micro-cyan/10 bg-micro-bg dark:bg-white/5 border border-micro-line dark:border-white/10 transition-all flex items-center justify-center cursor-pointer shadow-xs"
+                          title="Copiar dados formatados do circuito"
                         >
                           {isCopied ? (
-                            <>
-                              <Check className="w-3.5 h-3.5 text-emerald-500" />
-                              <span className="text-emerald-500 text-[11px] font-black">Copiado!</span>
-                            </>
+                            <Check className="w-4 h-4 text-emerald-500 animate-scaleIn" />
                           ) : (
-                            <>
-                              <Copy className="w-3.5 h-3.5" />
-                              <span className="text-[11px]">Copiar Dados</span>
-                            </>
+                            <Copy className="w-4 h-4" />
                           )}
                         </button>
                       </div>
@@ -707,10 +707,10 @@ export function UnidadeDetailPage() {
                             <button
                               type="button"
                               onClick={() => copyCardText(`op-${c.id}`, c.operator)}
-                              className="text-micro-muted hover:text-micro-cyan p-1"
+                              className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg"
                               title="Copiar Operadora"
                             >
-                              {copiedCardId === `op-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                              {copiedCardId === `op-${c.id}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                             </button>
                           </div>
 
@@ -722,10 +722,10 @@ export function UnidadeDetailPage() {
                             <button
                               type="button"
                               onClick={() => copyCardText(`tec-${c.id}`, c.technology || '')}
-                              className="text-micro-muted hover:text-micro-cyan p-1"
+                              className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg"
                               title="Copiar Tecnologia"
                             >
-                              {copiedCardId === `tec-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                              {copiedCardId === `tec-${c.id}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                             </button>
                           </div>
 
@@ -737,10 +737,10 @@ export function UnidadeDetailPage() {
                             <button
                               type="button"
                               onClick={() => copyCardText(`spd-${c.id}`, c.speedMbps ? `${c.speedMbps} Mbps` : '')}
-                              className="text-micro-muted hover:text-micro-cyan p-1"
+                              className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg"
                               title="Copiar Banda"
                             >
-                              {copiedCardId === `spd-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                              {copiedCardId === `spd-${c.id}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                             </button>
                           </div>
 
@@ -760,10 +760,10 @@ export function UnidadeDetailPage() {
                               <button
                                 type="button"
                                 onClick={() => copyCardText(`cid-${c.id}`, c.circuitId)}
-                                className="text-micro-muted hover:text-micro-cyan p-1"
+                                className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg"
                                 title="Copiar ID Circuito"
                               >
-                                {copiedCardId === `cid-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                                {copiedCardId === `cid-${c.id}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                               </button>
                             )}
                           </div>
@@ -777,10 +777,10 @@ export function UnidadeDetailPage() {
                               <button
                                 type="button"
                                 onClick={() => copyCardText(`cnt-${c.id}`, c.contractId)}
-                                className="text-micro-muted hover:text-micro-cyan p-1"
+                                className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg"
                                 title="Copiar Contrato"
                               >
-                                {copiedCardId === `cnt-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                                {copiedCardId === `cnt-${c.id}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                               </button>
                             )}
                           </div>
@@ -794,10 +794,10 @@ export function UnidadeDetailPage() {
                               <button
                                 type="button"
                                 onClick={() => copyCardText(`ip-${c.id}`, c.lpIp)}
-                                className="text-micro-muted hover:text-micro-cyan p-1"
+                                className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg"
                                 title="Copiar IP"
                               >
-                                {copiedCardId === `ip-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                                {copiedCardId === `ip-${c.id}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                               </button>
                             )}
                           </div>
@@ -811,10 +811,10 @@ export function UnidadeDetailPage() {
                               <button
                                 type="button"
                                 onClick={() => copyCardText(`vpn-${c.id}`, c.lpVpn)}
-                                className="text-micro-muted hover:text-micro-cyan p-1"
+                                className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg"
                                 title="Copiar VPN"
                               >
-                                {copiedCardId === `vpn-${c.id}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                                {copiedCardId === `vpn-${c.id}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                               </button>
                             )}
                           </div>
@@ -1010,26 +1010,20 @@ export function UnidadeDetailPage() {
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        {/* Botão de Cópia do POP */}
+                        {/* Botão de Cópia Intrínseco do POP */}
                         <button
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             copyCardText(`pop-${procKey}`, `[PROCEDIMENTO CCO - ${catLabel}]\n${p.content}`);
                           }}
-                          className="px-3 py-1.5 rounded-xl text-xs font-bold text-micro-cyan hover:bg-micro-cyan/10 bg-micro-bg dark:bg-white/5 border border-micro-line dark:border-white/10 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                          className="p-2 rounded-xl text-micro-muted hover:text-micro-cyan hover:bg-micro-cyan/10 bg-micro-bg dark:bg-white/5 border border-micro-line dark:border-white/10 transition-all flex items-center justify-center cursor-pointer shadow-xs"
                           title="Copiar procedimento na íntegra"
                         >
                           {isCopied ? (
-                            <>
-                              <Check className="w-3.5 h-3.5 text-emerald-500" />
-                              <span className="text-emerald-500 text-[11px] font-black">Copiado!</span>
-                            </>
+                            <Check className="w-4 h-4 text-emerald-500 animate-scaleIn" />
                           ) : (
-                            <>
-                              <Copy className="w-3.5 h-3.5" />
-                              <span className="text-[11px]">Copiar POP</span>
-                            </>
+                            <Copy className="w-4 h-4" />
                           )}
                         </button>
 
@@ -1042,7 +1036,10 @@ export function UnidadeDetailPage() {
                     {/* Conteúdo Renderizado com Markdown */}
                     {isOpen && (
                       <div className="p-6 border-t border-micro-line dark:border-white/10 bg-micro-bg/30 dark:bg-black/20 animate-fadeIn">
-                        <ProcedureContent content={p.content} />
+                        <ProcedureContent 
+                          content={p.content} 
+                          onImageClick={(src, alt) => setPreviewImage({ src, label: alt || 'Procedimento Operacional' })}
+                        />
                       </div>
                     )}
                   </div>
@@ -1055,7 +1052,6 @@ export function UnidadeDetailPage() {
 
       {/* =========================================================================
           SEÇÃO 3: ESCALONAMENTOS & CONTATOS LOCAIS DA UNIDADE
-          (Operadoras agora estão diretamente dentro de cada circuito na Seção 1)
           ========================================================================= */}
       <div className="rounded-3xl border border-micro-line dark:border-white/10 overflow-hidden shadow-sm bg-white dark:bg-micro-navy">
         {/* Barra de Título da Seção */}
@@ -1139,7 +1135,7 @@ export function UnidadeDetailPage() {
                                   const info = `${ct.name} (${ct.roleDescription}) - Tel: ${ct.phone || ct.mobile || ct.whatsapp || 'N/A'}`;
                                   copyCardText(`ct-${ct.id}`, info);
                                 }}
-                                className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
+                                className="text-micro-muted hover:text-micro-cyan p-1.5 rounded-lg transition-colors cursor-pointer"
                                 title="Copiar contato"
                               >
                                 {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
@@ -1225,7 +1221,7 @@ export function UnidadeDetailPage() {
                                   const info = `[PLANTÃO LOCAL] ${ct.name} (${ct.roleDescription}) - Tel: ${ct.whatsapp || ct.mobile || ct.phone || 'N/A'}`;
                                   copyCardText(`ct-${ct.id}`, info);
                                 }}
-                                className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
+                                className="text-micro-muted hover:text-micro-cyan p-1.5 rounded-lg transition-colors cursor-pointer"
                                 title="Copiar contato de plantão"
                               >
                                 {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
@@ -1305,7 +1301,7 @@ export function UnidadeDetailPage() {
                                   const info = `[MICROSET CCO] ${ct.name} (${ct.roleDescription}) - Tel: ${ct.mobile || ct.phone || 'N/A'}`;
                                   copyCardText(`ct-${ct.id}`, info);
                                 }}
-                                className="text-micro-muted hover:text-micro-cyan p-1 rounded-lg transition-colors cursor-pointer"
+                                className="text-micro-muted hover:text-micro-cyan p-1.5 rounded-lg transition-colors cursor-pointer"
                                 title="Copiar contato Microset"
                               >
                                 {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
@@ -1343,10 +1339,16 @@ export function UnidadeDetailPage() {
         )}
       </div>
 
-      {/* 6. Dica Operacional M7 no Rodapé */}
+      {/* 6. Dica Operacional M7 no Rodapé (Mascote também clicável para preview) */}
       <div className="bg-gradient-to-br from-blue-50 to-indigo-50/50 dark:from-white/5 dark:to-white/10 rounded-3xl p-5 border border-micro-cyan/20 shadow-sm">
         <div className="flex items-start space-x-3.5">
-          <img src={m7Lightbulb} alt="Dica M7" className="w-12 h-12 object-contain shrink-0 drop-shadow-sm" />
+          <img 
+            src={m7Lightbulb} 
+            alt="Dica M7" 
+            onClick={() => setPreviewImage({ src: m7Lightbulb, label: 'Mascote Operacional M7 — Central CCO Microset' })}
+            className="w-12 h-12 object-contain shrink-0 drop-shadow-sm cursor-zoom-in hover:scale-110 transition-transform" 
+            title="Clique para visualizar"
+          />
           <div>
             <div className="text-xs font-bold text-micro-navy dark:text-white flex items-center gap-2">
               <span>Orientação Operacional do M7</span>
@@ -1358,6 +1360,46 @@ export function UnidadeDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* =========================================================================
+          MODAL LIGHTBOX DE PREVIEW DE IMAGEM
+          (Fecha ao clicar fora ou ao pressionar ESC)
+          ========================================================================= */}
+      {previewImage && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-fadeIn cursor-pointer"
+          onClick={() => setPreviewImage(null)}
+        >
+          {/* Botão de Fechar no topo direito */}
+          <button
+            type="button"
+            onClick={() => setPreviewImage(null)}
+            className="absolute top-5 right-5 text-white/80 hover:text-white bg-black/50 hover:bg-black/80 p-2.5 rounded-full backdrop-blur-md border border-white/20 transition-all cursor-pointer shadow-xl z-10"
+            title="Fechar preview (ESC)"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          <div 
+            className="relative max-w-5xl max-h-[90vh] flex flex-col items-center cursor-default select-none"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={previewImage.src}
+              alt={previewImage.label || 'Preview da Imagem'}
+              className="max-h-[82vh] max-w-[92vw] object-contain rounded-2xl shadow-2xl border border-white/20"
+            />
+            {previewImage.label && (
+              <div className="mt-3.5 px-4 py-1.5 bg-black/75 backdrop-blur-md rounded-xl text-white text-xs font-semibold tracking-wide border border-white/10 text-center max-w-lg shadow-lg">
+                {previewImage.label}
+              </div>
+            )}
+            <span className="text-[11px] text-white/60 mt-2 font-medium">
+              Pressione <kbd className="px-1.5 py-0.5 bg-white/15 rounded text-[10px] font-mono border border-white/20">ESC</kbd> ou clique fora da imagem para fechar
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Upload/Edição de Foto da Unidade */}
       <ImageUploadModal
